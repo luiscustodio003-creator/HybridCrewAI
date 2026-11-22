@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — HCW-01-007
+Feito: implementado `app/core/tasks/store_sqlite.py` com `SqliteTaskStore` (initialize, save, get, list_tasks, recover_orphans) usando SQLite real e `busy_timeout`. Actualizados `module.yaml`, `README.txt` e `__init__.py`. Teste real `tests/recovery/test_kill_resume.py` cria tarefa em subprocesso, sinaliza `PRONTO:`, sofre `kill()` do pai e é recuperada como `INTERRUPTED`, voltando depois a `QUEUED`/`RUNNING`.
+Falhou / por resolver: `B904` do Ruff no `raise AssertionError` dentro de `except Empty`; corrigido com `raise ... from None`.
+Ficheiros tocados: `app/core/tasks/*`, `tests/recovery/test_kill_resume.py`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-01-007.md`.
+Testes executados: 1 teste de recuperação passa; 77 testes na regressão completa; `ruff check app tests/unit/test_state_machine.py tests/recovery/test_kill_resume.py`, `mypy app`, `check_modules.py`, `check_file_size.py`, `check_traceability.py` e `plan_status.py` sem erros.
+Próxima acção: executar HCW-01-008 (ToolResult com cinco estados verificados).
+
 ## 2026-11-22 — HCW-01-006
 Feito: implementado `app/core/tasks/` com `ids.py` (UUIDv5 estável), `time.py` (UTC), `model.py` (`Task`, `TaskSpec`, `new_task`), `state_machine.py` (`TaskStatus`, `TaskStateError`, `pode_transitar`, `transitar`) e `__init__.py`. `Task` é imutável; transições inválidas falham; `RUNNING -> INTERRUPTED` e `INTERRUPTED -> QUEUED` permitem recuperação.
 Falhou / por resolver: primeiro teste de mensagem falhou porque o erro usava valores em minúsculas (`completed`) em vez de nomes (`COMPLETED`); mensagem ajustada. `check_modules` apontou falta de `README.txt` e `module.yaml`, criados a seguir. Ruff apontou `PLR2004` para o tamanho do UUID; extraído para constante.

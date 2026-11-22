@@ -538,7 +538,7 @@ tasks:
 - id: HCW-01-007
   title: Persistência SQLite das tarefas e recuperação após reinício
   phase: 1
-  status: APPROVED
+  status: VALIDATED
   priority: critical
   depends_on:
   - HCW-01-006
@@ -551,14 +551,20 @@ tasks:
   - app/core/tasks/store_sqlite.py
   files_change:
   - app/core/tasks/module.yaml
+  - app/core/tasks/README.txt
+  - app/core/tasks/__init__.py
   tests:
   - tests/recovery/test_kill_resume.py
   acceptance:
   - Matar o processo a meio e o estado recupera ao reiniciar
   - Teste usa subprocess real e ficheiro SQLite real, sem mocks
   - Tarefa RUNNING órfã passa a INTERRUPTED e volta a ser retomável
-  evidence: []
-  validated_on: null
+  evidence:
+  - tests/recovery/test_kill_resume.py
+  - app/core/tasks/store_sqlite.py
+  - reports/tasks/HCW-01-007.md
+  validated_on: 2026-11-22
+  notes: 'Teste real com Popen/kill e SQLite: tarefa RUNNING órfã passa a INTERRUPTED e volta a QUEUED/RUNNING. 77 testes na regressão completa, sem mocks.'
 - id: HCW-01-008
   title: ToolResult com os cinco estados verificados
   phase: 1
