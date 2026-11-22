@@ -61,3 +61,10 @@ Falhou / por resolver: nada nesta tarefa. Run de CI `45039146828` (commit `31ace
 Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `docs/reports/hcw-00-008.txt`.
 Testes executados: `python scripts/validate_plan.py` → 0 erros, 0 avisos; `python scripts/check_traceability.py` → 0 erros, 0 avisos; `python scripts/plan_status.py` → Fase 00 `6/12`, `VALIDATED=6`, `IMPLEMENTED=1`; GitHub API → run `45039146828` `status: completed`, `conclusion: success`.
 Próxima acção: pedir aprovação para `HCW-00-009` (spike do motor de agentes) antes de alterar `tasks.yaml` ou instalar qualquer dependência.
+
+## 2026-11-22 — abertura de HCW-00-009
+Feito: utilizador aprovou a abertura da tarefa; `tasks.yaml` passou a `HCW-00-009: APPROVED`; push do handoff `33ef37b` concluído sem divergência com `origin/master`.
+Falhou / por resolver: nada nesta acção. Continuam pendentes a validação de `HCW-00-006`, o ficheiro `STATE .md` (com espaço, fora do Git) e a decisão `ADR-0001`.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `python scripts/validate_plan.py` → 0 erros, 0 avisos; `python scripts/check_traceability.py` → 0 erros, 0 avisos; `git status -sb` → `## master...origin/master`.
+Próxima acção: executar `HCW-00-009` com a Skill `hcw-implement`, começando por `docs/reports/spike-agent-engine.md`, sem instalar dependências dos candidatos sem aprovação específica.

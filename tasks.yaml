@@ -250,7 +250,7 @@ tasks:
 - id: HCW-00-009
   title: 'Spike do motor de agentes: núcleo próprio vs CrewAI vs LangGraph'
   phase: 0
-  status: NOT_STARTED
+  status: APPROVED
   priority: critical
   depends_on:
   - HCW-00-002
