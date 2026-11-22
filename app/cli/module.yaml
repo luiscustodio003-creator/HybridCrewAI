@@ -1,0 +1,7 @@
+name: cli
+purpose: Comandos locais para seguir eventos reais e verificar a instalação
+public_api: [main, follow, formatar_evento, run, verificar_config, verificar_sqlite, verificar_redaccao]
+depends_on: [biblioteca padrão argparse, json, pathlib, sqlite3, sys, time, app.core.config, app.core.events, app.core.logging, app.core.tasks]
+events_emitted: []
+events_consumed: [eventos JSONL de logs/events.jsonl]
+tests: [tests/integration/test_cli.py]

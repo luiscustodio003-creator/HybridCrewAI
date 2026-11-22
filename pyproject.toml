@@ -4,6 +4,9 @@ version = "0.0.1"
 description = "Assistente pessoal JARVIS com equipa de agentes de engenharia de software"
 requires-python = ">=3.12"
 
+[project.scripts]
+hcw = "app.cli:main"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]

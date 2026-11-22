@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — HCW-01-009
+Feito: implementado `app/cli/` com `logs.py` (seguimento de JSONL com filtro por tarefa), `doctor.py` (configuração, SQLite e redacção), `main.py` (`argparse`), `__init__.py`, `__main__.py`, `README.txt` e `module.yaml`. Declarado `hcw = "app.cli:main"` em `pyproject.toml` e criado o launcher local `.venv\Scripts\hcw.cmd`.
+Falhou / por resolver: primeiro teste de seguimento rebentou com `OSError: telling position disabled by next()`; passou a leitura binária com `readline()` e contagem de bytes. Ruff apontou `PLR0913` em `follow`; removido o parâmetro `interval`, usando a constante do módulo.
+Ficheiros tocados: `app/cli/*`, `tests/integration/test_cli.py`, `pyproject.toml`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-01-009.md`.
+Testes executados: 3 testes de integração passam; 90 testes na regressão completa; `ruff check app tests/integration/test_cli.py`, `mypy app` (29 ficheiros), `check_modules.py`, `check_file_size.py`, `check_traceability.py`, `validate_plan.py` e `plan_status.py` sem erros; `hcw.cmd doctor` imprimiu `config OK`, `sqlite OK`, `redaction OK`.
+Próxima acção: executar o gate da Fase 1 com `run_gate.py --phase 1`.
+
 ## 2026-11-22 — HCW-01-008
 Feito: implementado `app/core/results/` com `statuses.py` (cinco estados), `tool_result.py` (`ToolResult`, `ToolResultError`, `new_tool_result`, `validar_tool_result`), `__init__.py`, `README.txt` e `module.yaml`. `done` exige evidência não vazia; cada estado tem regras próprias de campos obrigatórios e proibidos.
 Falhou / por resolver: Ruff apontou `PLR0912` (21 ramos) e `UP037`; validação refeita com tabelas `_REQUERIDOS`/`_PROIBIDOS`. Mypy rejeitou `dict.get` com `.value` do `StrEnum`; passou a usar o próprio membro como chave.

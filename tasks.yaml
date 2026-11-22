@@ -599,7 +599,7 @@ tasks:
 - id: HCW-01-009
   title: 'CLI: hcw logs --follow e hcw doctor'
   phase: 1
-  status: APPROVED
+  status: VALIDATED
   priority: high
   depends_on:
   - HCW-01-005
@@ -613,6 +613,9 @@ tasks:
   files_new:
   - app/cli/logs.py
   - app/cli/doctor.py
+  - app/cli/main.py
+  - app/cli/__init__.py
+  - app/cli/__main__.py
   - app/cli/README.txt
   - app/cli/module.yaml
   files_change:
@@ -624,8 +627,12 @@ tasks:
   - hcw doctor verifica configuração, SQLite e redacção e devolve código de saída 0
   - Ponto de entrada hcw declarado no pyproject.toml e executável no .venv
   - app/cli tem README.txt e module.yaml com as chaves obrigatórias
-  evidence: []
-  validated_on: null
+  evidence:
+  - tests/integration/test_cli.py
+  - app/cli
+  - reports/tasks/HCW-01-009.md
+  validated_on: 2026-11-22
+  notes: '3 testes de integração passam com subprocessos, JSONL e SQLite reais; launcher hcw.cmd executado; 90 testes na regressão completa; doctor devolve 0 com config, sqlite e redaction OK.'
 - id: HCW-01-999
   title: Gate da Fase 1
   phase: 1
