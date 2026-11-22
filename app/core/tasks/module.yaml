@@ -1,0 +1,7 @@
+name: core-tasks
+purpose: Modelo imutável de tarefas e máquina de estados com identificadores estáveis
+public_api: [Task, TaskSpec, TaskStatus, TaskStateError, generate_task_id, new_task, pode_transitar, transitar, utc_now]
+depends_on: [biblioteca padrão dataclasses, datetime, enum, uuid]
+events_emitted: []
+events_consumed: []
+tests: [tests/unit/test_state_machine.py]

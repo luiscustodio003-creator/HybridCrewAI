@@ -504,7 +504,7 @@ tasks:
 - id: HCW-01-006
   title: 'Tarefas: modelo e máquina de estados'
   phase: 1
-  status: APPROVED
+  status: VALIDATED
   priority: critical
   depends_on:
   - HCW-01-004
@@ -517,6 +517,8 @@ tasks:
   - app/core/tasks/model.py
   - app/core/tasks/state_machine.py
   - app/core/tasks/ids.py
+  - app/core/tasks/time.py
+  - app/core/tasks/__init__.py
   - app/core/tasks/README.txt
   - app/core/tasks/module.yaml
   files_change: []
@@ -527,8 +529,12 @@ tasks:
   - A transição RUNNING para INTERRUPTED existe para recuperação após kill
   - Identificadores de tarefa são únicos e estáveis entre reinícios
   - app/core/tasks tem README.txt e module.yaml com as chaves obrigatórias
-  evidence: []
-  validated_on: null
+  evidence:
+  - tests/unit/test_state_machine.py
+  - app/core/tasks
+  - reports/tasks/HCW-01-006.md
+  validated_on: 2026-11-22
+  notes: '9 testes de máquina de estados passam; 76 testes na regressão completa. UUIDv5 garante IDs estáveis; COMPLETED é terminal e RUNNING -> INTERRUPTED permite recuperação.'
 - id: HCW-01-007
   title: Persistência SQLite das tarefas e recuperação após reinício
   phase: 1
