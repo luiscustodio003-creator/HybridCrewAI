@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — encerramento da Fase 1
+Feito: `python scripts/run_gate.py --phase 1` devolveu `GO` com sete verificações OK e 90 testes acumulados. `HCW-01-999` marcada `VALIDATED`; criada a etiqueta local `phase-01-go` no commit `696ccdb600195fcec5f0a56a91449989a9167528`. Relatório em `docs/reports/phase-01.md`, `reports/phase-01/report.md` e `reports/phase-01/report.json`.
+Falhou / por resolver: `ruff check .` e `mypy scripts` continuam com erros pré-existentes em `scripts/` (`HCW-00-006`); o gate não os trata como bloqueantes. Push não autorizado.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `docs/MAP.md`, `docs/reports/phase-01.md`, `reports/phase-01/*`.
+Testes executados: `run_gate.py --phase 1` → GO; `pytest -q` → 90 passam; `plan_status.py` → Fase 01 `10/10`, próxima `HCW-02-001`; `check_traceability.py` e `validate_plan.py` → 0 erros.
+Próxima acção: planear a Fase 2 com `hcw-plan` e aprovação do utilizador para `HCW-02-001`.
+
 ## 2026-11-22 — HCW-01-009
 Feito: implementado `app/cli/` com `logs.py` (seguimento de JSONL com filtro por tarefa), `doctor.py` (configuração, SQLite e redacção), `main.py` (`argparse`), `__init__.py`, `__main__.py`, `README.txt` e `module.yaml`. Declarado `hcw = "app.cli:main"` em `pyproject.toml` e criado o launcher local `.venv\Scripts\hcw.cmd`.
 Falhou / por resolver: primeiro teste de seguimento rebentou com `OSError: telling position disabled by next()`; passou a leitura binária com `readline()` e contagem de bytes. Ruff apontou `PLR0913` em `follow`; removido o parâmetro `interval`, usando a constante do módulo.

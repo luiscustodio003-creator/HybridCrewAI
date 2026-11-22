@@ -1,0 +1,42 @@
+{
+  "phase": 1,
+  "verdict": "GO",
+  "when": "2026-11-22T18:57:56",
+  "results": [
+    {
+      "check": "validate_plan",
+      "ok": true,
+      "output": "[OK] validate_plan: 0 erro(s), 0 aviso(s)"
+    },
+    {
+      "check": "check_file_size",
+      "ok": true,
+      "output": "[OK] check_file_size: 0 erro(s), 0 aviso(s)"
+    },
+    {
+      "check": "check_modules",
+      "ok": true,
+      "output": "[OK] check_modules: 0 erro(s), 0 aviso(s)"
+    },
+    {
+      "check": "lint_skills",
+      "ok": true,
+      "output": "[OK] lint_skills (10 Skills): 0 erro(s), 0 aviso(s)"
+    },
+    {
+      "check": "check_traceability",
+      "ok": true,
+      "output": "[OK] check_traceability: 0 erro(s), 0 aviso(s)"
+    },
+    {
+      "check": "pytest (13 ficheiros)",
+      "ok": true,
+      "output": "........................................................................ [ 80%]\n..................                                                       [100%]"
+    },
+    {
+      "check": "tarefas da fase concluídas",
+      "ok": true,
+      "output": "todas concluídas"
+    }
+  ]
+}

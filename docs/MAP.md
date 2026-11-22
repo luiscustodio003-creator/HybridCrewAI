@@ -56,11 +56,11 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 
 ## Estrutura prevista — em construção
 
-A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fase correspondente as exigir. A Fase 1 já criou `app/core/config/`.
+A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fase correspondente as exigir. A Fase 1 criou `app/core/` e `app/cli/` e está encerrada.
 
 | Responsabilidade futura | Pasta prevista | Fase |
 |---|---|---|
-| Configuração, eventos, tarefas, logs e resultados | `app/core/` | 1 (em curso) |
+| Configuração, eventos, tarefas, logs e resultados | `app/core/` | 1 (concluída) |
 | Fornecedores LLM, encaminhamento, egress e orçamento | `app/llm/` | 2 |
 | Servidor e interface web | `app/ui/`, `app/ui/web/` | 3 |
 | Fluxo CREATE ponta a ponta | `app/workflows/create/` | 4 |
@@ -72,7 +72,7 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 | Ferramentas de computador, rede e engenharia reversa | `app/tools/` | 12 e 13 |
 | Autonomia, rotinas e checkpoints | `app/autonomy/` | 9 |
 | Aprovações por token e diff | `app/approvals/` | 4 e 12 |
-| CLI de utilizador | `app/cli/` | 1 (logs/doctor) e 14 |
+| CLI de utilizador | `app/cli/` | 1 (logs/doctor, concluída) e 14 |
 | Dados locais e relatórios gerados | `config/`, `data/`, `projects/`, `reports/`, `logs/` | conforme necessário |
 | Testes por natureza | `tests/unit/`, `integration/`, `contracts/`, `security/`, `recovery/`, `ui/`, `eval/`, `fixtures/` | fases seguintes |
 
@@ -82,8 +82,17 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 - Ameaça tratada: `Dependência ou ferramenta comprometida` — versões fixadas e CI com acções oficiais; evidência em `docs/reports/hcw-00-008.txt`.
 - Ameaça tratada: `Acção reportada como feita sem o ter sido` — evidências por saída real e códigos de saída nos relatórios de tarefa.
 - Limitação aberta: `HCW-00-006` permanece `IMPLEMENTED`; `ruff` e `mypy` têm erros pré-existentes fora do âmbito desta tarefa.
-- Limitação aberta: não existe aplicação, servidor nem funcionalidade de utilizador; o núcleo começa na Fase 1.
+- Limitação da Fase 0: na altura da auditoria não existia aplicação, servidor nem funcionalidade de utilizador; o núcleo foi criado na Fase 1.
 - Segredo: nenhuma credencial foi encontrada nos inventários de auditoria; nenhuma foi acrescentada nesta tarefa.
+
+## Fecho da Fase 1
+
+- Entregas verificadas: configuração, segredos, eventos, logging, máquina de estados, SQLite, `ToolResult` e CLI; 90 testes passam e o gate deu `GO`.
+- Ameaças tratadas: `Perda de trabalho em falhas` com teste real de `kill()`, `Fuga de segredos para logs/cloud` com redacção verificada e `Acção reportada como feita sem o ter sido` com `ToolResult`.
+- Evidência: `reports/phase-01/report.md`, `reports/phase-01/report.json` e `docs/reports/phase-01.md`.
+- Etiqueta local `phase-01-go` criada no commit `696ccdb600195fcec5f0a56a91449989a9167528`.
+- Limitação aberta: ainda não há servidor, interface web, cloud, workspace nem execução isolada; essas superfícies começam nas Fases 2 a 6.
+- Limitação aberta: `ruff check .` e `mypy scripts` continuam a apontar erros pré-existentes em `scripts/` (`HCW-00-006`).
 
 ## Como usar este mapa
 
