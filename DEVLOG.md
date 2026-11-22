@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — prompts versionados validados
+Feito: `HCW-02-006` validada; `app/llm/prompts/` carrega prompts Markdown com id, versão e SHA-256, rejeita metadados inválidos e só aceita conteúdo não confiável pelo delimitador de egress.
+Falhou / por resolver: nada nesta tarefa.
+Ficheiros tocados: `app/llm/prompts/*`, `app/llm/README.txt`, `app/llm/module.yaml`, `tests/unit/test_prompt_registry.py`, `docs/reports/hcw-02-006.md`, `docs/MAP.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `pytest -q` → 111 passam; `ruff`/`mypy` nos ficheiros novos limpos; guardas sem erros.
+Próxima acção: executar `HCW-02-007`, orçamento de tokens e ferramentas.
+
 ## 2026-11-22 — consentimento cloud validado
 Feito: `HCW-02-005` validada; `app/llm/consent.py` persiste consentimento e tipo de conta em SQLite sem credenciais, `unknown` nega cloud, revogação bloqueia pedidos seguintes; `docs/MAP.md` e documentação do módulo `llm` actualizados.
 Falhou / por resolver: nada nesta tarefa; P-05 continua em decisão, com negação segura por omissão.

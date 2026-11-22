@@ -1,0 +1,7 @@
+name: llm-prompts
+purpose: Registo de prompts versionados com hash e inserção segura de conteúdo não confiável
+public_api: [InvalidPromptVersion, PromptError, PromptNotFound, PromptRecord, PromptRegistry]
+depends_on: [llm-egress]
+events_emitted: []
+events_consumed: []
+tests: [tests/unit/test_prompt_registry.py]

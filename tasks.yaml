@@ -772,7 +772,7 @@ tasks:
 - id: HCW-02-006
   title: Criar registo de prompts versionados
   phase: 2
-  status: APPROVED
+  status: VALIDATED
   priority: high
   depends_on: [HCW-02-004]
   requirements: [NFR-005, SEC-002]
@@ -784,9 +784,12 @@ tasks:
   - "Cada prompt tem id, versão e SHA-256 do conteúdo, calculados no carregamento"
   - "Blocos não confiáveis só entram pelo delimitador de app/llm/egress/untrusted_wrap.py"
   - "Prompt inexistente ou com versão inválida falha com erro explícito, sem texto parcial"
-  evidence: []
-  validated_on: null
-  notes: Ficheiros .md são dados; nunca são executados como código.
+  evidence:
+  - docs/reports/hcw-02-006.md
+  - app/llm/prompts/registry.py
+  - tests/unit/test_prompt_registry.py
+  validated_on: 2026-11-22
+  notes: Ficheiros .md são dados; nunca são executados como código. Hash recalculado em cada carregamento.
 - id: HCW-02-007
   title: Aplicar orçamento de tokens e de ferramentas
   phase: 2

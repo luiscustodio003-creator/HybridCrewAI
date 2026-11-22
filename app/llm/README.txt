@@ -9,10 +9,11 @@ ESTRUTURA:
 - contracts.py — contratos, enumerações e validações.
 - consent.py — consentimento cloud e tipo de conta Gemini em SQLite.
 - egress/ — redacção, autorização e delimitação de conteúdo não confiável.
+- prompts/ — prompts versionados e renderização segura.
 - README.txt — esta descrição.
 - module.yaml — metadados para as guardas do projecto.
 
-INTERFACE PÚBLICA: ProviderKind, ErrorKind, ModelRequest, ModelResponse, ProviderError, AccountType, CloudConsentStore, EgressPolicy.
+INTERFACE PÚBLICA: ProviderKind, ErrorKind, ModelRequest, ModelResponse, ProviderError, AccountType, CloudConsentStore, EgressPolicy, PromptRegistry, PromptRecord.
 
 DEPENDÊNCIAS: internas — app.core.logging.SecretRegistry; externas — sqlite3 e urllib da stdlib.
 
@@ -22,7 +23,7 @@ UTILIZAÇÃO:
 from app.llm import ModelRequest, ProviderKind
 pedido = ModelRequest(provider=ProviderKind.FAKE, model="fake-1", prompt="Diz olá", timeout_s=5.0, task_id="HCW-02-003", correlation_id="corr-1")
 
-TESTES: .venv\Scripts\python.exe -m pytest -q tests/unit/test_llm_contracts.py tests/unit/test_llm_consent.py tests/security/test_egress.py
+TESTES: .venv\Scripts\python.exe -m pytest -q tests/unit/test_llm_contracts.py tests/unit/test_llm_consent.py tests/unit/test_prompt_registry.py tests/security/test_egress.py
 
 LIMITAÇÕES: não contacta fornecedores reais, não escolhe modelos nem impõe orçamento; essas responsabilidades pertencem às tarefas seguintes.
 

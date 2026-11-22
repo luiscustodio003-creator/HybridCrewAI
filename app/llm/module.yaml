@@ -1,7 +1,7 @@
 name: llm
 purpose: Contratos, consentimento cloud e egress do gateway de modelos
-public_api: [AccountType, CloudConsentStore, EgressPolicy, ErrorKind, ModelRequest, ModelResponse, ProviderError, ProviderKind]
+public_api: [AccountType, CloudConsentStore, EgressPolicy, ErrorKind, ModelRequest, ModelResponse, PromptRecord, PromptRegistry, ProviderError, ProviderKind]
 depends_on: [core-config, core-logging]
 events_emitted: []
 events_consumed: []
-tests: [tests/unit/test_llm_contracts.py, tests/unit/test_llm_consent.py, tests/security/test_egress.py]
+tests: [tests/unit/test_llm_contracts.py, tests/unit/test_llm_consent.py, tests/unit/test_prompt_registry.py, tests/security/test_egress.py]
