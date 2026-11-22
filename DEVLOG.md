@@ -75,3 +75,10 @@ Falhou / por resolver: nada nesta tarefa. `HCW-00-006` continua `IMPLEMENTED`; `
 Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `docs/reports/spike-agent-engine.md`.
 Testes executados: `python scripts/validate_plan.py` → 0 erros, 0 avisos; `python scripts/check_traceability.py` → 0 erros, 0 avisos; `python scripts/check_file_size.py` → 0 erros, 0 avisos; `python scripts/plan_status.py` → Fase 00 `7/12`, `VALIDATED=7`, `IMPLEMENTED=1`.
 Próxima acção: pedir aprovação ao utilizador para abrir `HCW-00-010` e escrever `docs/adr/ADR-0001-motor-de-agentes.md` com a decisão do motor, usando o spike `HCW-00-009` como evidência; não instalar dependências sem ADR aprovado.
+
+## 2026-11-22 — abertura e execução de HCW-00-010
+Feito: o utilizador aprovou a abertura de `HCW-00-010` e escolheu a recomendação `Núcleo próprio (Recommended)`. `tasks.yaml` passou a `APPROVED`, depois `IN_PROGRESS` e finalmente `IMPLEMENTED`, com evidência em `docs/adr/ADR-0001-motor-de-agentes.md`. O ADR foi redigido como `PROPOSTA`, com núcleo próprio e adaptadores futuros para CrewAI/LangGraph, requisitos `NFR-003`/`NFR-004`, segurança e testes exigidos na Fase 1.
+Falhou / por resolver: nada nesta tarefa. O utilizador aprovou o texto final, o ADR passou a `ACEITE` e `HCW-00-010` foi marcada `VALIDATED` com `validated_on: 2026-11-22`. `HCW-00-006` continua `IMPLEMENTED`; `STATE .md` (com espaço) permanece untracked. Nenhuma dependência de framework foi instalada.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `docs/adr/ADR-0001-motor-de-agentes.md` (novo).
+Testes executados: `python scripts/validate_plan.py` → 0 erros, 0 avisos; `python scripts/check_traceability.py` → 0 erros, 0 avisos; `python scripts/check_file_size.py` → 0 erros, 0 avisos; `python scripts/plan_status.py` → Fase 00 `8/12`, `VALIDATED=8`, `IMPLEMENTED=1`; `git status --short` → `M DEVLOG.md`, `M STATE.md`, `M tasks.yaml`, `?? "STATE .md"`, `?? docs/adr/`.
+Próxima acção: pedir aprovação ao utilizador para abrir `HCW-00-011` e gerar `docs/MAP.md` com o relatório final de auditoria da Fase 0; commit e push de `HCW-00-010` autorizados pelo utilizador.

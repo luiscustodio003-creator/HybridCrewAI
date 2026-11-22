@@ -274,7 +274,7 @@ tasks:
 - id: HCW-00-010
   title: 'Redigir ADR-0001: escolha do motor de agentes'
   phase: 0
-  status: NOT_STARTED
+  status: VALIDATED
   priority: critical
   depends_on:
   - HCW-00-009
@@ -287,8 +287,10 @@ tasks:
   tests: []
   acceptance:
   - ADR aprovado pelo utilizador
-  evidence: []
-  validated_on: null
+  evidence:
+  - docs/adr/ADR-0001-motor-de-agentes.md
+  validated_on: 2026-11-22
+  notes: 'ADR aprovado pelo utilizador em 2026-11-22; decisão: núcleo próprio com adaptadores futuros para CrewAI e LangGraph.'
 - id: HCW-00-011
   title: Gerar docs/MAP.md e o relatório de auditoria final
   phase: 0
