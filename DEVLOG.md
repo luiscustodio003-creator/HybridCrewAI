@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — HCW-01-005
+Feito: implementado `app/core/logging/` com `correlation.py` (contexto por `contextvars`), `redaction.py` (`SecretRegistry` com valores exactos, padrão `sk-` e nomes declarados), `setup.py` (`EventLogger`, `TextLogSink`, `configure_logging`) e `__init__.py`. Logs exigem `EventContext`; erros com `exc_info=True` incluem `stack_trace`; destino textual redige sempre.
+Falhou / por resolver: primeiro teste falhou por `ImportError: cannot import name 'EventLogger' from 'app.core.logging' (unknown location)`, corrigido com a implementação. `pytest.raises` no teste de stack trace não apanhava porque a excepção era consumida internamente; teste reescrito. Ruff apontou `PLR2004` e `I001`, ambos corrigidos.
+Ficheiros tocados: `app/core/logging/*`, `tests/security/test_redaction.py`, `tests/unit/test_logging.py`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-01-005.md`.
+Testes executados: 7 testes de logging e 6 de redacção passam; 67 testes na regressão completa; `ruff check app tests/unit/test_logging.py tests/security/test_redaction.py`, `mypy app`, `check_modules.py`, `check_file_size.py`, `check_traceability.py` e `plan_status.py` sem erros.
+Próxima acção: executar HCW-01-006 (modelo e máquina de estados de tarefas).
+
 ## 2026-11-22 — HCW-01-004
 Feito: implementado `app/core/events/` com `Event`, `EventContext`, `EventLevel`, `new_event`, `EventBus`, `JsonlSink` e `read_events`. `EventContext` obriga correlation_id/task_id/agent/phase; `JsonlSink` grava uma linha JSON por evento com bloqueio por instância; `EventBus` entrega a todos os destinos e levanta `EventBusError` se algum falhar. Criados `README.txt` e `module.yaml`.
 Falhou / por resolver: `ruff` apontou `PLR0913` em `new_event` com oito parâmetros; refactorizado para receber `EventContext` (5 parâmetros) e testes ajustados. Durante a edição do `tasks.yaml` houve um erro de indentação YAML corrigido antes do commit.

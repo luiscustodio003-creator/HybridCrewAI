@@ -1,0 +1,8 @@
+name: core-logging
+purpose: Emitir logs estruturados com correlação, redacção de segredos e stack trace
+public_api: [EventLogger, configure_logging, TextLogSink, SecretRegistry, bind_context, reset_context, current_context, LoggingError, LoggingContextError]
+files: [setup.py, correlation.py, redaction.py, __init__.py, README.txt, module.yaml]
+depends_on: [core/config, core/events]
+events_emitted: [log.debug, log.info, log.warning, log.error]
+events_consumed: []
+tests: [tests/unit/test_logging.py]

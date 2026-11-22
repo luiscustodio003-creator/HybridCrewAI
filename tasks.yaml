@@ -468,7 +468,7 @@ tasks:
 - id: HCW-01-005
   title: Logging central com correlação e redacção de segredos
   phase: 1
-  status: APPROVED
+  status: VALIDATED
   priority: critical
   depends_on:
   - HCW-01-004
@@ -482,18 +482,25 @@ tasks:
   - app/core/logging/setup.py
   - app/core/logging/correlation.py
   - app/core/logging/redaction.py
+  - app/core/logging/__init__.py
   - app/core/logging/README.txt
   - app/core/logging/module.yaml
   files_change: []
   tests:
   - tests/security/test_redaction.py
+  - tests/unit/test_logging.py
   acceptance:
   - Chave falsa não aparece nos logs
   - Redacção cobre padrões sk- e os nomes de variáveis declarados como secretos
   - correlation_id propagado pelo logging corresponde ao do evento publicado
   - app/core/logging tem README.txt e module.yaml com as chaves obrigatórias
-  evidence: []
-  validated_on: null
+  evidence:
+  - tests/security/test_redaction.py
+  - tests/unit/test_logging.py
+  - app/core/logging
+  - reports/tasks/HCW-01-005.md
+  validated_on: 2026-11-22
+  notes: '13 testes de logging e redacção passam; 67 testes na regressão completa. Formato sk- e nomes declarados são redigidos; logs de erro incluem stack_trace e phase; correlation_id vem do EventContext.'
 - id: HCW-01-006
   title: 'Tarefas: modelo e máquina de estados'
   phase: 1
