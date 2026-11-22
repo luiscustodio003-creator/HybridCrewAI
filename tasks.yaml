@@ -751,7 +751,7 @@ tasks:
 - id: HCW-02-005
   title: Registar consentimento cloud e tipo de conta
   phase: 2
-  status: APPROVED
+  status: VALIDATED
   priority: critical
   depends_on: [HCW-02-004]
   requirements: [FR-007, SEC-002]
@@ -763,9 +763,12 @@ tasks:
   - "Primeiro pedido cloud sem consentimento devolve erro acionável e não abre ligação"
   - "Consentimento e tipo de conta pessoal|trabalho|desconhecido persistem em SQLite local, sem valores de credenciais"
   - "Revogação do consentimento bloqueia pedidos cloud seguintes"
-  evidence: []
-  validated_on: null
-  notes: P-05 permanece em decisão; tipo desconhecido nunca autoriza cloud.
+  evidence:
+  - docs/reports/hcw-02-005.md
+  - app/llm/consent.py
+  - tests/unit/test_llm_consent.py
+  validated_on: 2026-11-22
+  notes: P-05 permanece em decisão; tipo desconhecido nunca autoriza cloud e nenhuma credencial é gravada.
 - id: HCW-02-006
   title: Criar registo de prompts versionados
   phase: 2

@@ -60,7 +60,10 @@ class EgressPolicy:
             and consent.allows_cloud() is True
         ):
             return
-        raise CloudDenied("Pedido cloud recusado: consentimento ausente ou não registado.")
+        raise CloudDenied(
+            "Pedido cloud recusado: consentimento ausente; "
+            "autorize explicitamente com ConsentStore.grant() antes de repetir."
+        )
 
     def send_json(
         self,

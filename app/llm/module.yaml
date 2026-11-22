@@ -1,7 +1,7 @@
 name: llm
-purpose: Contratos imutáveis do gateway de modelos, sem tipos de SDK externo
-public_api: [ErrorKind, ModelRequest, ModelResponse, ProviderError, ProviderKind]
+purpose: Contratos, consentimento cloud e egress do gateway de modelos
+public_api: [AccountType, CloudConsentStore, EgressPolicy, ErrorKind, ModelRequest, ModelResponse, ProviderError, ProviderKind]
 depends_on: [core-config, core-logging]
 events_emitted: []
 events_consumed: []
-tests: [tests/unit/test_llm_contracts.py]
+tests: [tests/unit/test_llm_contracts.py, tests/unit/test_llm_consent.py, tests/security/test_egress.py]

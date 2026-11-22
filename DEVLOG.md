@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — consentimento cloud validado
+Feito: `HCW-02-005` validada; `app/llm/consent.py` persiste consentimento e tipo de conta em SQLite sem credenciais, `unknown` nega cloud, revogação bloqueia pedidos seguintes; `docs/MAP.md` e documentação do módulo `llm` actualizados.
+Falhou / por resolver: nada nesta tarefa; P-05 continua em decisão, com negação segura por omissão.
+Ficheiros tocados: `app/llm/consent.py`, `app/core/config/defaults.py`, `app/llm/README.txt`, `app/llm/module.yaml`, `app/llm/egress/policy.py`, `tests/unit/test_llm_consent.py`, `docs/reports/hcw-02-005.md`, `docs/MAP.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `pytest -q` → 108 passam; `ruff`/`mypy` nos ficheiros tocados limpos; guardas sem erros.
+Próxima acção: executar `HCW-02-006`, registo de prompts versionados.
+
 ## 2026-11-22 — egress validado
 Feito: `HCW-02-004` validada; `app/llm/egress/` redige corpo, cabeçalhos e URL antes do envio, delimita conteúdo não confiável e recusa cloud sem consentimento antes de abrir socket; `docs/MAP.md` actualizado.
 Falhou / por resolver: nada nesta tarefa; `ruff check .` global continua com erros antigos em `scripts/`.
