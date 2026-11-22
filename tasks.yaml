@@ -668,24 +668,27 @@ tasks:
 - id: HCW-02-001
   title: Planear em detalhe a Fase 2 com a Skill hcw-plan
   phase: 2
-  status: IN_PROGRESS
+  status: VALIDATED
   priority: high
   depends_on:
   - HCW-01-999
   requirements: [DOC-001]
   modules: []
-  files_new: []
+  files_new: [docs/reports/phase-02-plan.md]
   files_change: [tasks.yaml, docs/requirements.yaml]
   tests: []
   acceptance:
   - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
-  evidence: []
-  validated_on: null
-  notes: Plano detalhado criado em 2026-11-22; aguarda aprovação do utilizador antes de passar as tarefas a APPROVED.
+  evidence:
+  - docs/reports/phase-02-plan.md
+  - tasks.yaml
+  - docs/requirements.yaml
+  validated_on: 2026-11-22
+  notes: Plano detalhado aprovado pelo utilizador em 2026-11-22; 11 tarefas passaram a APPROVED; ADR-0002 fica para HCW-02-002 e nova aprovação.
 - id: HCW-02-002
   title: Decidir a integração de modelos em ADR-0002
   phase: 2
-  status: PLANNED
+  status: APPROVED
   priority: critical
   depends_on: [HCW-02-001]
   requirements: [NFR-003, NFR-005, SEC-002]
@@ -703,7 +706,7 @@ tasks:
 - id: HCW-02-003
   title: Criar contratos e erros base do gateway
   phase: 2
-  status: PLANNED
+  status: APPROVED
   priority: critical
   depends_on: [HCW-02-002]
   requirements: [FR-005, SEC-002]
@@ -721,7 +724,7 @@ tasks:
 - id: HCW-02-004
   title: Implementar política de egress e redacção de payload
   phase: 2
-  status: PLANNED
+  status: APPROVED
   priority: critical
   depends_on: [HCW-02-003]
   requirements: [SEC-002, FR-007]
@@ -739,7 +742,7 @@ tasks:
 - id: HCW-02-005
   title: Registar consentimento cloud e tipo de conta
   phase: 2
-  status: PLANNED
+  status: APPROVED
   priority: critical
   depends_on: [HCW-02-004]
   requirements: [FR-007, SEC-002]
@@ -757,7 +760,7 @@ tasks:
 - id: HCW-02-006
   title: Criar registo de prompts versionados
   phase: 2
-  status: PLANNED
+  status: APPROVED
   priority: high
   depends_on: [HCW-02-004]
   requirements: [NFR-005, SEC-002]
@@ -775,7 +778,7 @@ tasks:
 - id: HCW-02-007
   title: Aplicar orçamento de tokens e de ferramentas
   phase: 2
-  status: PLANNED
+  status: APPROVED
   priority: high
   depends_on: [HCW-02-003]
   requirements: [FR-006, OPS-005]
@@ -793,7 +796,7 @@ tasks:
 - id: HCW-02-008
   title: Classificar erros, retries e cooldown por tipo
   phase: 2
-  status: PLANNED
+  status: APPROVED
   priority: high
   depends_on: [HCW-02-003]
   requirements: [FR-006]
@@ -811,7 +814,7 @@ tasks:
 - id: HCW-02-009
   title: Implementar escada de modelos e matriz de fallback
   phase: 2
-  status: PLANNED
+  status: APPROVED
   priority: critical
   depends_on: [HCW-02-005, HCW-02-007, HCW-02-008]
   requirements: [FR-006, FR-007]
@@ -829,7 +832,7 @@ tasks:
 - id: HCW-02-010
   title: Criar adaptadores Gemini Live, Gemini texto e Ollama
   phase: 2
-  status: PLANNED
+  status: APPROVED
   priority: critical
   depends_on: [HCW-02-006, HCW-02-007, HCW-02-009]
   requirements: [FR-005, NFR-003, OPS-005]
@@ -847,7 +850,7 @@ tasks:
 - id: HCW-02-011
   title: Adicionar comando hcw llm ping
   phase: 2
-  status: PLANNED
+  status: APPROVED
   priority: medium
   depends_on: [HCW-02-010]
   requirements: [OPS-004, OPS-005, FR-005]
@@ -865,7 +868,7 @@ tasks:
 - id: HCW-02-012
   title: Consolidar segurança e evidências da Fase 2
   phase: 2
-  status: PLANNED
+  status: APPROVED
   priority: high
   depends_on: [HCW-02-004, HCW-02-009, HCW-02-011]
   requirements: [SEC-002, DOC-001, OPS-005]

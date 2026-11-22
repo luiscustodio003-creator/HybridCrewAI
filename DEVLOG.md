@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — aprovação do plano da Fase 2
+Feito: o utilizador aprovou o plano detalhado; `HCW-02-001` passou a `VALIDATED` com evidência em `docs/reports/phase-02-plan.md`; `HCW-02-002` a `HCW-02-012` passaram a `APPROVED`.
+Falhou / por resolver: nada no plano; `ruff check .` e `mypy scripts` continuam com erros pré-existentes em `scripts/`.
+Ficheiros tocados: `tasks.yaml`, `docs/reports/phase-02-plan.md`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `validate_plan.py` e `check_traceability.py` → 0 erros, 0 avisos; `plan_status.py` → Fase 02 `1/13`, próxima `HCW-02-002`.
+Próxima acção: executar `HCW-02-002` e parar para aprovação de ADR-0002.
+
 ## 2026-11-22 — planeamento da Fase 2
 Feito: `hcw-router` confirmou Fase 1 `GO`; `hcw-plan` detalhou `HCW-02-002` a `HCW-02-012` e ligou todas ao gate `HCW-02-999`. Acrescentados requisitos `FR-005`, `FR-006`, `FR-007`, `SEC-002`, `NFR-005` e `OPS-005`. Auditoria incremental registada em `docs/reports/audit.md`. `HCW-02-001` ficou `IN_PROGRESS` até aprovação do utilizador.
 Falhou / por resolver: nenhum erro de plano; `ruff check .` e `mypy scripts` continuam com erros pré-existentes em `scripts/`. Não há `httpx`, `requests`, `google-genai`, `litellm` nem `ollama` no `.venv`; o plano usa stdlib e mantém integrações reais opcionais.
