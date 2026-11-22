@@ -108,7 +108,7 @@ tasks:
 - id: HCW-00-003
   title: Criar ambiente virtual .venv e configurar o VS Code
   phase: 0
-  status: IN_PROGRESS
+  status: VALIDATED
   priority: critical
   depends_on:
   - HCW-00-002
@@ -124,8 +124,11 @@ tasks:
   - python aponta para .venv da pasta do projecto
   - .vscode/settings.json na pasta certa
   - python -m pytest -q tests/scripts passa (18 testes)
-  evidence: []
-  validated_on: null
+  evidence:
+  - docs/reports/hcw-00-003.txt
+  - .vscode/settings.json
+  - requirements.lock.txt
+  validated_on: 2026-11-22
 - id: HCW-00-004
   title: Criar pyproject.toml com Ruff, mypy e pytest
   phase: 0

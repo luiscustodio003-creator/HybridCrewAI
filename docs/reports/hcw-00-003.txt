@@ -1,0 +1,27 @@
+Relatório de validação — HCW-00-003
+Data: 2026-11-22
+
+Ambiente
+- Python global fora do projecto: C:\Python315\python.exe (não alterado).
+- Ambiente activado do projecto (PATH com .venv\Scripts): D:\Dev\Python\HybridCrewAI\.venv\Scripts\python.exe, versão 3.12.0.
+- Comando directo .venv\Scripts\python.exe: D:\Dev\Python\HybridCrewAI\.venv\Scripts\python.exe.
+- .vscode/settings.json existe em D:\Dev\Python\HybridCrewAI\.vscode\settings.json com python.defaultInterpreterPath e python.terminal.activateEnvironment=true.
+- requirements.lock.txt existe (25 pacotes fixados).
+
+Critérios de aceitação
+1. python aponta para .venv da pasta do projecto — PASSA no ambiente activado e no terminal do VS Code; o Python global fora do projecto mantém-se inalterado por decisão de segurança.
+2. .vscode/settings.json na pasta certa — PASSA.
+3. python -m pytest -q tests/scripts passa (18 testes) — PASSA: 18 passed in 0.56s.
+
+Regressão
+- python scripts/validate_plan.py — [OK] 0 erros, 0 avisos.
+- python scripts/check_traceability.py — [OK] 0 erros, 0 avisos.
+- python scripts/check_file_size.py — [OK] 0 erros, 0 avisos.
+- python scripts/lint_skills.py — [OK] 10 Skills, 0 erros, 0 avisos.
+- python scripts/check_modules.py — [OK] 0 erros, 1 aviso (pasta app/ ainda não existe; previsto para fases seguintes).
+
+Segurança (hcw-security-review)
+- Ameaça da Fase 0 aplicável: dependência ou ferramenta comprometida. Contramedida: versões fixadas em requirements.lock.txt, origem oficial, nenhuma instalação nova nesta tarefa. Teste: verificação das versões e ausência de alteração de dependências. Resultado: sem novas exposições.
+- Nenhum texto de modelo virou comando; nenhuma rede, credencial, escrita fora do workspace ou execução de código gerado.
+
+Observação: ruff check scripts tests continua com 3 erros pré-existentes (2 I001, 1 PLW1510), fora do âmbito desta tarefa e por resolver em HCW-00-006.
