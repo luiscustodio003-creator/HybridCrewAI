@@ -1,0 +1,44 @@
+# Requisitos do projecto. Tipos: FR NFR SEC OPS UI DOC.
+requirements:
+- id: FR-001
+  text: Configuração centralizada e validada
+  status: ACTIVE
+- id: FR-002
+  text: Eventos normalizados com identificadores de correlação
+  status: ACTIVE
+- id: FR-003
+  text: Tarefas com máquina de estados e persistência
+  status: ACTIVE
+- id: FR-004
+  text: Resultados de ferramentas verificados (done, unverified, failed, ask, started)
+  status: ACTIVE
+- id: SEC-001
+  text: Nenhum segredo em código, logs ou ficheiros do projecto
+  status: ACTIVE
+- id: NFR-001
+  text: Ficheiros com no máximo 300 linhas e módulos documentados
+  status: ACTIVE
+- id: NFR-002
+  text: Compatibilidade Windows e Linux demonstrada por testes reais
+  status: ACTIVE
+- id: NFR-003
+  text: Motor de agentes substituível por adaptadores
+  status: ACTIVE
+- id: NFR-004
+  text: Recuperação do estado após interrupção do processo
+  status: ACTIVE
+- id: OPS-001
+  text: Auditoria e baseline do estado real antes de alterar
+  status: ACTIVE
+- id: OPS-002
+  text: Ambiente reproduzível (venv, versões fixadas, CI)
+  status: ACTIVE
+- id: OPS-003
+  text: Controlo de versões com etiquetas por fase
+  status: ACTIVE
+- id: OPS-004
+  text: 'Observabilidade: logs estruturados e consulta em tempo real'
+  status: ACTIVE
+- id: DOC-001
+  text: Documentação em PT-PT, README.txt e module.yaml por módulo
+  status: ACTIVE

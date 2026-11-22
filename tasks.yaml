@@ -1,0 +1,990 @@
+# Fonte única de verdade do estado do plano. Editar só com a Skill hcw-plan.
+# Estados: NOT_STARTED RESEARCH PLANNED APPROVED IN_PROGRESS BLOCKED IMPLEMENTED TESTING VALIDATED REJECTED DEPRECATED
+schema: 1
+phases:
+- id: 0
+  title: Fundação, auditoria e escolha do motor
+  status: IN_PROGRESS
+  doc: docs/phases/phase-00.md
+- id: 1
+  title: 'Núcleo: configuração, eventos, tarefas, persistência'
+  status: NOT_STARTED
+  doc: docs/phases/phase-01.md
+- id: 2
+  title: LLM Gateway com política de egress
+  status: NOT_STARTED
+  doc: docs/phases/phase-02.md
+- id: 3
+  title: Interface web mínima e Chat de texto
+  status: NOT_STARTED
+  doc: docs/phases/phase-03.md
+- id: 4
+  title: 'MVP vertical: CREATE ponta a ponta'
+  status: NOT_STARTED
+  doc: docs/phases/phase-04.md
+- id: 5
+  title: Workspace seguro, ZIP, Chat com anexos, diff e snapshots
+  status: NOT_STARTED
+  doc: docs/phases/phase-05.md
+- id: 6
+  title: Execução isolada
+  status: NOT_STARTED
+  doc: docs/phases/phase-06.md
+- id: 7
+  title: Project Intelligence e painel de análise de código
+  status: NOT_STARTED
+  doc: docs/phases/phase-07.md
+- id: 8
+  title: IMPROVE e controlo de versões (Git)
+  status: NOT_STARTED
+  doc: docs/phases/phase-08.md
+- id: 9
+  title: Autonomia, tarefas em segundo plano e rotinas
+  status: NOT_STARTED
+  doc: docs/phases/phase-09.md
+- id: 10
+  title: Memória e conhecimento
+  status: NOT_STARTED
+  doc: docs/phases/phase-10.md
+- id: 11
+  title: Voz JARVIS (Gemini Live)
+  status: NOT_STARTED
+  doc: docs/phases/phase-11.md
+- id: 12
+  title: Controlo do computador e ferramentas
+  status: NOT_STARTED
+  doc: docs/phases/phase-12.md
+- id: 13
+  title: Engenharia reversa (extensão REA via MCP)
+  status: NOT_STARTED
+  doc: docs/phases/phase-13.md
+- id: 14
+  title: Avaliação contínua, documentação e distribuição
+  status: NOT_STARTED
+  doc: docs/phases/phase-14.md
+tasks:
+- id: HCW-00-001
+  title: 'Registar o ponto de partida: projecto de raiz, sem código anterior'
+  phase: 0
+  status: VALIDATED
+  priority: critical
+  depends_on: []
+  requirements:
+  - OPS-001
+  modules: []
+  files_new:
+  - docs/reports/audit.md
+  files_change: []
+  tests: []
+  acceptance:
+  - docs/reports/audit.md declara que não existe código anterior (projecto de raiz)
+  - 'Ambiente inventariado: Python, pacotes instalados (baseline-freeze) e estrutura de pastas actual'
+  evidence:
+  - docs/reports/audit.md
+  - docs/reports/baseline-freeze.txt
+  validated_on: 2026-11-22
+  notes: 'O código anterior (agentes Planeador e Arquitecto, 197 testes) foi perdido e não é recuperável.
+    Será reconstruído de raiz: núcleo na Fase 1, agentes na Fase 4.'
+- id: HCW-00-002
+  title: 'Baseline de testes anterior (não aplicável: sem código anterior)'
+  phase: 0
+  status: DEPRECATED
+  priority: critical
+  depends_on:
+  - HCW-00-001
+  requirements:
+  - OPS-001
+  modules: []
+  files_new:
+  - docs/reports/baseline-freeze.txt
+  - docs/reports/baseline-tests.txt
+  files_change: []
+  tests: []
+  acceptance: []
+  evidence: []
+  validated_on: null
+  notes: Substituída por docs/reports/baseline-freeze.txt (versões do ambiente). A baseline real passa
+    a ser o resultado do gate da Fase 0.
+- id: HCW-00-003
+  title: Criar ambiente virtual .venv e configurar o VS Code
+  phase: 0
+  status: IN_PROGRESS
+  priority: critical
+  depends_on:
+  - HCW-00-002
+  requirements:
+  - OPS-002
+  modules: []
+  files_new:
+  - .vscode/settings.json
+  - requirements.lock.txt
+  files_change: []
+  tests: []
+  acceptance:
+  - python aponta para .venv da pasta do projecto
+  - .vscode/settings.json na pasta certa
+  - python -m pytest -q tests/scripts passa (18 testes)
+  evidence: []
+  validated_on: null
+- id: HCW-00-004
+  title: Criar pyproject.toml com Ruff, mypy e pytest
+  phase: 0
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-00-003
+  requirements:
+  - OPS-002
+  modules: []
+  files_new:
+  - pyproject.toml
+  files_change: []
+  tests: []
+  acceptance:
+  - ruff check e mypy executam sem erros de configuração
+  evidence: []
+  validated_on: null
+- id: HCW-00-005
+  title: Inicializar Git, .gitignore e etiqueta inicial
+  phase: 0
+  status: NOT_STARTED
+  priority: critical
+  depends_on: []
+  requirements:
+  - OPS-003
+  modules: []
+  files_new:
+  - .gitignore
+  files_change: []
+  tests: []
+  acceptance:
+  - .env, .venv e logs ignorados
+  - etiqueta phase-00-start criada
+  evidence: []
+  validated_on: null
+- id: HCW-00-006
+  title: Instalar os scripts de guarda (tamanho, módulos, plano, Skills) com testes
+  phase: 0
+  status: IMPLEMENTED
+  priority: critical
+  depends_on: []
+  requirements:
+  - NFR-001
+  - DOC-001
+  modules:
+  - scripts
+  files_new:
+  - scripts/check_file_size.py
+  - scripts/check_modules.py
+  - scripts/validate_plan.py
+  - scripts/lint_skills.py
+  - scripts/check_traceability.py
+  - scripts/run_gate.py
+  files_change: []
+  tests:
+  - tests/scripts/test_check_file_size.py
+  - tests/scripts/test_validate_plan.py
+  - tests/scripts/test_lint_skills.py
+  - tests/scripts/test_check_modules.py
+  acceptance:
+  - Ficheiro de 301 linhas falha
+  - Plano com ID duplicado falha
+  - Skills sem frontmatter falham
+  evidence: []
+  validated_on: null
+  notes: Entregue no pacote; falta correr os testes no ambiente do utilizador antes de VALIDATED.
+- id: HCW-00-007
+  title: Configurar pre-commit com Ruff e os scripts de guarda
+  phase: 0
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-00-004
+  - HCW-00-006
+  requirements:
+  - NFR-001
+  modules: []
+  files_new:
+  - .pre-commit-config.yaml
+  files_change: []
+  tests: []
+  acceptance:
+  - Commit com ficheiro de 301 linhas é bloqueado
+  evidence: []
+  validated_on: null
+- id: HCW-00-008
+  title: Configurar CI (GitHub Actions) em Windows e Linux
+  phase: 0
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-00-004
+  - HCW-00-006
+  requirements:
+  - OPS-002
+  - NFR-002
+  modules: []
+  files_new:
+  - .github/workflows/ci.yml
+  files_change: []
+  tests: []
+  acceptance:
+  - CI verde nos dois sistemas operativos
+  evidence: []
+  validated_on: null
+- id: HCW-00-009
+  title: 'Spike do motor de agentes: núcleo próprio vs CrewAI vs LangGraph'
+  phase: 0
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-00-002
+  - HCW-00-003
+  requirements:
+  - NFR-003
+  modules: []
+  files_new:
+  - docs/reports/spike-agent-engine.md
+  files_change: []
+  tests: []
+  acceptance:
+  - Mesmo cenário (pedido, plano, pausa, matar processo, retoma) nos três candidatos
+  - Tabela com linhas de código, dependências, tempo de arranque e facilidade de retoma
+  evidence: []
+  validated_on: null
+  notes: 'Sem código anterior a migrar: manter o spike pequeno (1 a 2 dias). Não instalar CrewAI nem LiteLLM
+    até o ADR-0001 decidir.'
+- id: HCW-00-010
+  title: 'Redigir ADR-0001: escolha do motor de agentes'
+  phase: 0
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-00-009
+  requirements:
+  - NFR-003
+  modules: []
+  files_new:
+  - docs/adr/ADR-0001-motor-de-agentes.md
+  files_change: []
+  tests: []
+  acceptance:
+  - ADR aprovado pelo utilizador
+  evidence: []
+  validated_on: null
+- id: HCW-00-011
+  title: Gerar docs/MAP.md e o relatório de auditoria final
+  phase: 0
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-00-001
+  requirements:
+  - DOC-001
+  modules: []
+  files_new:
+  - docs/MAP.md
+  files_change: []
+  tests: []
+  acceptance:
+  - MAP.md indica a pasta de cada responsabilidade
+  evidence: []
+  validated_on: null
+- id: HCW-00-999
+  title: Gate da Fase 0
+  phase: 0
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-00-001
+  - HCW-00-002
+  - HCW-00-003
+  - HCW-00-004
+  - HCW-00-005
+  - HCW-00-006
+  - HCW-00-007
+  - HCW-00-008
+  - HCW-00-009
+  - HCW-00-010
+  - HCW-00-011
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 0 devolve GO
+  - etiqueta phase-00-go criada
+  evidence: []
+  validated_on: null
+- id: HCW-01-001
+  title: Planear em detalhe a Fase 1 (rever as tarefas abaixo com o utilizador)
+  phase: 1
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-00-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+- id: HCW-01-002
+  title: 'Configuração: schema, loader e valores por omissão seguros'
+  phase: 1
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-01-001
+  requirements:
+  - FR-001
+  - SEC-001
+  modules:
+  - core/config
+  files_new:
+  - app/core/config/schema.py
+  - app/core/config/loader.py
+  - app/core/config/defaults.py
+  files_change: []
+  tests:
+  - tests/unit/test_config.py
+  acceptance:
+  - Configuração inválida dá erro claro e não arranca
+  evidence: []
+  validated_on: null
+- id: HCW-01-003
+  title: 'Credenciais: abstracção do armazenamento seguro (sem segredos em ficheiros)'
+  phase: 1
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-01-002
+  requirements:
+  - SEC-001
+  modules:
+  - core/config
+  files_new:
+  - app/core/config/secrets.py
+  files_change: []
+  tests:
+  - tests/security/test_secrets.py
+  acceptance:
+  - Chave nunca aparece em logs nem em ficheiros do projecto
+  evidence: []
+  validated_on: null
+- id: HCW-01-004
+  title: 'Eventos: modelo, event bus e escritor JSONL'
+  phase: 1
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-01-002
+  requirements:
+  - FR-002
+  - OPS-004
+  modules:
+  - core/events
+  files_new:
+  - app/core/events/models.py
+  - app/core/events/bus.py
+  - app/core/events/jsonl_sink.py
+  files_change: []
+  tests:
+  - tests/unit/test_events.py
+  acceptance:
+  - Todo o evento leva correlation_id, task_id, agent, phase
+  evidence: []
+  validated_on: null
+- id: HCW-01-005
+  title: Logging central com correlação e redacção de segredos
+  phase: 1
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-01-004
+  requirements:
+  - OPS-004
+  - SEC-001
+  modules:
+  - core/logging
+  files_new:
+  - app/core/logging/setup.py
+  - app/core/logging/correlation.py
+  - app/core/logging/redaction.py
+  files_change: []
+  tests:
+  - tests/security/test_redaction.py
+  acceptance:
+  - Chave falsa não aparece nos logs
+  evidence: []
+  validated_on: null
+- id: HCW-01-006
+  title: 'Tarefas: modelo e máquina de estados'
+  phase: 1
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-01-004
+  requirements:
+  - FR-003
+  modules:
+  - core/tasks
+  files_new:
+  - app/core/tasks/model.py
+  - app/core/tasks/state_machine.py
+  - app/core/tasks/ids.py
+  files_change: []
+  tests:
+  - tests/unit/test_state_machine.py
+  acceptance:
+  - Transições inválidas rejeitadas (COMPLETED para RUNNING)
+  evidence: []
+  validated_on: null
+- id: HCW-01-007
+  title: Persistência SQLite das tarefas e recuperação após reinício
+  phase: 1
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-01-006
+  requirements:
+  - FR-003
+  - NFR-004
+  modules:
+  - core/tasks
+  files_new:
+  - app/core/tasks/store_sqlite.py
+  files_change: []
+  tests:
+  - tests/recovery/test_kill_resume.py
+  acceptance:
+  - Matar o processo a meio e o estado recupera ao reiniciar
+  evidence: []
+  validated_on: null
+- id: HCW-01-008
+  title: ToolResult com os cinco estados verificados
+  phase: 1
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-01-002
+  requirements:
+  - FR-004
+  modules:
+  - core/results
+  files_new:
+  - app/core/results/tool_result.py
+  - app/core/results/statuses.py
+  files_change: []
+  tests:
+  - tests/contracts/test_tool_result.py
+  acceptance:
+  - '''done'' sem evidência é rejeitado pelo esquema'
+  evidence: []
+  validated_on: null
+- id: HCW-01-009
+  title: 'CLI: hcw logs --follow e hcw doctor'
+  phase: 1
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-01-005
+  - HCW-01-007
+  requirements:
+  - OPS-004
+  modules:
+  - cli
+  files_new:
+  - app/cli/logs.py
+  - app/cli/doctor.py
+  files_change: []
+  tests:
+  - tests/integration/test_cli.py
+  acceptance:
+  - Eventos de uma tarefa real aparecem em tempo real
+  evidence: []
+  validated_on: null
+- id: HCW-01-999
+  title: Gate da Fase 1
+  phase: 1
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-01-002
+  - HCW-01-003
+  - HCW-01-004
+  - HCW-01-005
+  - HCW-01-006
+  - HCW-01-007
+  - HCW-01-008
+  - HCW-01-009
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 1 devolve GO
+  - Recuperação após kill comprovada
+  - Zero segredos nos logs
+  evidence: []
+  validated_on: null
+- id: HCW-02-001
+  title: Planear em detalhe a Fase 2 com a Skill hcw-plan
+  phase: 2
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-01-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+  notes: Usar docs/phases/phase-02.md como base.
+- id: HCW-02-999
+  title: Gate da Fase 2
+  phase: 2
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-02-001
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 2 devolve GO
+  - etiqueta phase-02-go criada
+  evidence: []
+  validated_on: null
+  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+- id: HCW-03-001
+  title: Planear em detalhe a Fase 3 com a Skill hcw-plan
+  phase: 3
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-02-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+  notes: Usar docs/phases/phase-03.md como base.
+- id: HCW-03-999
+  title: Gate da Fase 3
+  phase: 3
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-03-001
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 3 devolve GO
+  - etiqueta phase-03-go criada
+  evidence: []
+  validated_on: null
+  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+- id: HCW-04-001
+  title: Planear em detalhe a Fase 4 com a Skill hcw-plan
+  phase: 4
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-03-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+  notes: Usar docs/phases/phase-04.md como base.
+- id: HCW-04-999
+  title: Gate da Fase 4
+  phase: 4
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-04-001
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 4 devolve GO
+  - etiqueta phase-04-go criada
+  evidence: []
+  validated_on: null
+  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+- id: HCW-05-001
+  title: Planear em detalhe a Fase 5 com a Skill hcw-plan
+  phase: 5
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-04-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+  notes: Usar docs/phases/phase-05.md como base.
+- id: HCW-05-999
+  title: Gate da Fase 5
+  phase: 5
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-05-001
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 5 devolve GO
+  - etiqueta phase-05-go criada
+  evidence: []
+  validated_on: null
+  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+- id: HCW-06-001
+  title: Planear em detalhe a Fase 6 com a Skill hcw-plan
+  phase: 6
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-05-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+  notes: Usar docs/phases/phase-06.md como base.
+- id: HCW-06-999
+  title: Gate da Fase 6
+  phase: 6
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-06-001
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 6 devolve GO
+  - etiqueta phase-06-go criada
+  evidence: []
+  validated_on: null
+  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+- id: HCW-07-001
+  title: Planear em detalhe a Fase 7 com a Skill hcw-plan
+  phase: 7
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-06-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+  notes: Usar docs/phases/phase-07.md como base.
+- id: HCW-07-999
+  title: Gate da Fase 7
+  phase: 7
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-07-001
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 7 devolve GO
+  - etiqueta phase-07-go criada
+  evidence: []
+  validated_on: null
+  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+- id: HCW-08-001
+  title: Planear em detalhe a Fase 8 com a Skill hcw-plan
+  phase: 8
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-07-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+  notes: Usar docs/phases/phase-08.md como base.
+- id: HCW-08-999
+  title: Gate da Fase 8
+  phase: 8
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-08-001
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 8 devolve GO
+  - etiqueta phase-08-go criada
+  evidence: []
+  validated_on: null
+  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+- id: HCW-09-001
+  title: Planear em detalhe a Fase 9 com a Skill hcw-plan
+  phase: 9
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-08-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+  notes: Usar docs/phases/phase-09.md como base.
+- id: HCW-09-999
+  title: Gate da Fase 9
+  phase: 9
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-09-001
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 9 devolve GO
+  - etiqueta phase-09-go criada
+  evidence: []
+  validated_on: null
+  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+- id: HCW-10-001
+  title: Planear em detalhe a Fase 10 com a Skill hcw-plan
+  phase: 10
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-09-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+  notes: Usar docs/phases/phase-10.md como base.
+- id: HCW-10-999
+  title: Gate da Fase 10
+  phase: 10
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-10-001
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 10 devolve GO
+  - etiqueta phase-10-go criada
+  evidence: []
+  validated_on: null
+  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+- id: HCW-11-001
+  title: Planear em detalhe a Fase 11 com a Skill hcw-plan
+  phase: 11
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-10-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+  notes: Usar docs/phases/phase-11.md como base.
+- id: HCW-11-999
+  title: Gate da Fase 11
+  phase: 11
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-11-001
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 11 devolve GO
+  - etiqueta phase-11-go criada
+  evidence: []
+  validated_on: null
+  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+- id: HCW-12-001
+  title: Planear em detalhe a Fase 12 com a Skill hcw-plan
+  phase: 12
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-11-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+  notes: Usar docs/phases/phase-12.md como base.
+- id: HCW-12-999
+  title: Gate da Fase 12
+  phase: 12
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-12-001
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 12 devolve GO
+  - etiqueta phase-12-go criada
+  evidence: []
+  validated_on: null
+  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+- id: HCW-13-001
+  title: Planear em detalhe a Fase 13 com a Skill hcw-plan
+  phase: 13
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-12-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+  notes: Usar docs/phases/phase-13.md como base.
+- id: HCW-13-999
+  title: Gate da Fase 13
+  phase: 13
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-13-001
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 13 devolve GO
+  - etiqueta phase-13-go criada
+  evidence: []
+  validated_on: null
+  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+- id: HCW-14-001
+  title: Planear em detalhe a Fase 14 com a Skill hcw-plan
+  phase: 14
+  status: NOT_STARTED
+  priority: high
+  depends_on:
+  - HCW-13-999
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: []
+  validated_on: null
+  notes: Usar docs/phases/phase-14.md como base.
+- id: HCW-14-999
+  title: Gate da Fase 14
+  phase: 14
+  status: NOT_STARTED
+  priority: critical
+  depends_on:
+  - HCW-14-001
+  requirements: []
+  modules: []
+  files_new: []
+  files_change: []
+  tests: []
+  acceptance:
+  - run_gate.py --phase 14 devolve GO
+  - etiqueta phase-14-go criada
+  evidence: []
+  validated_on: null
+  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.

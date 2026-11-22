@@ -1,0 +1,7 @@
+name: nome-do-modulo
+purpose: Uma frase com a responsabilidade única
+public_api: [funcao_ou_classe]
+depends_on: []
+events_emitted: []
+events_consumed: []
+tests: [tests/unit/test_exemplo.py]

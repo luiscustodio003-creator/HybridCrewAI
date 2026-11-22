@@ -1,0 +1,14 @@
+- id: HCW-NN-NNN
+  title: Título curto no infinitivo
+  phase: N
+  status: PLANNED
+  priority: critical | high | medium
+  depends_on: [HCW-NN-NNN]
+  requirements: [FR-000]
+  modules: [pasta/do/modulo]
+  files_new: [app/pasta/ficheiro.py]
+  files_change: []
+  tests: [tests/unit/test_ficheiro.py]
+  acceptance: ["Critério verificável 1", "Critério verificável 2"]
+  evidence: []
+  validated_on: null
