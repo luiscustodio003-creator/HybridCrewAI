@@ -365,7 +365,7 @@ tasks:
 - id: HCW-01-002
   title: 'Configuração: schema, loader e valores por omissão seguros'
   phase: 1
-  status: APPROVED
+  status: IMPLEMENTED
   priority: critical
   depends_on:
   - HCW-01-001
@@ -376,6 +376,9 @@ tasks:
   modules:
   - core/config
   files_new:
+  - app/__init__.py
+  - app/core/__init__.py
+  - app/core/config/__init__.py
   - app/core/config/schema.py
   - app/core/config/loader.py
   - app/core/config/defaults.py
@@ -383,6 +386,7 @@ tasks:
   - app/core/config/module.yaml
   files_change:
   - pyproject.toml
+  - docs/MAP.md
   tests:
   - tests/unit/test_config.py
   acceptance:
@@ -390,8 +394,13 @@ tasks:
   - Sem dependências novas: validação com a biblioteca padrão e leitura de variáveis de ambiente
   - pyproject.toml passa a analisar app/ com Ruff e mypy
   - app/core/config tem README.txt e module.yaml com as chaves obrigatórias
-  evidence: []
+  evidence:
+  - tests/unit/test_config.py
+  - app/core/config/README.txt
+  - app/core/config/module.yaml
+  - pyproject.toml
   validated_on: null
+  notes: '13 testes passam; ruff/mypy/check_modules/check_file_size sem erros no âmbito da tarefa. Revisão de segurança: caminhos absolutos/traversal, inteiro com texto de comando e chave API falsa têm testes dedicados.'
 - id: HCW-01-003
   title: 'Credenciais: abstracção do armazenamento seguro (sem segredos em ficheiros)'
   phase: 1

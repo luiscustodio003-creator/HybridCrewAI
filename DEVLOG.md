@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — HCW-01-002
+Feito: implementada a configuração em `app/core/config/` com `Settings` imutável, `ConfigError`, `load_settings` e valores por omissão; apenas biblioteca padrão. `pyproject.toml` passou a incluir `app/` no Ruff e mypy. Criados `README.txt` e `module.yaml` do módulo e marcas de pacote `app/__init__.py` e `app/core/__init__.py`. `docs/MAP.md` passou a indicar a Fase 1 em curso.
+Falhou / por resolver: nada na implementação. `ruff check .` global continua a falhar por 5 erros pré-existentes em `scripts/` (HCW-00-006); âmbito desta tarefa está limpo.
+Ficheiros tocados: `app/__init__.py`, `app/core/__init__.py`, `app/core/config/*`, `tests/unit/test_config.py`, `pyproject.toml`, `docs/MAP.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `.venv\Scripts\python.exe -m pytest -q` → 31 testes passam; `ruff check app tests/unit/test_config.py` → limpo; `mypy app` → limpo; `check_file_size.py`, `check_modules.py`, `check_traceability.py`, `validate_plan.py` → 0 erros. Revisão de segurança: caminho absoluto e `..` rejeitados; `HCW_MAX_FILE_LINES="300;rm -rf /"` aborta sem execução; `HCW_API_KEY` não entra na configuração; carregar configuração não cria ficheiros.
+Próxima acção: `hcw-test-gate` para HCW-01-002 e depois HCW-01-003.
+
 ## 2026-11-22 — aprovação do plano da Fase 1
 Feito: utilizador aprovou todas as tarefas do plano. `HCW-01-001` passou a `VALIDATED` com evidência em `tasks.yaml`; `HCW-01-002` a `HCW-01-009` passaram a `APPROVED`. Nenhuma dependência foi instalada.
 Falhou / por resolver: nada nesta acção. Quatro commits locais sem push.

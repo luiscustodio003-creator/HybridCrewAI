@@ -12,7 +12,7 @@ addopts = "-q"
 [tool.ruff]
 line-length = 88
 target-version = "py312"
-src = ["scripts", "tests"]
+src = ["app", "scripts", "tests"]
 extend-exclude = [".venv", "node_modules"]
 
 [tool.ruff.lint]
@@ -20,7 +20,7 @@ select = ["E", "F", "I", "UP", "B", "PL"]
 ignore = ["E501"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["scripts"]
+known-first-party = ["app", "scripts"]
 
 [tool.ruff.format]
 quote-style = "double"

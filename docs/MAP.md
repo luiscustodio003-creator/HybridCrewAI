@@ -54,13 +54,13 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 
 `STATE .md` (com espaço antes da extensão) é uma cópia antiga e não deve ser usada. A fonte activa é `STATE.md`, sem espaço. A renomeação/remoção do ficheiro legado exige decisão do utilizador.
 
-## Estrutura prevista — ainda não existe
+## Estrutura prevista — em construção
 
-A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fase correspondente as exigir.
+A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fase correspondente as exigir. A Fase 1 já criou `app/core/config/`.
 
 | Responsabilidade futura | Pasta prevista | Fase |
 |---|---|---|
-| Configuração, eventos, tarefas, logs e resultados | `app/core/` | 1 |
+| Configuração, eventos, tarefas, logs e resultados | `app/core/` | 1 (em curso) |
 | Fornecedores LLM, encaminhamento, egress e orçamento | `app/llm/` | 2 |
 | Servidor e interface web | `app/ui/`, `app/ui/web/` | 3 |
 | Fluxo CREATE ponta a ponta | `app/workflows/create/` | 4 |
