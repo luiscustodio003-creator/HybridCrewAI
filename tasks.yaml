@@ -814,7 +814,7 @@ tasks:
 - id: HCW-02-008
   title: Classificar erros, retries e cooldown por tipo
   phase: 2
-  status: APPROVED
+  status: VALIDATED
   priority: high
   depends_on: [HCW-02-003]
   requirements: [FR-006]
@@ -826,9 +826,13 @@ tasks:
   - "Timeout, HTTP 429 e resposta inválida são classificados separadamente"
   - "Retries são limitados a duas tentativas por tipo de erro, com jitter desactivado em testes"
   - "Cooldown é injetável por relógio falso e diferente para 429, timeout e erro inválido"
-  evidence: []
-  validated_on: null
-  notes: Nenhum sleep real nos testes de cooldown.
+  evidence:
+  - docs/reports/hcw-02-008.md
+  - app/llm/router/errors.py
+  - app/llm/router/cooldown.py
+  - tests/unit/test_router_cooldown.py
+  validated_on: 2026-11-22
+  notes: Sem sleep real; retries até duas tentativas e cooldowns distintos por tipo, com relógio falso injectável.
 - id: HCW-02-009
   title: Implementar escada de modelos e matriz de fallback
   phase: 2

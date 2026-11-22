@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — resiliência do roteador validada
+Feito: `HCW-02-008` validada; `app/llm/router/` classifica timeout, HTTP 429 e resposta inválida, limita retries a duas tentativas por tipo e mantém cooldowns distintos com relógio falso injectável.
+Falhou / por resolver: nada nesta tarefa.
+Ficheiros tocados: `app/llm/router/*`, `app/core/config/defaults.py`, `tests/unit/test_router_cooldown.py`, `app/llm/README.txt`, `app/llm/module.yaml`, `docs/reports/hcw-02-008.md`, `docs/MAP.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `pytest -q` → 117 passam; `ruff`/`mypy` nos ficheiros Python tocados limpos; guardas sem erros.
+Próxima acção: executar `HCW-02-009`, escada de modelos e matriz de fallback.
+
 ## 2026-11-22 — orçamento validado
 Feito: `HCW-02-007` validada; `app/llm/budget/` estima tokens de forma determinística, bloqueia pedidos/tarefas acima do limite com `BudgetExceeded` e evento `budget.exceeded`, e limita ferramentas e descrições para Ollama.
 Falhou / por resolver: nada nesta tarefa.

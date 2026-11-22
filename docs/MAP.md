@@ -42,6 +42,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Consentimento cloud | `app/llm/` | `consent.py` | validado em `HCW-02-005` |
 | Prompts versionados | `app/llm/prompts/` | `registry.py`, `system.md`, `revisao.md` | validados em `HCW-02-006` |
 | Orçamento de modelo | `app/llm/budget/` | `tokens.py`, `tools_budget.py` | validado em `HCW-02-007` |
+| Resiliência do roteador | `app/llm/router/` | `errors.py`, `cooldown.py` | validada em `HCW-02-008` |
 | Auditoria inicial | `docs/reports/` | `audit.md` | VALIDADA em HCW-00-001 |
 | Baseline de ambiente | `docs/reports/` | `baseline-freeze.txt` | VALIDADA em HCW-00-001 |
 | Baseline de testes | `docs/reports/` | `baseline-tests.txt` | histórico: sem testes iniciais |
