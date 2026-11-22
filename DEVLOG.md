@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — escada de modelos validada
+Feito: `HCW-02-009` validada; `app/llm/router/ladder.py` carrega escadas de JSON e aplica a matriz Gemini→Gemini automático, outro cloud só com autorização e Ollama apenas em tarefa leve.
+Falhou / por resolver: nada nesta tarefa.
+Ficheiros tocados: `app/llm/router/ladder.py`, `app/llm/router/__init__.py`, `app/llm/contracts.py`, `tests/unit/test_ladder.py`, `app/llm/router/README.txt`, `app/llm/router/module.yaml`, `app/llm/README.txt`, `app/llm/module.yaml`, `docs/reports/hcw-02-009.md`, `docs/MAP.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `pytest -q` → 120 passam; `ruff`/`mypy` nos ficheiros Python tocados limpos; guardas sem erros.
+Próxima acção: executar `HCW-02-010`, adaptadores com servidor HTTP falso.
+
 ## 2026-11-22 — resiliência do roteador validada
 Feito: `HCW-02-008` validada; `app/llm/router/` classifica timeout, HTTP 429 e resposta inválida, limita retries a duas tentativas por tipo e mantém cooldowns distintos com relógio falso injectável.
 Falhou / por resolver: nada nesta tarefa.

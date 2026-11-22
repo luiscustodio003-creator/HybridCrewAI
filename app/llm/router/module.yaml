@@ -1,7 +1,7 @@
 name: llm-router
-purpose: Classificação de erros, retries limitados e cooldown por tipo
-public_api: [Clock, CooldownTracker, FakeClock, RetryDecision, RetryPolicy, SystemClock, classify_error, normalize_error_kind]
+purpose: Classificação de erros, retries, cooldown e escada de fallback por tipo de tarefa
+public_api: [Clock, CooldownTracker, FakeClock, Ladder, LadderError, LadderStep, RetryDecision, RetryPolicy, RouteStep, StepAction, SystemClock, TaskKind, classify_error, load_ladder, normalize_error_kind, plan_fallback]
 depends_on: [core-config, llm-contracts]
 events_emitted: []
 events_consumed: []
-tests: [tests/unit/test_router_cooldown.py]
+tests: [tests/unit/test_router_cooldown.py, tests/unit/test_ladder.py]

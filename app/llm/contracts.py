@@ -18,12 +18,13 @@ _PADRAO_ATRIBUICAO = re.compile(
 
 
 class ProviderKind(StrEnum):
-    """Fornecedores permitidos, sem fuga de tipos de SDK."""
+    """Fornecedores permitidos, sem fuga de tipos de SDK; EXTERNAL é só política."""
 
     GEMINI_TEXT = "gemini-text"
     GEMINI_LIVE = "gemini-live"
     OLLAMA = "ollama"
     FAKE = "fake"
+    EXTERNAL = "external"
 
 
 class ErrorKind(StrEnum):

@@ -836,7 +836,7 @@ tasks:
 - id: HCW-02-009
   title: Implementar escada de modelos e matriz de fallback
   phase: 2
-  status: APPROVED
+  status: VALIDATED
   priority: critical
   depends_on: [HCW-02-005, HCW-02-007, HCW-02-008]
   requirements: [FR-006, FR-007]
@@ -848,9 +848,12 @@ tasks:
   - "Gemini para Gemini é automático; Gemini para outro cloud exige autorização explícita"
   - "Gemini para Ollama só em tarefas leves; em tarefas de código pausa e pede decisão"
   - "A escada é carregada de ficheiro de configuração; remover um modelo não exige mudar código"
-  evidence: []
-  validated_on: null
-  notes: Matriz de fallback completa é evidência obrigatória do gate.
+  evidence:
+  - docs/reports/hcw-02-009.md
+  - app/llm/router/ladder.py
+  - tests/unit/test_ladder.py
+  validated_on: 2026-11-22
+  notes: Matriz de fallback completa é evidência obrigatória do gate; EXTERNAL é apenas classificação de política.
 - id: HCW-02-010
   title: Criar adaptadores Gemini Live, Gemini texto e Ollama
   phase: 2
