@@ -54,3 +54,10 @@ Feito: pacote de Skills, scripts de validação, tasks.yaml (fases 0 a 14), fich
 Por resolver: auditoria e baseline do código existente; ambiente .venv do utilizador.
 Testes executados: tests/scripts (ver relatório da Fase 0).
 Próxima acção: HCW-00-001 (auditoria) com a Skill `hcw-audit`.
+
+## 2026-11-22 — handoff HCW-00-008
+Feito: tarefa `HCW-00-008` marcada `VALIDATED` com evidência real; relatório, `STATE.md` e entrada da tarefa actualizados; encerramento cometido em `31aceed` e enviado para `origin/master`.
+Falhou / por resolver: nada nesta tarefa. Run de CI `45039146828` (commit `31aceed`) confirmado como `conclusion: success` após o push de encerramento; `HCW-00-006` continua `IMPLEMENTED`; `STATE .md` (com espaço) permanece untracked.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `docs/reports/hcw-00-008.txt`.
+Testes executados: `python scripts/validate_plan.py` → 0 erros, 0 avisos; `python scripts/check_traceability.py` → 0 erros, 0 avisos; `python scripts/plan_status.py` → Fase 00 `6/12`, `VALIDATED=6`, `IMPLEMENTED=1`; GitHub API → run `45039146828` `status: completed`, `conclusion: success`.
+Próxima acção: pedir aprovação para `HCW-00-009` (spike do motor de agentes) antes de alterar `tasks.yaml` ou instalar qualquer dependência.
