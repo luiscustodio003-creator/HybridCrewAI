@@ -688,7 +688,7 @@ tasks:
 - id: HCW-02-002
   title: Decidir a integração de modelos em ADR-0002
   phase: 2
-  status: APPROVED
+  status: IMPLEMENTED
   priority: critical
   depends_on: [HCW-02-001]
   requirements: [NFR-003, NFR-005, SEC-002]
@@ -700,9 +700,11 @@ tasks:
   - "ADR-0002 regista a decisão, alternativas rejeitadas e consequências para Gemini texto, Gemini Live e Ollama"
   - "Nenhum pacote LiteLLM, google-genai ou ollama é instalado antes da aprovação do ADR"
   - "LiveSession fica atrás de contrato próprio, sem exposição transitiva do SDK no resto do código"
-  evidence: []
+  evidence:
+  - docs/adr/ADR-0002-gateway-de-modelos.md
+  - docs/MAP.md
   validated_on: null
-  notes: Ponto de paragem obrigatório; o utilizador aprova o ADR antes da implementação.
+  notes: ADR escrito em 2026-11-22 com estado PROPOSTA; implementado, por validar — aguarda aprovação do utilizador antes de passar a ACEITE.
 - id: HCW-02-003
   title: Criar contratos e erros base do gateway
   phase: 2

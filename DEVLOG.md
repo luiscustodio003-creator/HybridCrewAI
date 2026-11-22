@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — ADR-0002 proposto
+Feito: `HCW-02-002` passou a `IMPLEMENTED`; ADR-0002 regista a proposta de contrato próprio com adaptadores finos, sem LiteLLM, SDKs ou instalações na Fase 2; `LiveSession` fica atrás de `Protocol`; `docs/MAP.md` actualizado com o novo ADR.
+Falhou / por resolver: nada no conteúdo; não há testes de código nesta tarefa documental. A revisão de segurança ligou egress, prompt injection, quotas, dependências e voz a testes das tarefas seguintes; nenhum foi executado ainda porque o código não existe.
+Ficheiros tocados: `docs/adr/ADR-0002-gateway-de-modelos.md`, `docs/MAP.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `pytest -q` → 90 passam; `check_file_size.py`, `validate_plan.py`, `check_traceability.py` → 0 erros; `plan_status.py` → Fase 02 `1/13`.
+Próxima acção: o utilizador aprova ou rejeita ADR-0002; se aprovado, passar a `ACEITE`, validar `HCW-02-002` e iniciar `HCW-02-003`.
+
 ## 2026-11-22 — aprovação do plano da Fase 2
 Feito: o utilizador aprovou o plano detalhado; `HCW-02-001` passou a `VALIDATED` com evidência em `docs/reports/phase-02-plan.md`; `HCW-02-002` a `HCW-02-012` passaram a `APPROVED`.
 Falhou / por resolver: nada no plano; `ruff check .` e `mypy scripts` continuam com erros pré-existentes em `scripts/`.

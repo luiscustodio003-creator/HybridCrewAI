@@ -1,17 +1,18 @@
-# Mapa do projecto — Fase 0
+# Mapa do projecto
 
-Data: 2026-11-22 · Responsabilidade: DOC-001 · Estado: relatório final da auditoria da Fase 0
+Data: 2026-11-22 · Responsabilidade: DOC-001 · Estado: mapa vivo; Fases 0 e 1 encerradas, Fase 2 em curso
 
 Este ficheiro responde a «onde está o quê». Distingue o que existe em disco do que apenas está previsto no plano. O conteúdo dos ficheiros listados é a fonte de verdade; este mapa é um índice, não substitui os relatórios de evidência.
 
 ## Estado real
 
-- Raiz do projecto sem pasta `app/`: a Fase 0 criou apenas infra-estrutura de controlo, documentação, guardas e CI.
-- Plano com 12 tarefas na Fase 0; 9 passam a estar `VALIDATED` com `HCW-00-011`, incluindo o mapa final.
+- Raiz do projecto com `app/core/` e `app/cli/` criados na Fase 1; `app/llm/` ainda não existe.
+- Plano com 12 tarefas na Fase 0; 10 estão `VALIDATED`.
 - Repositório Git com `origin/master` e etiqueta `phase-00-start` no commit inicial `fd9ac9c`.
 - Ambiente controlado: `.venv` com Python 3.12.0; Python global 3.15.2 fora do projecto.
 - CI verde em `ubuntu-latest` e `windows-latest`; evidência em `docs/reports/hcw-00-008.txt`.
 - ADR-0001 aprovado: núcleo próprio, com adaptadores futuros para CrewAI e LangGraph.
+- ADR-0002 proposto: gateway com contrato próprio e adaptadores finos; aguarda aprovação do utilizador.
 
 ## Responsabilidades existentes
 
@@ -35,6 +36,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Fichas das fases | `docs/phases/` | `phase-00.md` a `phase-14.md` | existentes |
 | Requisitos | `docs/` | `requirements.yaml` | existente |
 | Decisão do motor | `docs/adr/` | `ADR-0001-motor-de-agentes.md` | ACEITE |
+| Decisão do gateway LLM | `docs/adr/` | `ADR-0002-gateway-de-modelos.md` | PROPOSTA |
 | Auditoria inicial | `docs/reports/` | `audit.md` | VALIDADA em HCW-00-001 |
 | Baseline de ambiente | `docs/reports/` | `baseline-freeze.txt` | VALIDADA em HCW-00-001 |
 | Baseline de testes | `docs/reports/` | `baseline-tests.txt` | histórico: sem testes iniciais |
@@ -97,6 +99,6 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 ## Como usar este mapa
 
 1. Para estado do plano, abrir `STATE.md` e correr `python scripts/plan_status.py`.
-2. Para decisões de arquitectura, abrir `docs/adr/ADR-0001-motor-de-agentes.md`.
+2. Para decisões de arquitectura, abrir `docs/adr/ADR-0001-motor-de-agentes.md` e `docs/adr/ADR-0002-gateway-de-modelos.md`.
 3. Para evidência de CI, abrir `docs/reports/hcw-00-008.txt`.
 4. Para o ponto de partida, abrir `docs/reports/audit.md`.
