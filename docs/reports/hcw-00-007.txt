@@ -1,0 +1,31 @@
+Relatório de validação — HCW-00-007
+Data: 2026-11-22
+
+Configuração criada
+- `.pre-commit-config.yaml` com `minimum_pre_commit_version: "4.0.0"`.
+- Sete hooks locais, sem `repo` remoto e sem instalação de dependências:
+  - `ruff-check` — `python -m ruff check`, apenas ficheiros Python em stage.
+  - `ruff-format-check` — `python -m ruff format --check`, apenas ficheiros Python em stage.
+  - `check-file-size` — `python scripts/check_file_size.py`, sempre executado.
+  - `validate-plan` — `python scripts/validate_plan.py`, quando `tasks.yaml` está em stage.
+  - `check-modules`, `lint-skills`, `check-traceability` — sempre executados.
+- O config exige o ambiente virtual activo; isso já está definido em `.vscode/settings.json`.
+
+Critério de aceitação
+- "Commit com ficheiro de 301 linhas é bloqueado" — PASSA.
+- Teste real: criado `tests/_temp_301.py` com exatamente 301 linhas, colocado em stage e executado `python -m pre_commit run check-file-size`.
+- Resultado: hook falhou com `exit code: 1` e mensagem `tests\_temp_301.py: 301 linhas (máximo 300)`; `[FALHOU] check_file_size: 1 erro(s), 0 aviso(s)`.
+- O ficheiro temporário foi removido e retirado do stage. Execução de confirmação sem o ficheiro: `Guarda - limite de linhas....Passed`, `FILE_SIZE_EXIT=0`.
+
+Outras verificações
+- `python -m pre_commit validate-config .pre-commit-config.yaml` terminou sem erros.
+- `python -m pre_commit run validate-plan --files tasks.yaml` → Passed, `PLAN_EXIT=0`.
+
+Revisão de segurança
+- Ameaça "Dependência ou ferramenta comprometida": contramedida — nenhuma instalação nova; `pre-commit 4.7.0`, `ruff 0.17.6` e os scripts já estavam no `.venv`; teste — `validate-config` e execução dos hooks sem rede.
+- Ameaça "Acção reportada como feita sem o ter sido": contramedida — verificação por código de saída real do hook; teste — ficheiro de 301 linhas bloqueado com `EXIT=1`.
+- Ameaça "Execução de código gerado ou de terceiros": contramedida — apenas scripts locais de confiança, sem `repo` externo e sem downloads; teste — inspecção do config e execução local.
+- Nenhum segredo, `.env`, token ou chave foi adicionado; nenhum push foi feito.
+
+Observação
+- `HCW-00-006` continua `IMPLEMENTED` com erros de `ruff`/`mypy` pré-existentes; os hooks de Ruff analisam só ficheiros em stage, por isso não bloqueiam alterações que não toquem nesses ficheiros.

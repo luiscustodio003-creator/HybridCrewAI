@@ -205,7 +205,7 @@ tasks:
 - id: HCW-00-007
   title: Configurar pre-commit com Ruff e os scripts de guarda
   phase: 0
-  status: NOT_STARTED
+  status: VALIDATED
   priority: high
   depends_on:
   - HCW-00-004
@@ -219,8 +219,10 @@ tasks:
   tests: []
   acceptance:
   - Commit com ficheiro de 301 linhas é bloqueado
-  evidence: []
-  validated_on: null
+  evidence:
+  - docs/reports/hcw-00-007.txt
+  - .pre-commit-config.yaml
+  validated_on: 2026-11-22
 - id: HCW-00-008
   title: Configurar CI (GitHub Actions) em Windows e Linux
   phase: 0

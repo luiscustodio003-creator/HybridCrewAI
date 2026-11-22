@@ -29,6 +29,13 @@ Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `docs/reports/hcw-00-0
 Testes executados: `git check-ignore -v .env .venv/ logs/` → 3 regras do `.gitignore` confirmadas; `git tag -l` → `phase-00-start`; `git show-ref --tags` → `fd9ac9cb5ebfb8202841126ee2cc5f2cde3cb151 refs/tags/phase-00-start`; `git remote -v` → fetch/push para `https://github.com/luiscustodio003-creator/HybridCrewAI`; `python -m pytest -q` → 18 testes, sucesso; `python scripts/validate_plan.py` → 0 erros, 0 avisos; `python scripts/check_traceability.py` → 0 erros, 0 avisos; `python scripts/plan_status.py` → Fase 00 `4/12`.
 Próxima acção: pedir aprovação para o commit de `HCW-00-005` e para `HCW-00-007`; primeiro push só com aprovação explícita.
 
+## 2026-11-22 — HCW-00-007
+Feito: tarefa aprovada pelo utilizador, executada e validada. Criado `.pre-commit-config.yaml` com sete hooks locais: Ruff (lint e formatação), `check_file_size`, `validate_plan`, `check_modules`, `lint_skills` e `check_traceability`. Sem repos remotos e sem novas instalações. Evidência em `docs/reports/hcw-00-007.txt`.
+Falhou / por resolver: nada nesta tarefa. `HCW-00-006` continua `IMPLEMENTED` com erros de lint/tipagem pré-existentes; `STATE .md` (com espaço) permanece fora do Git; nenhum push foi feito.
+Ficheiros tocados: `.pre-commit-config.yaml` (novo), `docs/reports/hcw-00-007.txt` (novo), `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `pre_commit validate-config` → sem erros; ficheiro temporário com 301 linhas em stage → `pre_commit run check-file-size` falhou com `EXIT=1` e mensagem `301 linhas (máximo 300)`; após remoção → `Passed`, `FILE_SIZE_EXIT=0`; `pre_commit run validate-plan --files tasks.yaml` → `Passed`, `PLAN_EXIT=0`; `python -m pytest -q` → 18 testes, sucesso; `python scripts/validate_plan.py` → 0 erros, 0 avisos; `python scripts/check_traceability.py` → 0 erros, 0 avisos; `python scripts/plan_status.py` → Fase 00 `5/12`.
+Próxima acção: pedir aprovação para o commit de `HCW-00-007` e para `HCW-00-008`; primeiro push só com aprovação explícita.
+
 ## 2026-11-22 — projecto de raiz
 Feito: pacote copiado para a raiz; ambiente .venv criado; baseline-freeze guardada.
 Decisão: o código anterior foi perdido. HCW-00-002 passa a DEPRECATED; HCW-00-001 passa a registar o arranque de raiz.
