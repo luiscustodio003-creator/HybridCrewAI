@@ -294,7 +294,7 @@ tasks:
 - id: HCW-00-011
   title: Gerar docs/MAP.md e o relatório de auditoria final
   phase: 0
-  status: NOT_STARTED
+  status: VALIDATED
   priority: high
   depends_on:
   - HCW-00-001
@@ -307,8 +307,11 @@ tasks:
   tests: []
   acceptance:
   - MAP.md indica a pasta de cada responsabilidade
-  evidence: []
-  validated_on: null
+  evidence:
+  - docs/MAP.md
+  - docs/reports/audit.md
+  - docs/adr/ADR-0001-motor-de-agentes.md
+  validated_on: 2026-11-22
 - id: HCW-00-999
   title: Gate da Fase 0
   phase: 0

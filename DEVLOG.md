@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — HCW-00-011
+Feito: tarefa aprovada pelo utilizador e executada. Criado `docs/MAP.md` com responsabilidade, pasta e ficheiro principal de cada área existente; distingue o que existe do que está apenas previsto, inclui o ficheiro legado fora do Git e fecha a auditoria da Fase 0 com entregas, ameaças tratadas e limitações abertas. Tarefa marcada `VALIDATED` com `validated_on: 2026-11-22` e evidência real em `docs/MAP.md`, `docs/reports/audit.md` e `docs/adr/ADR-0001-motor-de-agentes.md`.
+Falhou / por resolver: `python -m pytest -q` com o Python global 3.15.2 falhou por não ter `pytest`; repetido com `.venv\Scripts\python.exe`, tendo passado. `HCW-00-006` continua `IMPLEMENTED`; `STATE .md` (com espaço) permanece untracked. Alterações desta tarefa ainda não cometidas.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `docs/MAP.md` (novo).
+Testes executados: `python scripts/validate_plan.py` → 0 erros, 0 avisos; `python scripts/check_traceability.py` → 0 erros, 0 avisos; `python scripts/check_file_size.py` → 0 erros, 0 avisos; `python scripts/lint_skills.py` → 0 erros, 0 avisos; `python scripts/check_modules.py` → 0 erros, 1 aviso (`app/` ainda não existe); `python scripts/plan_status.py` → Fase 00 `9/12`; `.venv\Scripts\python.exe -m pytest -q` → 18 passaram; `git diff --check` → sem erros.
+Próxima acção: pedir aprovação ao utilizador para o commit de `HCW-00-011` e para abrir/executar `HCW-00-999` com `python scripts/run_gate.py --phase 0`.
+
 ## 2026-11-22 — HCW-00-001
 Feito: `docs/reports/audit.md` declara o projecto de raiz e inventaria Python 3.15.2 global, `.venv` com Python 3.12.0, 100 pacotes em `baseline-freeze.txt`, 25 em `requirements.lock.txt` e a estrutura de pastas actual. Sem segredos em ficheiros do projecto. Tarefa marcada `VALIDATED` com evidência. Criado `.gitignore`, inicializado Git e feito o commit `fd9ac9c` (`HCW-00-001: registar ponto de partida`, 65 ficheiros).
 Falhou / por resolver: `pyproject.toml` por criar; `python` da PATH aponta para `C:\Python315`, não para o `.venv`; existe `STATE .md` com espaço no nome, deixado fora do commit; `ruff check scripts tests` aponta 3 erros pré-existentes (2 I001, 1 PLW1510) em `scripts/` e `tests/`, fora do âmbito de HCW-00-001.
