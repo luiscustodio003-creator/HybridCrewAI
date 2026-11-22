@@ -6,7 +6,7 @@ Feito: implementado `app/core/tasks/` com `ids.py` (UUIDv5 estável), `time.py` 
 Falhou / por resolver: primeiro teste de mensagem falhou porque o erro usava valores em minúsculas (`completed`) em vez de nomes (`COMPLETED`); mensagem ajustada. `check_modules` apontou falta de `README.txt` e `module.yaml`, criados a seguir. Ruff apontou `PLR2004` para o tamanho do UUID; extraído para constante.
 Ficheiros tocados: `app/core/tasks/*`, `tests/unit/test_state_machine.py`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-01-006.md`.
 Testes executados: 9 testes de estados passam; 76 testes na regressão completa; `ruff check app tests/unit/test_state_machine.py`, `mypy app`, `check_modules.py`, `check_file_size.py`, `check_traceability.py` e `plan_status.py` sem erros.
-Próxima acção: executar HCW-01-007 (resultados padronizados).
+Próxima acção: executar HCW-01-007 (persistência SQLite e recuperação após reinício).
 
 ## 2026-11-22 — HCW-01-005
 Feito: implementado `app/core/logging/` com `correlation.py` (contexto por `contextvars`), `redaction.py` (`SecretRegistry` com valores exactos, padrão `sk-` e nomes declarados), `setup.py` (`EventLogger`, `TextLogSink`, `configure_logging`) e `__init__.py`. Logs exigem `EventContext`; erros com `exc_info=True` incluem `stack_trace`; destino textual redige sempre.
