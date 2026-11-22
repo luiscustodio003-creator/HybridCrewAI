@@ -1,7 +1,7 @@
 name: core-config
 purpose: Carregar uma configuração imutável e validada sem gravar ficheiros nem ler segredos
-public_api: [Settings, ConfigError, load_settings]
+public_api: [Settings, ConfigError, load_settings, Secrets, SecretStr, EnvironmentSecrets, SecretError, redact]
 depends_on: []
 events_emitted: []
 events_consumed: []
-tests: [tests/unit/test_config.py]
+tests: [tests/unit/test_config.py, tests/security/test_secrets.py]

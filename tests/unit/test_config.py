@@ -99,6 +99,7 @@ def test_modulo_usa_apenas_biblioteca_padrao() -> None:
         "dataclasses",
         "os",
         "pathlib",
+        "re",
         "typing",
     }
     for source in package.glob("*.py"):

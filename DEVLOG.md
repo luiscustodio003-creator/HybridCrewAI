@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — HCW-01-003
+Feito: implementada a abstracção de segredos em `app/core/config/secrets.py` — `SecretStr` com `repr` redigido, `Secrets` com lista de nomes permitidos, `EnvironmentSecrets`, `SecretProvider` injectado e `redact()` para logs. API pública actualizada em `app/core/config/__init__.py`; README e module.yaml do módulo actualizados.
+Falhou / por resolver: nada na implementação. Durante a regressão, o teste de «só biblioteca padrão» precisou de incluir `re` (módulo padrão recém-usado); corrigido. `ruff check .` global permanece com 5 erros pré-existentes em `scripts/`.
+Ficheiros tocados: `app/core/config/secrets.py`, `app/core/config/__init__.py`, `app/core/config/README.txt`, `app/core/config/module.yaml`, `tests/security/test_secrets.py`, `tests/unit/test_config.py`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-01-003.md`.
+Testes executados: 9 testes de segurança e 43 testes na regressão completa passam; `ruff check app ...`, `mypy app`, `check_modules.py`, `check_file_size.py`, `check_traceability.py`, `validate_plan.py` sem erros. Ataque com `sk-TEST-NAO-GRAVAR` não persistido nem revelado em `repr`.
+Próxima acção: executar HCW-01-004 (eventos).
+
 ## 2026-11-22 — validação HCW-01-002
 Feito: `hcw-test-gate` aplicado; os quatro critérios de aceitação têm teste real e passam. Relatório gravado em `reports/tasks/HCW-01-002.md`. Tarefa passou a `VALIDATED` com `validated_on: 2026-11-22`.
 Falhou / por resolver: nada. `ruff check .` global permanece com 5 erros pré-existentes em `scripts/`.

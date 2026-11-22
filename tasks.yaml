@@ -405,7 +405,7 @@ tasks:
 - id: HCW-01-003
   title: 'Credenciais: abstracção do armazenamento seguro (sem segredos em ficheiros)'
   phase: 1
-  status: APPROVED
+  status: VALIDATED
   priority: critical
   depends_on:
   - HCW-01-002
@@ -417,14 +417,21 @@ tasks:
   - app/core/config/secrets.py
   files_change:
   - app/core/config/module.yaml
+  - app/core/config/README.txt
+  - app/core/config/__init__.py
+  - tests/unit/test_config.py
   tests:
   - tests/security/test_secrets.py
   acceptance:
   - Chave nunca aparece em logs nem em ficheiros do projecto
   - Segredo lido apenas de variável de ambiente ou de backend injectado; nada é gravado em disco
   - Teste de ataque: valor falso sk-TEST fornecido na configuração não é persistido nem devolvido em repr
-  evidence: []
-  validated_on: null
+  evidence:
+  - tests/security/test_secrets.py
+  - app/core/config/secrets.py
+  - reports/tasks/HCW-01-003.md
+  validated_on: 2026-11-22
+  notes: '9 testes de segurança passam; 43 testes na regressão completa. Segredo com repr redigido, fornecedor injectado, nomes declarados e redacção de texto testados.'
 - id: HCW-01-004
   title: 'Eventos: modelo, event bus e escritor JSONL'
   phase: 1
