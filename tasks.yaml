@@ -346,7 +346,7 @@ tasks:
 - id: HCW-01-001
   title: Planear em detalhe a Fase 1 (rever as tarefas abaixo com o utilizador)
   phase: 1
-  status: NOT_STARTED
+  status: PLANNED
   priority: high
   depends_on:
   - HCW-00-999
@@ -362,30 +362,37 @@ tasks:
 - id: HCW-01-002
   title: 'Configuração: schema, loader e valores por omissão seguros'
   phase: 1
-  status: NOT_STARTED
+  status: PLANNED
   priority: critical
   depends_on:
   - HCW-01-001
   requirements:
   - FR-001
   - SEC-001
+  - NFR-001
   modules:
   - core/config
   files_new:
   - app/core/config/schema.py
   - app/core/config/loader.py
   - app/core/config/defaults.py
-  files_change: []
+  - app/core/config/README.txt
+  - app/core/config/module.yaml
+  files_change:
+  - pyproject.toml
   tests:
   - tests/unit/test_config.py
   acceptance:
-  - Configuração inválida dá erro claro e não arranca
+  - Configuração inválida dá erro claro e o arranque aborta
+  - Sem dependências novas: validação com a biblioteca padrão e leitura de variáveis de ambiente
+  - pyproject.toml passa a analisar app/ com Ruff e mypy
+  - app/core/config tem README.txt e module.yaml com as chaves obrigatórias
   evidence: []
   validated_on: null
 - id: HCW-01-003
   title: 'Credenciais: abstracção do armazenamento seguro (sem segredos em ficheiros)'
   phase: 1
-  status: NOT_STARTED
+  status: PLANNED
   priority: critical
   depends_on:
   - HCW-01-002
@@ -395,85 +402,105 @@ tasks:
   - core/config
   files_new:
   - app/core/config/secrets.py
-  files_change: []
+  files_change:
+  - app/core/config/module.yaml
   tests:
   - tests/security/test_secrets.py
   acceptance:
   - Chave nunca aparece em logs nem em ficheiros do projecto
+  - Segredo lido apenas de variável de ambiente ou de backend injectado; nada é gravado em disco
+  - Teste de ataque: valor falso sk-TEST fornecido na configuração não é persistido nem devolvido em repr
   evidence: []
   validated_on: null
 - id: HCW-01-004
   title: 'Eventos: modelo, event bus e escritor JSONL'
   phase: 1
-  status: NOT_STARTED
+  status: PLANNED
   priority: critical
   depends_on:
   - HCW-01-002
   requirements:
   - FR-002
   - OPS-004
+  - NFR-001
   modules:
   - core/events
   files_new:
   - app/core/events/models.py
   - app/core/events/bus.py
   - app/core/events/jsonl_sink.py
+  - app/core/events/README.txt
+  - app/core/events/module.yaml
   files_change: []
   tests:
   - tests/unit/test_events.py
   acceptance:
   - Todo o evento leva correlation_id, task_id, agent, phase
+  - Cada linha do ficheiro JSONL é um evento válido e independente
+  - app/core/events tem README.txt e module.yaml com as chaves obrigatórias
   evidence: []
   validated_on: null
 - id: HCW-01-005
   title: Logging central com correlação e redacção de segredos
   phase: 1
-  status: NOT_STARTED
+  status: PLANNED
   priority: critical
   depends_on:
   - HCW-01-004
   requirements:
   - OPS-004
   - SEC-001
+  - NFR-001
   modules:
   - core/logging
   files_new:
   - app/core/logging/setup.py
   - app/core/logging/correlation.py
   - app/core/logging/redaction.py
+  - app/core/logging/README.txt
+  - app/core/logging/module.yaml
   files_change: []
   tests:
   - tests/security/test_redaction.py
   acceptance:
   - Chave falsa não aparece nos logs
+  - Redacção cobre padrões sk- e os nomes de variáveis declarados como secretos
+  - correlation_id propagado pelo logging corresponde ao do evento publicado
+  - app/core/logging tem README.txt e module.yaml com as chaves obrigatórias
   evidence: []
   validated_on: null
 - id: HCW-01-006
   title: 'Tarefas: modelo e máquina de estados'
   phase: 1
-  status: NOT_STARTED
+  status: PLANNED
   priority: critical
   depends_on:
   - HCW-01-004
   requirements:
   - FR-003
+  - NFR-001
   modules:
   - core/tasks
   files_new:
   - app/core/tasks/model.py
   - app/core/tasks/state_machine.py
   - app/core/tasks/ids.py
+  - app/core/tasks/README.txt
+  - app/core/tasks/module.yaml
   files_change: []
   tests:
   - tests/unit/test_state_machine.py
   acceptance:
   - Transições inválidas rejeitadas (COMPLETED para RUNNING)
+  - A transição RUNNING para INTERRUPTED existe para recuperação após kill
+  - Identificadores de tarefa são únicos e estáveis entre reinícios
+  - app/core/tasks tem README.txt e module.yaml com as chaves obrigatórias
   evidence: []
   validated_on: null
 - id: HCW-01-007
   title: Persistência SQLite das tarefas e recuperação após reinício
   phase: 1
-  status: NOT_STARTED
+  status: PLANNED
   priority: critical
   depends_on:
   - HCW-01-006
@@ -484,54 +511,70 @@ tasks:
   - core/tasks
   files_new:
   - app/core/tasks/store_sqlite.py
-  files_change: []
+  files_change:
+  - app/core/tasks/module.yaml
   tests:
   - tests/recovery/test_kill_resume.py
   acceptance:
   - Matar o processo a meio e o estado recupera ao reiniciar
+  - Teste usa subprocess real e ficheiro SQLite real, sem mocks
+  - Tarefa RUNNING órfã passa a INTERRUPTED e volta a ser retomável
   evidence: []
   validated_on: null
 - id: HCW-01-008
   title: ToolResult com os cinco estados verificados
   phase: 1
-  status: NOT_STARTED
+  status: PLANNED
   priority: high
   depends_on:
   - HCW-01-002
   requirements:
   - FR-004
+  - NFR-001
   modules:
   - core/results
   files_new:
   - app/core/results/tool_result.py
   - app/core/results/statuses.py
+  - app/core/results/README.txt
+  - app/core/results/module.yaml
   files_change: []
   tests:
   - tests/contracts/test_tool_result.py
   acceptance:
   - '''done'' sem evidência é rejeitado pelo esquema'
+  - Os cinco estados done, unverified, failed, ask e started são aceites
+  - app/core/results tem README.txt e module.yaml com as chaves obrigatórias
   evidence: []
   validated_on: null
 - id: HCW-01-009
   title: 'CLI: hcw logs --follow e hcw doctor'
   phase: 1
-  status: NOT_STARTED
+  status: PLANNED
   priority: high
   depends_on:
   - HCW-01-005
   - HCW-01-007
   requirements:
+  - OPS-002
   - OPS-004
+  - NFR-001
   modules:
   - cli
   files_new:
   - app/cli/logs.py
   - app/cli/doctor.py
-  files_change: []
+  - app/cli/README.txt
+  - app/cli/module.yaml
+  files_change:
+  - pyproject.toml
   tests:
   - tests/integration/test_cli.py
   acceptance:
-  - Eventos de uma tarefa real aparecem em tempo real
+  - Eventos de uma tarefa real aparecem em tempo real com o respectivo correlation_id
+  - hcw doctor verifica configuração, SQLite e redacção e devolve código de saída 0
+  - Ponto de entrada hcw declarado no pyproject.toml e executável no .venv
+  - app/cli tem README.txt e module.yaml com as chaves obrigatórias
   evidence: []
   validated_on: null
 - id: HCW-01-999
@@ -557,6 +600,9 @@ tasks:
   - run_gate.py --phase 1 devolve GO
   - Recuperação após kill comprovada
   - Zero segredos nos logs
+  - ToolResult ''done'' sem evidência rejeitado
+  - hcw logs --follow e hcw doctor demonstrados com dados reais
+  - etiqueta phase-01-go criada
   evidence: []
   validated_on: null
 - id: HCW-02-001

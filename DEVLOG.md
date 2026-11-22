@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — planeamento da Fase 1
+Feito: utilizador aprovou a abertura do planeamento. Revisão das oito tarefas já existentes (HCW-01-002 a HCW-01-009) contra `docs/phases/phase-01.md`, `docs/requirements.yaml` e o estado real do código (sem `app/`); todas passaram a `PLANNED`, sem duplicar tarefas. Refinamentos: documentação obrigatória por módulo (`README.txt` e `module.yaml`), inclusão de `app/` no Ruff/mypy, recuperação REAL com subprocess e SQLite sem mocks, redacção de segredos com teste de ataque, ToolResult com os cinco estados e aceitação do gate com etiqueta `phase-01-go`. `docs/MAP.md` passou a indicar também a CLI da Fase 1.
+Falhou / por resolver: nada nesta acção. Plano ainda não aprovado para execução; nenhuma dependência nova foi instalada. `STATE .md` permanece untracked.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `docs/MAP.md`.
+Testes executados: `.venv\Scripts\python.exe scripts/validate_plan.py` → 0 erros, 0 avisos; `scripts/check_traceability.py` → 0 erros, 0 avisos; `scripts/check_file_size.py` → 0 erros, 0 avisos; `scripts/plan_status.py` → Fase 01 `0/10`, `PLANNED=9`, próxima `HCW-01-001`.
+Próxima acção: pedir aprovação ao utilizador para passar HCW-01-002 a HCW-01-009 a `APPROVED` e executar `HCW-01-002` com `hcw-implement`.
+
 ## 2026-11-22 — HCW-00-999
 Feito: utilizador aprovou o commit de `HCW-00-011` e a execução do gate; commit `d385dce` criado sem push. Gate da Fase 0 executado com o Python do `.venv`: veredicto GO, sete verificações OK, 18 testes acumulados a passar. Tarefa `HCW-00-999` marcada `VALIDATED` com evidência real, etiqueta local `phase-00-go` criada em `d385dce` e relatório de fase escrito em `docs/reports/phase-00.md`.
 Falhou / por resolver: nada no gate. `HCW-00-006` continua `IMPLEMENTED` com lint/tipagem por corrigir; `STATE .md` (com espaço) permanece untracked; commit de encerramento, relatório e etiqueta ainda não enviados para `origin`.

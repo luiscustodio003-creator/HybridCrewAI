@@ -72,7 +72,7 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 | Ferramentas de computador, rede e engenharia reversa | `app/tools/` | 12 e 13 |
 | Autonomia, rotinas e checkpoints | `app/autonomy/` | 9 |
 | Aprovações por token e diff | `app/approvals/` | 4 e 12 |
-| CLI de utilizador | `app/cli/` | 14 |
+| CLI de utilizador | `app/cli/` | 1 (logs/doctor) e 14 |
 | Dados locais e relatórios gerados | `config/`, `data/`, `projects/`, `reports/`, `logs/` | conforme necessário |
 | Testes por natureza | `tests/unit/`, `integration/`, `contracts/`, `security/`, `recovery/`, `ui/`, `eval/`, `fixtures/` | fases seguintes |
 
