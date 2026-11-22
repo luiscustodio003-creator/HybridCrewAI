@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — HCW-00-999
+Feito: utilizador aprovou o commit de `HCW-00-011` e a execução do gate; commit `d385dce` criado sem push. Gate da Fase 0 executado com o Python do `.venv`: veredicto GO, sete verificações OK, 18 testes acumulados a passar. Tarefa `HCW-00-999` marcada `VALIDATED` com evidência real, etiqueta local `phase-00-go` criada em `d385dce` e relatório de fase escrito em `docs/reports/phase-00.md`.
+Falhou / por resolver: nada no gate. `HCW-00-006` continua `IMPLEMENTED` com lint/tipagem por corrigir; `STATE .md` (com espaço) permanece untracked; commit de encerramento, relatório e etiqueta ainda não enviados para `origin`.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `docs/reports/phase-00.md` (novo), `reports/phase-00/report.md` e `report.json` (novos, gerados pelo gate).
+Testes executados: `.venv\Scripts\python.exe scripts/run_gate.py --phase 0` → `GO`, `GATE_EXIT=0`; `git tag phase-00-go` → `refs/tags/phase-00-go` em `d385dce`; `git status -sb` → `## master...origin/master` antes do commit de encerramento.
+Próxima acção: pedir aprovação ao utilizador para o commit de encerramento da Fase 0 e para planear a Fase 1 (`HCW-01-001`) com `hcw-plan`; push só com aprovação explícita.
+
 ## 2026-11-22 — HCW-00-011
 Feito: tarefa aprovada pelo utilizador e executada. Criado `docs/MAP.md` com responsabilidade, pasta e ficheiro principal de cada área existente; distingue o que existe do que está apenas previsto, inclui o ficheiro legado fora do Git e fecha a auditoria da Fase 0 com entregas, ameaças tratadas e limitações abertas. Tarefa marcada `VALIDATED` com `validated_on: 2026-11-22` e evidência real em `docs/MAP.md`, `docs/reports/audit.md` e `docs/adr/ADR-0001-motor-de-agentes.md`.
 Falhou / por resolver: `python -m pytest -q` com o Python global 3.15.2 falhou por não ter `pytest`; repetido com `.venv\Scripts\python.exe`, tendo passado. `HCW-00-006` continua `IMPLEMENTED`; `STATE .md` (com espaço) permanece untracked. Alterações desta tarefa ainda não cometidas.

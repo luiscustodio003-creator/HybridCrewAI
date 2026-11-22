@@ -315,7 +315,7 @@ tasks:
 - id: HCW-00-999
   title: Gate da Fase 0
   phase: 0
-  status: NOT_STARTED
+  status: VALIDATED
   priority: critical
   depends_on:
   - HCW-00-001
@@ -337,8 +337,12 @@ tasks:
   acceptance:
   - run_gate.py --phase 0 devolve GO
   - etiqueta phase-00-go criada
-  evidence: []
-  validated_on: null
+  evidence:
+  - reports/phase-00/report.md
+  - reports/phase-00/report.json
+  - docs/reports/phase-00.md
+  validated_on: 2026-11-22
+  notes: 'Gate GO em 2026-11-22 com o Python do .venv; etiqueta phase-00-go criada no commit d385dce.'
 - id: HCW-01-001
   title: Planear em detalhe a Fase 1 (rever as tarefas abaixo com o utilizador)
   phase: 1
