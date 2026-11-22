@@ -346,7 +346,7 @@ tasks:
 - id: HCW-01-001
   title: Planear em detalhe a Fase 1 (rever as tarefas abaixo com o utilizador)
   phase: 1
-  status: PLANNED
+  status: VALIDATED
   priority: high
   depends_on:
   - HCW-00-999
@@ -357,12 +357,15 @@ tasks:
   tests: []
   acceptance:
   - Tarefas aprovadas pelo utilizador
-  evidence: []
-  validated_on: null
+  evidence:
+  - tasks.yaml
+  - docs/reports/phase-00.md
+  validated_on: 2026-11-22
+  notes: 'Plano detalhado em 9 tarefas, aprovado pelo utilizador em 2026-11-22; sem dependências novas.'
 - id: HCW-01-002
   title: 'Configuração: schema, loader e valores por omissão seguros'
   phase: 1
-  status: PLANNED
+  status: APPROVED
   priority: critical
   depends_on:
   - HCW-01-001
@@ -392,7 +395,7 @@ tasks:
 - id: HCW-01-003
   title: 'Credenciais: abstracção do armazenamento seguro (sem segredos em ficheiros)'
   phase: 1
-  status: PLANNED
+  status: APPROVED
   priority: critical
   depends_on:
   - HCW-01-002
@@ -415,7 +418,7 @@ tasks:
 - id: HCW-01-004
   title: 'Eventos: modelo, event bus e escritor JSONL'
   phase: 1
-  status: PLANNED
+  status: APPROVED
   priority: critical
   depends_on:
   - HCW-01-002
@@ -443,7 +446,7 @@ tasks:
 - id: HCW-01-005
   title: Logging central com correlação e redacção de segredos
   phase: 1
-  status: PLANNED
+  status: APPROVED
   priority: critical
   depends_on:
   - HCW-01-004
@@ -472,7 +475,7 @@ tasks:
 - id: HCW-01-006
   title: 'Tarefas: modelo e máquina de estados'
   phase: 1
-  status: PLANNED
+  status: APPROVED
   priority: critical
   depends_on:
   - HCW-01-004
@@ -500,7 +503,7 @@ tasks:
 - id: HCW-01-007
   title: Persistência SQLite das tarefas e recuperação após reinício
   phase: 1
-  status: PLANNED
+  status: APPROVED
   priority: critical
   depends_on:
   - HCW-01-006
@@ -524,7 +527,7 @@ tasks:
 - id: HCW-01-008
   title: ToolResult com os cinco estados verificados
   phase: 1
-  status: PLANNED
+  status: APPROVED
   priority: high
   depends_on:
   - HCW-01-002
@@ -550,7 +553,7 @@ tasks:
 - id: HCW-01-009
   title: 'CLI: hcw logs --follow e hcw doctor'
   phase: 1
-  status: PLANNED
+  status: APPROVED
   priority: high
   depends_on:
   - HCW-01-005

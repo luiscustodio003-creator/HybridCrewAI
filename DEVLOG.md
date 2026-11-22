@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — aprovação do plano da Fase 1
+Feito: utilizador aprovou todas as tarefas do plano. `HCW-01-001` passou a `VALIDATED` com evidência em `tasks.yaml`; `HCW-01-002` a `HCW-01-009` passaram a `APPROVED`. Nenhuma dependência foi instalada.
+Falhou / por resolver: nada nesta acção. Quatro commits locais sem push.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `.venv\Scripts\python.exe scripts/validate_plan.py` → 0 erros, 0 avisos; `scripts/plan_status.py` → Fase 01 `1/10`, `APPROVED=8`, próxima `HCW-01-002`.
+Próxima acção: executar `HCW-01-002` com `hcw-implement` e `hcw-security-review`.
+
 ## 2026-11-22 — planeamento da Fase 1
 Feito: utilizador aprovou a abertura do planeamento. Revisão das oito tarefas já existentes (HCW-01-002 a HCW-01-009) contra `docs/phases/phase-01.md`, `docs/requirements.yaml` e o estado real do código (sem `app/`); todas passaram a `PLANNED`, sem duplicar tarefas. Refinamentos: documentação obrigatória por módulo (`README.txt` e `module.yaml`), inclusão de `app/` no Ruff/mypy, recuperação REAL com subprocess e SQLite sem mocks, redacção de segredos com teste de ataque, ToolResult com os cinco estados e aceitação do gate com etiqueta `phase-01-go`. `docs/MAP.md` passou a indicar também a CLI da Fase 1.
 Falhou / por resolver: nada nesta acção. Plano ainda não aprovado para execução; nenhuma dependência nova foi instalada. `STATE .md` permanece untracked.
