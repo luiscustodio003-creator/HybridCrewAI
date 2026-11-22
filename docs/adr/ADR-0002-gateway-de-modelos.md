@@ -1,7 +1,7 @@
 # ADR-0002 — Gateway de modelos: contrato próprio e adaptadores finos
 
-Estado: PROPOSTA
-Data: 2026-11-22
+Estado: ACEITE
+Data: 2026-11-22 · Aprovado pelo utilizador em 2026-11-22
 
 ## Contexto
 

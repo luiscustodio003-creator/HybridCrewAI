@@ -12,7 +12,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 - Ambiente controlado: `.venv` com Python 3.12.0; Python global 3.15.2 fora do projecto.
 - CI verde em `ubuntu-latest` e `windows-latest`; evidência em `docs/reports/hcw-00-008.txt`.
 - ADR-0001 aprovado: núcleo próprio, com adaptadores futuros para CrewAI e LangGraph.
-- ADR-0002 proposto: gateway com contrato próprio e adaptadores finos; aguarda aprovação do utilizador.
+- ADR-0002 aceite: gateway com contrato próprio e adaptadores finos, sem novas dependências na Fase 2.
 
 ## Responsabilidades existentes
 
@@ -36,7 +36,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Fichas das fases | `docs/phases/` | `phase-00.md` a `phase-14.md` | existentes |
 | Requisitos | `docs/` | `requirements.yaml` | existente |
 | Decisão do motor | `docs/adr/` | `ADR-0001-motor-de-agentes.md` | ACEITE |
-| Decisão do gateway LLM | `docs/adr/` | `ADR-0002-gateway-de-modelos.md` | PROPOSTA |
+| Decisão do gateway LLM | `docs/adr/` | `ADR-0002-gateway-de-modelos.md` | ACEITE |
 | Auditoria inicial | `docs/reports/` | `audit.md` | VALIDADA em HCW-00-001 |
 | Baseline de ambiente | `docs/reports/` | `baseline-freeze.txt` | VALIDADA em HCW-00-001 |
 | Baseline de testes | `docs/reports/` | `baseline-tests.txt` | histórico: sem testes iniciais |
