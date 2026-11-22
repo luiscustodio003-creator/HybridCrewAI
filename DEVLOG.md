@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — planeamento da Fase 2
+Feito: `hcw-router` confirmou Fase 1 `GO`; `hcw-plan` detalhou `HCW-02-002` a `HCW-02-012` e ligou todas ao gate `HCW-02-999`. Acrescentados requisitos `FR-005`, `FR-006`, `FR-007`, `SEC-002`, `NFR-005` e `OPS-005`. Auditoria incremental registada em `docs/reports/audit.md`. `HCW-02-001` ficou `IN_PROGRESS` até aprovação do utilizador.
+Falhou / por resolver: nenhum erro de plano; `ruff check .` e `mypy scripts` continuam com erros pré-existentes em `scripts/`. Não há `httpx`, `requests`, `google-genai`, `litellm` nem `ollama` no `.venv`; o plano usa stdlib e mantém integrações reais opcionais.
+Ficheiros tocados: `tasks.yaml`, `docs/requirements.yaml`, `docs/reports/audit.md`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `pytest -q` → 90 passam; `validate_plan.py`, `check_traceability.py`, `check_modules.py`, `check_file_size.py` → 0 erros; `plan_status.py` → Fase 02 `0/13`, próxima `HCW-02-001`.
+Próxima acção: obter aprovação do plano e de ADR-0002 antes de passar as tarefas a `APPROVED`.
+
 ## 2026-11-22 — encerramento da Fase 1
 Feito: `python scripts/run_gate.py --phase 1` devolveu `GO` com sete verificações OK e 90 testes acumulados. `HCW-01-999` marcada `VALIDATED`; criada a etiqueta local `phase-01-go` no commit `696ccdb600195fcec5f0a56a91449989a9167528`. Relatório em `docs/reports/phase-01.md`, `reports/phase-01/report.md` e `reports/phase-01/report.json`.
 Falhou / por resolver: `ruff check .` e `mypy scripts` continuam com erros pré-existentes em `scripts/` (`HCW-00-006`); o gate não os trata como bloqueantes. Push não autorizado.

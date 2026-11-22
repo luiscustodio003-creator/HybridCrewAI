@@ -668,20 +668,218 @@ tasks:
 - id: HCW-02-001
   title: Planear em detalhe a Fase 2 com a Skill hcw-plan
   phase: 2
-  status: NOT_STARTED
+  status: IN_PROGRESS
   priority: high
   depends_on:
   - HCW-01-999
-  requirements: []
+  requirements: [DOC-001]
   modules: []
   files_new: []
-  files_change: []
+  files_change: [tasks.yaml, docs/requirements.yaml]
   tests: []
   acceptance:
   - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
   evidence: []
   validated_on: null
-  notes: Usar docs/phases/phase-02.md como base.
+  notes: Plano detalhado criado em 2026-11-22; aguarda aprovação do utilizador antes de passar as tarefas a APPROVED.
+- id: HCW-02-002
+  title: Decidir a integração de modelos em ADR-0002
+  phase: 2
+  status: PLANNED
+  priority: critical
+  depends_on: [HCW-02-001]
+  requirements: [NFR-003, NFR-005, SEC-002]
+  modules: [docs/adr]
+  files_new: [docs/adr/ADR-0002-gateway-de-modelos.md]
+  files_change: [docs/MAP.md]
+  tests: []
+  acceptance:
+  - "ADR-0002 regista a decisão, alternativas rejeitadas e consequências para Gemini texto, Gemini Live e Ollama"
+  - "Nenhum pacote LiteLLM, google-genai ou ollama é instalado antes da aprovação do ADR"
+  - "LiveSession fica atrás de contrato próprio, sem exposição transitiva do SDK no resto do código"
+  evidence: []
+  validated_on: null
+  notes: Ponto de paragem obrigatório; o utilizador aprova o ADR antes da implementação.
+- id: HCW-02-003
+  title: Criar contratos e erros base do gateway
+  phase: 2
+  status: PLANNED
+  priority: critical
+  depends_on: [HCW-02-002]
+  requirements: [FR-005, SEC-002]
+  modules: [app/llm]
+  files_new: [app/llm/__init__.py, app/llm/contracts.py, app/llm/README.txt, app/llm/module.yaml]
+  files_change: []
+  tests: [tests/unit/test_llm_contracts.py]
+  acceptance:
+  - "ModelRequest, ModelResponse e ProviderError são imutáveis e têm tipo explícito de fornecedor"
+  - "Toda a ModelRequest exige timeout positivo; timeout None ou zero é rejeitado"
+  - "A representação de ModelRequest e ModelResponse nunca mostra segredos"
+  evidence: []
+  validated_on: null
+  notes: Reutilizar SecretStr de app/core/config; não criar novo tipo de segredo.
+- id: HCW-02-004
+  title: Implementar política de egress e redacção de payload
+  phase: 2
+  status: PLANNED
+  priority: critical
+  depends_on: [HCW-02-003]
+  requirements: [SEC-002, FR-007]
+  modules: [app/llm/egress]
+  files_new: [app/llm/egress/__init__.py, app/llm/egress/secret_scan.py, app/llm/egress/policy.py, app/llm/egress/untrusted_wrap.py, app/llm/egress/README.txt, app/llm/egress/module.yaml]
+  files_change: []
+  tests: [tests/security/test_egress.py]
+  acceptance:
+  - "Servidor HTTP local falso capta o pedido e a chave falsa AKIA... não aparece em corpo, cabeçalhos nem URL"
+  - "Conteúdo não confiável segue em bloco delimitado; tentativa de forjar o marcador de fecho é rejeitada"
+  - "Pedido cloud sem consentimento registado é recusado antes de qualquer socket"
+  evidence: []
+  validated_on: null
+  notes: Usar apenas stdlib (urllib e http.server); sem httpx nem requests no .venv.
+- id: HCW-02-005
+  title: Registar consentimento cloud e tipo de conta
+  phase: 2
+  status: PLANNED
+  priority: critical
+  depends_on: [HCW-02-004]
+  requirements: [FR-007, SEC-002]
+  modules: [app/llm/consent.py]
+  files_new: [app/llm/consent.py]
+  files_change: [app/core/config/defaults.py]
+  tests: [tests/unit/test_llm_consent.py]
+  acceptance:
+  - "Primeiro pedido cloud sem consentimento devolve erro acionável e não abre ligação"
+  - "Consentimento e tipo de conta pessoal|trabalho|desconhecido persistem em SQLite local, sem valores de credenciais"
+  - "Revogação do consentimento bloqueia pedidos cloud seguintes"
+  evidence: []
+  validated_on: null
+  notes: P-05 permanece em decisão; tipo desconhecido nunca autoriza cloud.
+- id: HCW-02-006
+  title: Criar registo de prompts versionados
+  phase: 2
+  status: PLANNED
+  priority: high
+  depends_on: [HCW-02-004]
+  requirements: [NFR-005, SEC-002]
+  modules: [app/llm/prompts]
+  files_new: [app/llm/prompts/__init__.py, app/llm/prompts/registry.py, app/llm/prompts/system.md, app/llm/prompts/revisao.md, app/llm/prompts/README.txt, app/llm/prompts/module.yaml]
+  files_change: []
+  tests: [tests/unit/test_prompt_registry.py]
+  acceptance:
+  - "Cada prompt tem id, versão e SHA-256 do conteúdo, calculados no carregamento"
+  - "Blocos não confiáveis só entram pelo delimitador de app/llm/egress/untrusted_wrap.py"
+  - "Prompt inexistente ou com versão inválida falha com erro explícito, sem texto parcial"
+  evidence: []
+  validated_on: null
+  notes: Ficheiros .md são dados; nunca são executados como código.
+- id: HCW-02-007
+  title: Aplicar orçamento de tokens e de ferramentas
+  phase: 2
+  status: PLANNED
+  priority: high
+  depends_on: [HCW-02-003]
+  requirements: [FR-006, OPS-005]
+  modules: [app/llm/budget]
+  files_new: [app/llm/budget/__init__.py, app/llm/budget/tokens.py, app/llm/budget/tools_budget.py, app/llm/budget/README.txt, app/llm/budget/module.yaml]
+  files_change: []
+  tests: [tests/unit/test_llm_budget.py]
+  acceptance:
+  - "Estimativa de tokens é determinística e independente do fornecedor"
+  - "Exceder o limite gera erro tipado antes da chamada e emite evento de orçamento"
+  - "Ollama recebe lista curta de ferramentas com descrições breves, nunca o catálogo completo"
+  evidence: []
+  validated_on: null
+  notes: Limites vêm de configuração, não de constantes espalhadas no código.
+- id: HCW-02-008
+  title: Classificar erros, retries e cooldown por tipo
+  phase: 2
+  status: PLANNED
+  priority: high
+  depends_on: [HCW-02-003]
+  requirements: [FR-006]
+  modules: [app/llm/router]
+  files_new: [app/llm/router/__init__.py, app/llm/router/errors.py, app/llm/router/cooldown.py, app/llm/router/README.txt, app/llm/router/module.yaml]
+  files_change: []
+  tests: [tests/unit/test_router_cooldown.py]
+  acceptance:
+  - "Timeout, HTTP 429 e resposta inválida são classificados separadamente"
+  - "Retries são limitados a duas tentativas por tipo de erro, com jitter desactivado em testes"
+  - "Cooldown é injetável por relógio falso e diferente para 429, timeout e erro inválido"
+  evidence: []
+  validated_on: null
+  notes: Nenhum sleep real nos testes de cooldown.
+- id: HCW-02-009
+  title: Implementar escada de modelos e matriz de fallback
+  phase: 2
+  status: PLANNED
+  priority: critical
+  depends_on: [HCW-02-005, HCW-02-007, HCW-02-008]
+  requirements: [FR-006, FR-007]
+  modules: [app/llm/router]
+  files_new: [app/llm/router/ladder.py]
+  files_change: [app/llm/router/README.txt, app/llm/router/module.yaml]
+  tests: [tests/unit/test_ladder.py]
+  acceptance:
+  - "Gemini para Gemini é automático; Gemini para outro cloud exige autorização explícita"
+  - "Gemini para Ollama só em tarefas leves; em tarefas de código pausa e pede decisão"
+  - "A escada é carregada de ficheiro de configuração; remover um modelo não exige mudar código"
+  evidence: []
+  validated_on: null
+  notes: Matriz de fallback completa é evidência obrigatória do gate.
+- id: HCW-02-010
+  title: Criar adaptadores Gemini Live, Gemini texto e Ollama
+  phase: 2
+  status: PLANNED
+  priority: critical
+  depends_on: [HCW-02-006, HCW-02-007, HCW-02-009]
+  requirements: [FR-005, NFR-003, OPS-005]
+  modules: [app/llm/providers]
+  files_new: [app/llm/providers/__init__.py, app/llm/providers/gemini_text.py, app/llm/providers/gemini_live.py, app/llm/providers/ollama.py, app/llm/providers/README.txt, app/llm/providers/module.yaml]
+  files_change: []
+  tests: [tests/unit/test_providers.py, tests/integration/test_llm_real.py]
+  acceptance:
+  - "Adaptadores usam apenas contratos de app/llm/contracts.py e nenhum import de SDK externo"
+  - "Servidor HTTP falso valida pedido, timeout e payload redigido; Ollama real e Gemini real ficam opcionais por env"
+  - "LiveSession é uma Protocol; sessão real só é criada quando ADR-0002 e consentimento autorizam"
+  evidence: []
+  validated_on: null
+  notes: URLs base vêm de configuração; não inventar endpoints nem instalar dependências.
+- id: HCW-02-011
+  title: Adicionar comando hcw llm ping
+  phase: 2
+  status: PLANNED
+  priority: medium
+  depends_on: [HCW-02-010]
+  requirements: [OPS-004, OPS-005, FR-005]
+  modules: [app/cli]
+  files_new: [app/cli/llm_ping.py]
+  files_change: [app/cli/main.py, app/cli/README.txt, app/cli/module.yaml]
+  tests: [tests/integration/test_llm_ping.py]
+  acceptance:
+  - "Sem --allow-cloud, o comando usa apenas fornecedor local ou modo simulado"
+  - "Saída mostra fornecedor, latência em ms e pré-visualização integralmente redigida"
+  - "Falha de consentimento ou timeout termina com código de saída diferente de zero e mensagem sem segredo"
+  evidence: []
+  validated_on: null
+  notes: Demonstração da Fase 2; manter app/cli/main.py abaixo de 300 linhas.
+- id: HCW-02-012
+  title: Consolidar segurança e evidências da Fase 2
+  phase: 2
+  status: PLANNED
+  priority: high
+  depends_on: [HCW-02-004, HCW-02-009, HCW-02-011]
+  requirements: [SEC-002, DOC-001, OPS-005]
+  modules: [docs/reports]
+  files_new: [docs/reports/phase-02-security.md]
+  files_change: [THREAT_MODEL.md, docs/MAP.md]
+  tests: [tests/security/test_egress.py]
+  acceptance:
+  - "Relatório apresenta matriz de fallback, zero segredos no payload, quotas activas e consentimento verificado"
+  - "THREAT_MODEL.md regista ameaças de egress, prompt injection e falha de fornecedor com testes correspondentes"
+  - "Evidências citam comandos executados e ficheiros reais, sem afirmar validação sem teste"
+  evidence: []
+  validated_on: null
+  notes: Fechar com hcw-security-review antes do gate.
 - id: HCW-02-999
   title: Gate da Fase 2
   phase: 2
@@ -689,6 +887,17 @@ tasks:
   priority: critical
   depends_on:
   - HCW-02-001
+  - HCW-02-002
+  - HCW-02-003
+  - HCW-02-004
+  - HCW-02-005
+  - HCW-02-006
+  - HCW-02-007
+  - HCW-02-008
+  - HCW-02-009
+  - HCW-02-010
+  - HCW-02-011
+  - HCW-02-012
   requirements: []
   modules: []
   files_new: []

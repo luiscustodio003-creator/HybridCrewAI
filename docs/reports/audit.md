@@ -77,3 +77,42 @@ Não se propõem tarefas novas fora do plano aprovado. As lacunas acima já têm
 - `HCW-00-005` — inicializar Git, `.gitignore` e etiqueta inicial.
 - `HCW-00-009` / `HCW-00-010` — spike do motor e ADR-0001, sem instalar CrewAI nem LiteLLM antes da decisão aprovada.
 - `HCW-00-011` — gerar `docs/MAP.md` a partir desta auditoria.
+
+## Auditoria incremental para a Fase 2 — 2026-11-22
+
+### Resumo
+Esta secção actualiza o inventário antes do planeamento do gateway LLM. Não substitui a baseline da Fase 0: acrescenta o estado real depois das Fases 0 e 1.
+ O commit actual é `3ec3fe6`, com as etiquetas locais `phase-00-go` e `phase-01-go`; `git status` mostra apenas `STATE .md` por decidir e, durante o planeamento, as alterações a `tasks.yaml` e `docs/requirements.yaml`.
+
+### Estrutura e pontos de entrada
+Existe `app/` com `app/core/config/`, `events/`, `logging/`, `tasks/`, `results/` e `app/cli/`. Ponto de entrada de utilizador: `app.cli:main` (`hcw`). Pontos de controlo: `scripts/plan_status.py`, `scripts/run_gate.py`, `scripts/check_traceability.py`, `scripts/validate_plan.py`, `scripts/check_modules.py` e `scripts/check_file_size.py`. Ainda não existe `app/llm/`, `app/ui/` nem workspace de execução.
+
+### Módulos
+| Módulo | Estado | Interface pública | Testes | Notas |
+|---|---|---|---|---|
+| `app/core/config` | existente e validado | `load_settings`, `Settings`, `Secrets`, `SecretStr` | `tests/unit/test_config.py` | Já tem `cloud_enabled` e lista de segredos permitidos |
+| `app/core/events` | existente e validado | `Event`, `JsonlSink`, `new_event` | `tests/unit/test_events.py` | Base para eventos de chamada LLM |
+| `app/core/logging` | existente e validado | `SecretRegistry`, `redact`, `setup_logging` | `tests/unit/test_logging.py` | Reutilizar no egress |
+| `app/core/tasks` | existente e validado | `Task`, `SqliteTaskStore`, `transitar` | `tests/unit/test_state_machine.py`, `tests/recovery/test_kill_resume.py` | SQLite real disponível para consentimento |
+| `app/core/results` | existente e validado | `ToolResult`, `validar_tool_result` | `tests/contracts/test_tool_result.py` | Pertence à Fase 1, não duplicar |
+| `app/cli` | existente e validado | `main`, `follow`, `doctor` | `tests/integration/test_cli.py` | Extensível com `hcw llm ping` |
+| `scripts/` | existente e incompleto | guardas de plano e gate | `tests/scripts/` | `ruff check .` e `mypy scripts` ainda falham por erros pré-existentes |
+| `app/llm` | proposto | — | — | Fase 2; contratos, egress, router, budget, prompts e providers |
+
+### Dependências
+`pip freeze` no `.venv` confirma `pytest==9.2.0`, `ruff==0.17.6`, `mypy==2.4.1`, `PyYAML==6.0.4`. Não aparecem `httpx`, `requests`, `google-genai`, `litellm` nem `ollama`. O congelamento global `docs/reports/baseline-freeze.txt` regista `google-genai==2.34.0` e `httpx==0.28.1`, mas não são dependências do `.venv`. O plano da Fase 2 não instala nada: usa `urllib.request` e `http.server` da stdlib e mantém integrações reais opcionais.
+
+### Testes
+Comando executado: `.venv\Scripts\python.exe -m pytest -q`. Resultado: 90 testes passam, 0 falhas, 0 desactivados. `validate_plan.py`, `check_traceability.py`, `check_modules.py` e `check_file_size.py` também passaram sem erros. Não foram executados pedidos a Gemini nem a Ollama: não há credenciais, endereços configurados nem serviços externos no `.venv`.
+
+### Lacunas e riscos
+- Não existe ainda contrato comum para modelos; cada integração directa criaria acoplamento e chamadas sem timeout (risco para FR-005).
+- Não existe política de egress: um pedido cloud poderia transportar segredos
+ ou conteúdo não confiável sem delimitação (risco para SEC-002).
+- O tipo de conta Gemini continua por decidir (P-05); o consentimento tem de tratar `desconhecido` como negação.
+- URLs de fornecedores não estão definidas em configuração; não devem ser inventadas no código.
+- A procura de segredos encontrou apenas valores falsos e deliberados em testes e em `app/cli/doctor.py` (`sk-...`), nunca credenciais reais.
+- Ainda há erros pré-existentes em `scripts/` associados a `HCW-00-006`; não bloqueiam o gate, mas impedem `ruff check .` e `mypy scripts` globais limpos.
+
+### Tarefas propostas
+O plano detalhado da Fase 2 está em `HCW-02-002` a `HCW-02-012`, com ADR-0002 como primeira paragem de aprovação. Não se propõe trabalho fora da ficha `docs/phases/phase-02.md`.

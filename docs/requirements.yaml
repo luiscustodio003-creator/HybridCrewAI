@@ -12,6 +12,24 @@ requirements:
 - id: FR-004
   text: Resultados de ferramentas verificados (done, unverified, failed, ask, started)
   status: ACTIVE
+- id: FR-005
+  text: Gateway único para modelos, com contratos estáveis e timeout obrigatório
+  status: ACTIVE
+- id: FR-006
+  text: Escada de modelos configurável, com fallback, retries limitados e cooldown por erro
+  status: ACTIVE
+- id: FR-007
+  text: Consentimento cloud explícito e tipo de conta registados antes de qualquer pedido externo
+  status: ACTIVE
+- id: SEC-002
+  text: Payloads para fornecedores sem segredos e com conteúdo não confiável delimitado
+  status: ACTIVE
+- id: NFR-005
+  text: Prompts versionados, rastreáveis e substituíveis sem alterar código
+  status: ACTIVE
+- id: OPS-005
+  text: Pedidos ao gateway observáveis com latência, fornecedor e pré-visualização redigida
+  status: ACTIVE
 - id: SEC-001
   text: Nenhum segredo em código, logs ou ficheiros do projecto
   status: ACTIVE
