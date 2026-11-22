@@ -1,0 +1,7 @@
+name: core/results
+purpose: Resultados de ferramentas com estados verificáveis e prova obrigatória para done
+public_api: [ToolResult, ToolResultError, ToolStatus, new_tool_result, validar_tool_result]
+depends_on: [biblioteca padrão dataclasses, enum]
+events_emitted: []
+events_consumed: []
+tests: [tests/contracts/test_tool_result.py]

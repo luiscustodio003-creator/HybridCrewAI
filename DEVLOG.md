@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — HCW-01-008
+Feito: implementado `app/core/results/` com `statuses.py` (cinco estados), `tool_result.py` (`ToolResult`, `ToolResultError`, `new_tool_result`, `validar_tool_result`), `__init__.py`, `README.txt` e `module.yaml`. `done` exige evidência não vazia; cada estado tem regras próprias de campos obrigatórios e proibidos.
+Falhou / por resolver: Ruff apontou `PLR0912` (21 ramos) e `UP037`; validação refeita com tabelas `_REQUERIDOS`/`_PROIBIDOS`. Mypy rejeitou `dict.get` com `.value` do `StrEnum`; passou a usar o próprio membro como chave.
+Ficheiros tocados: `app/core/results/*`, `tests/contracts/test_tool_result.py`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-01-008.md`.
+Testes executados: 10 testes de contrato passam; 87 testes na regressão completa; `ruff check`, `mypy`, `check_modules.py`, `check_file_size.py`, `check_traceability.py` e `plan_status.py` sem erros.
+Próxima acção: executar HCW-01-009 (CLI de logs e doctor).
+
 ## 2026-11-22 — HCW-01-007
 Feito: implementado `app/core/tasks/store_sqlite.py` com `SqliteTaskStore` (initialize, save, get, list_tasks, recover_orphans) usando SQLite real e `busy_timeout`. Actualizados `module.yaml`, `README.txt` e `__init__.py`. Teste real `tests/recovery/test_kill_resume.py` cria tarefa em subprocesso, sinaliza `PRONTO:`, sofre `kill()` do pai e é recuperada como `INTERRUPTED`, voltando depois a `QUEUED`/`RUNNING`.
 Falhou / por resolver: `B904` do Ruff no `raise AssertionError` dentro de `except Empty`; corrigido com `raise ... from None`.

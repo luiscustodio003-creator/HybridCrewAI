@@ -568,7 +568,7 @@ tasks:
 - id: HCW-01-008
   title: ToolResult com os cinco estados verificados
   phase: 1
-  status: APPROVED
+  status: VALIDATED
   priority: high
   depends_on:
   - HCW-01-002
@@ -580,6 +580,7 @@ tasks:
   files_new:
   - app/core/results/tool_result.py
   - app/core/results/statuses.py
+  - app/core/results/__init__.py
   - app/core/results/README.txt
   - app/core/results/module.yaml
   files_change: []
@@ -589,8 +590,12 @@ tasks:
   - '''done'' sem evidência é rejeitado pelo esquema'
   - Os cinco estados done, unverified, failed, ask e started são aceites
   - app/core/results tem README.txt e module.yaml com as chaves obrigatórias
-  evidence: []
-  validated_on: null
+  evidence:
+  - tests/contracts/test_tool_result.py
+  - app/core/results/tool_result.py
+  - reports/tasks/HCW-01-008.md
+  validated_on: 2026-11-22
+  notes: '10 testes de contrato passam; 87 testes na regressão completa. Schema rejeita done sem evidência e aceita os cinco estados.'
 - id: HCW-01-009
   title: 'CLI: hcw logs --follow e hcw doctor'
   phase: 1
