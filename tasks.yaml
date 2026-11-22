@@ -152,7 +152,7 @@ tasks:
 - id: HCW-00-005
   title: Inicializar Git, .gitignore e etiqueta inicial
   phase: 0
-  status: NOT_STARTED
+  status: VALIDATED
   priority: critical
   depends_on: []
   requirements:
@@ -165,8 +165,12 @@ tasks:
   acceptance:
   - .env, .venv e logs ignorados
   - etiqueta phase-00-start criada
-  evidence: []
-  validated_on: null
+  - ligar o remoto origin a https://github.com/luiscustodio003-creator/HybridCrewAI
+  evidence:
+  - docs/reports/hcw-00-005.txt
+  - .gitignore
+  validated_on: 2026-11-22
+  notes: Primeiro push só com aprovação explícita do utilizador; sem --force, sem mudar histórico e sem apagar ramos.
 - id: HCW-00-006
   title: Instalar os scripts de guarda (tamanho, módulos, plano, Skills) com testes
   phase: 0

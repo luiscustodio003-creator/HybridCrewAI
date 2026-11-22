@@ -1,0 +1,23 @@
+Relatório de validação — HCW-00-005
+Data: 2026-11-22
+
+Estado herdado
+- Repositório Git já inicializado em HCW-00-001; `.gitignore` já criado e cometido em `fd9ac9c`.
+- Nesta tarefa foi acrescentado ao plano o critério de ligar o remoto `origin`, antes da execução, pela Skill `hcw-plan`.
+
+Critérios de aceitação
+1. ".env, .venv e logs ignorados" — PASSA. `git check-ignore -v .env .venv/ logs/` devolveu:
+   - `.gitignore:4:.env	.env`
+   - `.gitignore:1:.venv/	.venv/`
+   - `.gitignore:6:logs/	logs/`
+2. "etiqueta phase-00-start criada" — PASSA. `git tag -l` lista `phase-00-start`; `git show-ref --tags` mostra `fd9ac9cb5ebfb8202841126ee2cc5f2cde3cb151 refs/tags/phase-00-start`. A etiqueta aponta para o commit inicial (`fd9ac9c`), que representa o ponto de partida da Fase 0.
+3. "ligar o remoto origin a https://github.com/luiscustodio003-creator/HybridCrewAI" — PASSA. `git remote -v` mostra fetch e push para esse URL.
+
+Segurança e limites
+- Nenhuma operação de rede: `git remote add` e `git tag` são locais.
+- Nenhum push, `--force`, mudança de histórico ou apagar ramos.
+- Nenhum segredo, token, `.env` ou `*.key` foi adicionado ao índice.
+- Ataque verificado: acção reportada como feita sem o ter sido — contramedida: verificação directa com `git remote -v`, `git tag -l` e `git show-ref --tags`.
+
+Observação
+- O ficheiro legado `STATE .md` (com espaço) continua fora do Git, à espera de decisão de renomeação; `git status --short` mostra apenas esse ficheiro e as alterações desta tarefa.

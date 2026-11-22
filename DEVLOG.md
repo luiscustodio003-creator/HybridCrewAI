@@ -22,6 +22,13 @@ Ficheiros tocados: `pyproject.toml` (novo), `docs/reports/hcw-00-004.txt` (novo)
 Testes executados: `python -m ruff check scripts tests` → 5 erros de código, 0 de configuração; `python -m mypy --config-file pyproject.toml scripts` → 3 erros de tipagem, 0 de configuração; `python -m pytest -q` → 18 testes, sucesso; `python scripts/validate_plan.py` → 0 erros, 0 avisos; `python scripts/check_traceability.py` → 0 erros, 0 avisos; `python scripts/check_file_size.py` → 0 erros, 0 avisos; `python scripts/lint_skills.py` → 0 erros, 0 avisos; `python scripts/check_modules.py` → 0 erros, 1 aviso (`app/` ainda não existe); `python scripts/plan_status.py` → Fase 00 `3/12`.
 Próxima acção: pedir aprovação ao utilizador para `HCW-00-005`; ao aprová-la, usar `hcw-plan` para acrescentar a ligação do remoto `origin` antes de implementar; primeiro push só com aprovação explícita.
 
+## 2026-11-22 — HCW-00-005
+Feito: tarefa aprovada pelo utilizador e actualizada com `hcw-plan` antes da execução, para incluir a ligação do remoto `origin`. Confirmados os critérios: `.env`, `.venv/` e `logs/` ignorados por `.gitignore`; etiqueta `phase-00-start` criada no commit inicial `fd9ac9c`; remoto `origin` apontando para o repositório indicado pelo utilizador. Criado `docs/reports/hcw-00-005.txt`.
+Falhou / por resolver: nada nesta tarefa. Nenhum push foi feito. `HCW-00-006` continua `IMPLEMENTED` com erros de lint/tipagem pré-existentes; `STATE .md` (com espaço) permanece fora do Git.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `docs/reports/hcw-00-005.txt` (novo).
+Testes executados: `git check-ignore -v .env .venv/ logs/` → 3 regras do `.gitignore` confirmadas; `git tag -l` → `phase-00-start`; `git show-ref --tags` → `fd9ac9cb5ebfb8202841126ee2cc5f2cde3cb151 refs/tags/phase-00-start`; `git remote -v` → fetch/push para `https://github.com/luiscustodio003-creator/HybridCrewAI`; `python -m pytest -q` → 18 testes, sucesso; `python scripts/validate_plan.py` → 0 erros, 0 avisos; `python scripts/check_traceability.py` → 0 erros, 0 avisos; `python scripts/plan_status.py` → Fase 00 `4/12`.
+Próxima acção: pedir aprovação para o commit de `HCW-00-005` e para `HCW-00-007`; primeiro push só com aprovação explícita.
+
 ## 2026-11-22 — projecto de raiz
 Feito: pacote copiado para a raiz; ambiente .venv criado; baseline-freeze guardada.
 Decisão: o código anterior foi perdido. HCW-00-002 passa a DEPRECATED; HCW-00-001 passa a registar o arranque de raiz.
