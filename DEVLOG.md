@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — orçamento validado
+Feito: `HCW-02-007` validada; `app/llm/budget/` estima tokens de forma determinística, bloqueia pedidos/tarefas acima do limite com `BudgetExceeded` e evento `budget.exceeded`, e limita ferramentas e descrições para Ollama.
+Falhou / por resolver: nada nesta tarefa.
+Ficheiros tocados: `app/llm/budget/*`, `app/core/config/defaults.py`, `tests/unit/test_llm_budget.py`, `app/llm/README.txt`, `app/llm/module.yaml`, `docs/reports/hcw-02-007.md`, `docs/MAP.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `pytest -q` → 114 passam; `ruff`/`mypy` nos ficheiros tocados limpos; guardas sem erros.
+Próxima acção: executar `HCW-02-008`, classificação de erros, retries e cooldown.
+
 ## 2026-11-22 — prompts versionados validados
 Feito: `HCW-02-006` validada; `app/llm/prompts/` carrega prompts Markdown com id, versão e SHA-256, rejeita metadados inválidos e só aceita conteúdo não confiável pelo delimitador de egress.
 Falhou / por resolver: nada nesta tarefa.

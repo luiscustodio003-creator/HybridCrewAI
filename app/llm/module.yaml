@@ -1,7 +1,7 @@
 name: llm
-purpose: Contratos, consentimento cloud e egress do gateway de modelos
-public_api: [AccountType, CloudConsentStore, EgressPolicy, ErrorKind, ModelRequest, ModelResponse, PromptRecord, PromptRegistry, ProviderError, ProviderKind]
-depends_on: [core-config, core-logging]
-events_emitted: []
+purpose: Contratos, consentimento cloud, egress e orçamento do gateway de modelos
+public_api: [AccountType, BudgetExceeded, BudgetLimits, CloudConsentStore, EgressPolicy, ErrorKind, ModelRequest, ModelResponse, PromptRecord, PromptRegistry, ProviderError, ProviderKind, TokenBudget, ToolSpec, estimate_tokens, select_tools]
+depends_on: [core-config, core-events, core-logging]
+events_emitted: [budget.exceeded]
 events_consumed: []
-tests: [tests/unit/test_llm_contracts.py, tests/unit/test_llm_consent.py, tests/unit/test_prompt_registry.py, tests/security/test_egress.py]
+tests: [tests/unit/test_llm_contracts.py, tests/unit/test_llm_consent.py, tests/unit/test_llm_budget.py, tests/unit/test_prompt_registry.py, tests/security/test_egress.py]

@@ -41,6 +41,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Redacção e egress | `app/llm/egress/` | `policy.py`, `secret_scan.py`, `untrusted_wrap.py` | validados em `HCW-02-004` |
 | Consentimento cloud | `app/llm/` | `consent.py` | validado em `HCW-02-005` |
 | Prompts versionados | `app/llm/prompts/` | `registry.py`, `system.md`, `revisao.md` | validados em `HCW-02-006` |
+| Orçamento de modelo | `app/llm/budget/` | `tokens.py`, `tools_budget.py` | validado em `HCW-02-007` |
 | Auditoria inicial | `docs/reports/` | `audit.md` | VALIDADA em HCW-00-001 |
 | Baseline de ambiente | `docs/reports/` | `baseline-freeze.txt` | VALIDADA em HCW-00-001 |
 | Baseline de testes | `docs/reports/` | `baseline-tests.txt` | histórico: sem testes iniciais |

@@ -1,0 +1,7 @@
+name: llm-budget
+purpose: Orçamento de tokens e selecção curta de ferramentas antes de chamadas ao modelo
+public_api: [BudgetExceeded, BudgetLimits, TokenBudget, ToolSpec, estimate_tokens, select_tools]
+depends_on: [core-config, core-events]
+events_emitted: [budget.exceeded]
+events_consumed: []
+tests: [tests/unit/test_llm_budget.py]

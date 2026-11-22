@@ -793,7 +793,7 @@ tasks:
 - id: HCW-02-007
   title: Aplicar orçamento de tokens e de ferramentas
   phase: 2
-  status: APPROVED
+  status: VALIDATED
   priority: high
   depends_on: [HCW-02-003]
   requirements: [FR-006, OPS-005]
@@ -805,9 +805,12 @@ tasks:
   - "Estimativa de tokens é determinística e independente do fornecedor"
   - "Exceder o limite gera erro tipado antes da chamada e emite evento de orçamento"
   - "Ollama recebe lista curta de ferramentas com descrições breves, nunca o catálogo completo"
-  evidence: []
-  validated_on: null
-  notes: Limites vêm de configuração, não de constantes espalhadas no código.
+  evidence:
+  - docs/reports/hcw-02-007.md
+  - app/llm/budget/tokens.py
+  - tests/unit/test_llm_budget.py
+  validated_on: 2026-11-22
+  notes: Limites vêm de app.core.config.defaults e são injectados por BudgetLimits; contadores são por processo.
 - id: HCW-02-008
   title: Classificar erros, retries e cooldown por tipo
   phase: 2

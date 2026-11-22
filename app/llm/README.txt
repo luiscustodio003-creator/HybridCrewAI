@@ -1,8 +1,8 @@
 MÓDULO: llm
 
-FINALIDADE: Definir os contratos, o consentimento cloud e a política de egress do gateway de modelos, sem expor tipos de SDK externo.
+FINALIDADE: Definir os contratos, o consentimento cloud, a política de egress e o orçamento do gateway de modelos, sem expor tipos de SDK externo.
 
-FUNCIONALIDADES: Modelos de pedido, resposta e erro; validação de timeout; redacção de segredos; consentimento persistido sem credenciais; recusa de cloud sem autorização.
+FUNCIONALIDADES: Modelos de pedido, resposta e erro; validação de timeout; redacção de segredos; consentimento persistido sem credenciais; recusa de cloud sem autorização; estimativa de tokens; limites por pedido e tarefa; selecção curta de ferramentas.
 
 ESTRUTURA:
 - __init__.py — API pública do módulo.
@@ -10,21 +10,22 @@ ESTRUTURA:
 - consent.py — consentimento cloud e tipo de conta Gemini em SQLite.
 - egress/ — redacção, autorização e delimitação de conteúdo não confiável.
 - prompts/ — prompts versionados e renderização segura.
+- budget/ — orçamento de tokens e ferramentas.
 - README.txt — esta descrição.
 - module.yaml — metadados para as guardas do projecto.
 
-INTERFACE PÚBLICA: ProviderKind, ErrorKind, ModelRequest, ModelResponse, ProviderError, AccountType, CloudConsentStore, EgressPolicy, PromptRegistry, PromptRecord.
+INTERFACE PÚBLICA: ProviderKind, ErrorKind, ModelRequest, ModelResponse, ProviderError, AccountType, CloudConsentStore, EgressPolicy, PromptRegistry, PromptRecord, BudgetExceeded, BudgetLimits, TokenBudget, ToolSpec, estimate_tokens, select_tools.
 
-DEPENDÊNCIAS: internas — app.core.logging.SecretRegistry; externas — sqlite3 e urllib da stdlib.
+DEPENDÊNCIAS: internas — app.core.events, app.core.logging.SecretRegistry; externas — sqlite3 e urllib da stdlib.
 
-CONFIGURAÇÃO: CLOUD_CONSENT_DEFAULT e GEMINI_ACCOUNT_TYPE_DEFAULT em app.core.config.defaults; o timeout é obrigatório em cada pedido.
+CONFIGURAÇÃO: CLOUD_CONSENT_DEFAULT, GEMINI_ACCOUNT_TYPE_DEFAULT, DEFAULT_MAX_TOKENS_PER_REQUEST, DEFAULT_MAX_TOKENS_PER_TASK, DEFAULT_MAX_TOOLS_PER_REQUEST e DEFAULT_MAX_TOOL_DESCRIPTION_CHARS em app.core.config.defaults; o timeout é obrigatório em cada pedido.
 
 UTILIZAÇÃO:
 from app.llm import ModelRequest, ProviderKind
 pedido = ModelRequest(provider=ProviderKind.FAKE, model="fake-1", prompt="Diz olá", timeout_s=5.0, task_id="HCW-02-003", correlation_id="corr-1")
 
-TESTES: .venv\Scripts\python.exe -m pytest -q tests/unit/test_llm_contracts.py tests/unit/test_llm_consent.py tests/unit/test_prompt_registry.py tests/security/test_egress.py
+TESTES: .venv\Scripts\python.exe -m pytest -q tests/unit/test_llm_contracts.py tests/unit/test_llm_consent.py tests/unit/test_llm_budget.py tests/unit/test_prompt_registry.py tests/security/test_egress.py
 
-LIMITAÇÕES: não contacta fornecedores reais, não escolhe modelos nem impõe orçamento; essas responsabilidades pertencem às tarefas seguintes.
+LIMITAÇÕES: não contacta fornecedores reais nem escolhe modelos; a estimativa de tokens é determinística mas aproximada e os contadores não persistem entre processos.
 
-RELAÇÕES: usado pelo planeado roteador, egress, budget, providers e CLI; usa app.core.logging.
+RELAÇÕES: usado pelo planeado roteador, providers e CLI; usa app.core.events e app.core.logging.
