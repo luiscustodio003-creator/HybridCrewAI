@@ -1,7 +1,7 @@
 # Estado do projecto
-Fase actual: 0 · Gate: pendente (5/12 validadas)
-Última tarefa validada: HCW-00-007 (2026-11-22) — cometida em `be5a1bd`; `.pre-commit-config.yaml` com Ruff e guardas locais; evidência em `docs/reports/hcw-00-007.txt`
-A meio: HCW-00-008 está `IMPLEMENTED`: `.github/workflows/ci.yml` corrige Windows/Linux com Python 3.12, guardas, pytest e validação do pre-commit; evidência em `docs/reports/hcw-00-008.txt`. Falta commit, primeiro push e ver o CI verde nos runners reais. HCW-00-006 continua `IMPLEMENTED` com erros pré-existentes de Ruff/mypy.
-Bloqueios: nenhum comando falhou; commit de HCW-00-008 e primeiro push ainda não autorizados.
-Próxima acção exacta: pedir ao utilizador autorização para o commit `HCW-00-008` e para o primeiro push, de forma a observar a CI real em `ubuntu-latest` e `windows-latest`.
-Decisões pendentes: commit de `HCW-00-008`; primeiro push só com aprovação explícita do utilizador (sem `--force`, sem mudar histórico, sem apagar ramos); validação de `HCW-00-006`; renomear `STATE .md` (com espaço, fora do Git) para `STATE.md`; ADR-0001 — motor de agentes, via spike `HCW-00-009` (não instalar CrewAI nem LiteLLM antes da decisão); P-02 ferramentas de redes; P-03 finalidade do REA; P-04 hardware; P-05 tipo de conta Gemini
+Fase actual: 0 · Gate: pendente (6/12 validadas)
+Última tarefa validada: HCW-00-008 (2026-11-22) — CI real verde em `ubuntu-latest` e `windows-latest` (run `45038923836`); cometida em `aaf34ce`; primeiro push feito para `origin/master`; evidência em `docs/reports/hcw-00-008.txt`
+A meio: HCW-00-006 continua `IMPLEMENTED` (scripts com 18 testes a passar, mas 5 erros de `ruff`, 3 de `mypy` e 13 ficheiros por formatar); os hooks de Ruff analisam só ficheiros em stage. A CI não bloqueia por Ruff/mypy enquanto `HCW-00-006` não for corrigido.
+Bloqueios: nenhum
+Próxima acção exacta: pedir aprovação para a tarefa `HCW-00-009` (spike do motor de agentes: núcleo próprio vs CrewAI vs LangGraph); não instalar CrewAI nem LiteLLM antes da decisão.
+Decisões pendentes: validação de `HCW-00-006`; renomear `STATE .md` (com espaço, fora do Git) para `STATE.md`; ADR-0001 — motor de agentes, via spike `HCW-00-009`; P-02 ferramentas de redes; P-03 finalidade do REA; P-04 hardware; P-05 tipo de conta Gemini. Push futuro só com aprovação explícita (sem `--force`, sem mudar histórico, sem apagar ramos).

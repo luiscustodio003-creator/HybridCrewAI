@@ -226,7 +226,7 @@ tasks:
 - id: HCW-00-008
   title: Configurar CI (GitHub Actions) em Windows e Linux
   phase: 0
-  status: IMPLEMENTED
+  status: VALIDATED
   priority: high
   depends_on:
   - HCW-00-004
@@ -245,8 +245,8 @@ tasks:
   - .github/workflows/ci.yml
   - docs/reports/hcw-00-008.txt
   notes:
-  - Validação final depende do primeiro push e da execução real do GitHub Actions nos runners ubuntu-latest e windows-latest; sem push autorizado, a tarefa fica IMPLEMENTED e não VALIDATED.
-  validated_on: null
+  - Primeiro push autorizado; run 45038923836 concluiu com success nos jobs ubuntu-latest (137258780846) e windows-latest (137258781164); URL: https://github.com/luiscustodio003-creator/HybridCrewAI/actions/runs/45038923836
+  validated_on: 2026-11-22
 - id: HCW-00-009
   title: 'Spike do motor de agentes: núcleo próprio vs CrewAI vs LangGraph'
   phase: 0

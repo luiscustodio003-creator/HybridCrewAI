@@ -1,4 +1,4 @@
-Relatório de execução — HCW-00-008 (IMPLEMENTED, por validar)
+Relatório de execução — HCW-00-008 (VALIDATED)
 Data: 2026-11-22
 
 Ficheiro criado
@@ -15,16 +15,20 @@ Evidência local real
 - Windows: `python -m pre_commit validate-config .pre-commit-config.yaml` → sem erros.
 - Linux via WSL Ubuntu / Python 3.12.3: `validate_plan`, `check_traceability`, `check_file_size`, `lint_skills` e `check_modules` → todos OK; `WSL_EXIT=0`.
 
-Limitação que impede `VALIDATED`
-- O critério "CI verde nos dois sistemas operativos" exige a execução real do GitHub Actions nos runners `ubuntu-latest` e `windows-latest`.
-- Nenhum push foi autorizado, logo o workflow ainda não correu no GitHub. O WSL cobre a parte Linux dos guardas, mas não substitui o runner nem executa `pytest` em Linux (o pytest não está instalado no WSL e não foi autorizada instalação de pacotes).
-- Por isso a tarefa fica `IMPLEMENTED`, com esta evidência, e não é marcada `VALIDATED`.
+Resultado real da CI (2026-11-22)
+- Primeiro push autorizado: `git push -u origin master` → `* [new branch] master -> master`; `branch 'master' set up to track 'origin/master'`.
+- Commit validado: `aaf34ce04e109d3ce7f5faab7acb1e991e783a14` — `HCW-00-008: configura CI em Windows e Linux`.
+- Run `45038923836`: `status: completed`, `conclusion: success`, `event: push`, `run_number: 1`.
+- Job `137258780846` — `Verificações em ubuntu-latest`: `status: completed`, `conclusion: success`.
+- Job `137258781164` — `Verificações em windows-latest`: `status: completed`, `conclusion: success`.
+- URL: https://github.com/luiscustodio003-creator/HybridCrewAI/actions/runs/45038923836
+- Critério "CI verde nos dois sistemas operativos": provado pela execução real nos runners `ubuntu-latest` e `windows-latest`.
 
 Revisão de segurança
 - Ameaça "Dependência ou ferramenta comprometida": contramedida — versões fixadas em `requirements.lock.txt`, apenas ações oficiais com versões confirmadas; teste — leitura dos README oficiais e validação local do workflow.
 - Ameaça "Acção reportada como feita sem o ter sido": contramedida — evidência por saída real e códigos de saída (`WSL_EXIT=0`); teste — execução dos guardas no Windows e no WSL.
 - Nenhum segredo, token ou credencial no workflow; `permissions: contents: read` e `persist-credentials: false`.
-- Nenhuma operação de rede, instalação de pacotes ou push foi executada localmente nesta tarefa.
+- Nenhuma instalação de pacotes foi feita localmente. A única operação de rede local autorizada foi o primeiro push; a instalação de dependências ocorreu dentro dos runners isolados do GitHub Actions.
 
 Observação
 - `ruff check` e `mypy` não são passos bloqueantes neste workflow porque `HCW-00-006` ainda está `IMPLEMENTED` com erros pré-existentes (5 de Ruff, 3 de mypy). O workflow valida apenas as versões e a config do pre-commit; esses checks entram quando `HCW-00-006` for corrigido.
