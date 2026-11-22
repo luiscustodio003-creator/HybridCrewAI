@@ -1,0 +1,25 @@
+Relatório de validação — HCW-00-004
+Data: 2026-11-22
+
+Ferramentas confirmadas no .venv
+- ruff 0.17.6
+- mypy 2.4.1 (compiled)
+- pytest 9.2.0
+
+Ficheiro criado: pyproject.toml
+- TOML analisado com tomllib: OK; secções `project` e `tool`.
+- `tool.pytest.ini_options`: testpaths=["tests"], python_files=["test_*.py"], addopts="-q".
+- `tool.ruff`: line-length=88, target-version="py312", src=["scripts","tests"], extend-exclude=[".venv","node_modules"].
+- `tool.ruff.lint`: select=["E","F","I","UP","B","PL"], ignore=["E501"].
+- `tool.ruff.lint.isort`: known-first-party=["scripts"].
+- `tool.ruff.format`: quote-style="double", line-ending="lf".
+- `tool.mypy`: python_version="3.12", warn_unused_configs=true, ignore_missing_imports=true, disallow_untyped_defs=true, warn_redundant_casts=true, warn_unused_ignores=true, no_implicit_optional=true.
+
+Critério de aceitação
+- "ruff check e mypy executam sem erros de configuração" — PASSA. `ruff check scripts tests` e `mypy --config-file pyproject.toml scripts` leram a configuração sem avisos de chave desconhecida, secção inválida ou sintaxe inválida. `pytest -q` usou as opções do pyproject e terminou com `18 passed in 0.56s`.
+
+Observações de código pré-existente (não são erros de configuração)
+- `ruff check scripts tests` reporta 5 erros de código: 4 `PLR2004` em `scripts/lint_skills.py` e 1 `PLW1510` em `scripts/run_gate.py`.
+- `mypy --config-file pyproject.toml scripts` reporta 3 erros de tipagem em `scripts/_common.py`, `scripts/check_modules.py` e `scripts/check_file_size.py`.
+- `ruff format --check scripts tests` indica 13 ficheiros por formatar.
+- Estes pontos ficam para `HCW-00-006` (não aprovada nesta sessão); nenhum foi introduzido por esta tarefa.

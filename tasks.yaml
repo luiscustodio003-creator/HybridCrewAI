@@ -132,7 +132,7 @@ tasks:
 - id: HCW-00-004
   title: Criar pyproject.toml com Ruff, mypy e pytest
   phase: 0
-  status: NOT_STARTED
+  status: VALIDATED
   priority: high
   depends_on:
   - HCW-00-003
@@ -145,8 +145,10 @@ tasks:
   tests: []
   acceptance:
   - ruff check e mypy executam sem erros de configuração
-  evidence: []
-  validated_on: null
+  evidence:
+  - docs/reports/hcw-00-004.txt
+  - pyproject.toml
+  validated_on: 2026-11-22
 - id: HCW-00-005
   title: Inicializar Git, .gitignore e etiqueta inicial
   phase: 0
