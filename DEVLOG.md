@@ -68,3 +68,10 @@ Falhou / por resolver: nada nesta acção. Continuam pendentes a validação de 
 Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
 Testes executados: `python scripts/validate_plan.py` → 0 erros, 0 avisos; `python scripts/check_traceability.py` → 0 erros, 0 avisos; `git status -sb` → `## master...origin/master`.
 Próxima acção: executar `HCW-00-009` com a Skill `hcw-implement`, começando por `docs/reports/spike-agent-engine.md`, sem instalar dependências dos candidatos sem aprovação específica.
+
+## 2026-11-22 — execução de HCW-00-009
+Feito: `docs/reports/spike-agent-engine.md` escrito com o mesmo cenário nos três candidatos (pedido, plano, pausa, morte do processo, retoma), tabela comparativa de linhas de código estimadas/dependências/arranque/retoma, revisão de segurança e fontes oficiais; `HCW-00-009` passou a `IMPLEMENTED` e depois `VALIDATED`, com `validated_on: 2026-11-22` e evidência local no `tasks.yaml`.
+Falhou / por resolver: nada nesta tarefa. Não foi feito commit nem push; `HCW-00-006` continua `IMPLEMENTED`; `STATE .md` (com espaço) permanece untracked. Nenhuma dependência dos candidatos foi instalada ou executada.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `docs/reports/spike-agent-engine.md`.
+Testes executados: `python scripts/validate_plan.py` → 0 erros, 0 avisos; `python scripts/check_traceability.py` → 0 erros, 0 avisos; `python scripts/check_file_size.py` → 0 erros, 0 avisos; `python scripts/plan_status.py` → Fase 00 `7/12`, `VALIDATED=7`, `IMPLEMENTED=1`.
+Próxima acção: pedir aprovação ao utilizador para o commit de `HCW-00-009`; push só com aprovação explícita adicional; depois abrir `HCW-00-010` para escrever `ADR-0001` com a decisão do motor.

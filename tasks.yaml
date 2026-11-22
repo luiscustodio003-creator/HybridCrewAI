@@ -250,7 +250,7 @@ tasks:
 - id: HCW-00-009
   title: 'Spike do motor de agentes: núcleo próprio vs CrewAI vs LangGraph'
   phase: 0
-  status: APPROVED
+  status: VALIDATED
   priority: critical
   depends_on:
   - HCW-00-002
@@ -265,10 +265,12 @@ tasks:
   acceptance:
   - Mesmo cenário (pedido, plano, pausa, matar processo, retoma) nos três candidatos
   - Tabela com linhas de código, dependências, tempo de arranque e facilidade de retoma
-  evidence: []
-  validated_on: null
-  notes: 'Sem código anterior a migrar: manter o spike pequeno (1 a 2 dias). Não instalar CrewAI nem LiteLLM
-    até o ADR-0001 decidir.'
+  evidence:
+  - docs/reports/spike-agent-engine.md
+  validated_on: 2026-11-22
+  notes: 'Documental, sem instalação. Fontes oficiais: https://docs.crewai.com/concepts/flows,
+    https://docs.crewai.com/en/learn/human-feedback-in-flows, https://langchain-ai.github.io/langgraph/concepts/human_in_the_loop/
+    e https://langchain-ai.github.io/langgraph/concepts/persistence. Decisão final fica para ADR-0001.'
 - id: HCW-00-010
   title: 'Redigir ADR-0001: escolha do motor de agentes'
   phase: 0
