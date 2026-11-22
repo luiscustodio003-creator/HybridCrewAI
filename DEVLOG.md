@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — validação HCW-01-002
+Feito: `hcw-test-gate` aplicado; os quatro critérios de aceitação têm teste real e passam. Relatório gravado em `reports/tasks/HCW-01-002.md`. Tarefa passou a `VALIDATED` com `validated_on: 2026-11-22`.
+Falhou / por resolver: nada. `ruff check .` global permanece com 5 erros pré-existentes em `scripts/`.
+Ficheiros tocados: `tests/unit/test_config.py`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-01-002.md`.
+Testes executados: 16 testes do módulo e 34 testes da regressão completa passam; `ruff check app tests/unit/test_config.py`, `mypy app`, `check_file_size.py`, `check_modules.py`, `check_traceability.py`, `validate_plan.py` sem erros.
+Próxima acção: executar HCW-01-003 (segredos).
+
 ## 2026-11-22 — HCW-01-002
 Feito: implementada a configuração em `app/core/config/` com `Settings` imutável, `ConfigError`, `load_settings` e valores por omissão; apenas biblioteca padrão. `pyproject.toml` passou a incluir `app/` no Ruff e mypy. Criados `README.txt` e `module.yaml` do módulo e marcas de pacote `app/__init__.py` e `app/core/__init__.py`. `docs/MAP.md` passou a indicar a Fase 1 em curso.
 Falhou / por resolver: nada na implementação. `ruff check .` global continua a falhar por 5 erros pré-existentes em `scripts/` (HCW-00-006); âmbito desta tarefa está limpo.

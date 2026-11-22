@@ -87,3 +87,38 @@ def test_carregar_configuracao_nao_escreve_ficheiros(tmp_path: Path) -> None:
     settings = load_settings({}, base_dir=base)
     assert list(base.iterdir()) == []
     assert settings.event_log == base / "logs" / "events.jsonl"
+
+
+def test_modulo_usa_apenas_biblioteca_padrao() -> None:
+    root = Path(__file__).resolve().parents[2]
+    package = root / "app" / "core" / "config"
+    permitidos = {
+        "__future__",
+        "app",
+        "collections",
+        "dataclasses",
+        "os",
+        "pathlib",
+        "typing",
+    }
+    for source in package.glob("*.py"):
+        for line in source.read_text(encoding="utf-8").splitlines():
+            if line.startswith(("import ", "from ")):
+                modulo = line.split()[1].split(".")[0]
+                assert modulo in permitidos, f"{source.name}: importação externa {modulo}"
+
+
+def test_pyproject_inclui_app_na_analise() -> None:
+    root = Path(__file__).resolve().parents[2]
+    pyproject = (root / "pyproject.toml").read_text(encoding="utf-8")
+    assert 'src = ["app", "scripts", "tests"]' in pyproject
+    assert 'known-first-party = ["app", "scripts"]' in pyproject
+
+
+def test_modulo_tem_documentacao_obrigatoria() -> None:
+    root = Path(__file__).resolve().parents[2]
+    package = root / "app" / "core" / "config"
+    assert (package / "README.txt").is_file()
+    manifest = (package / "module.yaml").read_text(encoding="utf-8")
+    for key in ("name:", "purpose:", "public_api:", "depends_on:"):
+        assert key in manifest

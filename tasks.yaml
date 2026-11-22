@@ -365,7 +365,7 @@ tasks:
 - id: HCW-01-002
   title: 'Configuração: schema, loader e valores por omissão seguros'
   phase: 1
-  status: IMPLEMENTED
+  status: VALIDATED
   priority: critical
   depends_on:
   - HCW-01-001
@@ -399,8 +399,9 @@ tasks:
   - app/core/config/README.txt
   - app/core/config/module.yaml
   - pyproject.toml
-  validated_on: null
-  notes: '13 testes passam; ruff/mypy/check_modules/check_file_size sem erros no âmbito da tarefa. Revisão de segurança: caminhos absolutos/traversal, inteiro com texto de comando e chave API falsa têm testes dedicados.'
+  - reports/tasks/HCW-01-002.md
+  validated_on: 2026-11-22
+  notes: '16 testes passam; ruff/mypy/check_modules/check_file_size sem erros no âmbito da tarefa. Revisão de segurança: caminhos absolutos/traversal, inteiro com texto de comando e chave API falsa têm testes dedicados.'
 - id: HCW-01-003
   title: 'Credenciais: abstracção do armazenamento seguro (sem segredos em ficheiros)'
   phase: 1
