@@ -1,0 +1,7 @@
+name: core-events
+purpose: Definir eventos imutáveis e entregá-los a destinos, com persistência JSONL
+public_api: [Event, EventContext, EventLevel, new_event, EventBus, EventBusError, EventSink, JsonlSink, read_events]
+depends_on: []
+events_emitted: []
+events_consumed: []
+tests: [tests/unit/test_events.py]

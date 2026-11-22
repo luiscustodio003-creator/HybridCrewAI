@@ -435,7 +435,7 @@ tasks:
 - id: HCW-01-004
   title: 'Eventos: modelo, event bus e escritor JSONL'
   phase: 1
-  status: APPROVED
+  status: VALIDATED
   priority: critical
   depends_on:
   - HCW-01-002
@@ -451,6 +451,7 @@ tasks:
   - app/core/events/jsonl_sink.py
   - app/core/events/README.txt
   - app/core/events/module.yaml
+  - app/core/events/__init__.py
   files_change: []
   tests:
   - tests/unit/test_events.py
@@ -458,8 +459,12 @@ tasks:
   - Todo o evento leva correlation_id, task_id, agent, phase
   - Cada linha do ficheiro JSONL é um evento válido e independente
   - app/core/events tem README.txt e module.yaml com as chaves obrigatórias
-  evidence: []
-  validated_on: null
+  evidence:
+  - tests/unit/test_events.py
+  - app/core/events
+  - reports/tasks/HCW-01-004.md
+  validated_on: 2026-11-22
+  notes: '11 testes de eventos passam; 54 testes na regressão completa. EventContext obriga correlation_id/task_id/agent/phase; JSONL tem uma linha independente por evento; check_modules valida README e module.yaml.'
 - id: HCW-01-005
   title: Logging central com correlação e redacção de segredos
   phase: 1

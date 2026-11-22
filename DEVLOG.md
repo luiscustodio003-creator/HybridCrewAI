@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — HCW-01-004
+Feito: implementado `app/core/events/` com `Event`, `EventContext`, `EventLevel`, `new_event`, `EventBus`, `JsonlSink` e `read_events`. `EventContext` obriga correlation_id/task_id/agent/phase; `JsonlSink` grava uma linha JSON por evento com bloqueio por instância; `EventBus` entrega a todos os destinos e levanta `EventBusError` se algum falhar. Criados `README.txt` e `module.yaml`.
+Falhou / por resolver: `ruff` apontou `PLR0913` em `new_event` com oito parâmetros; refactorizado para receber `EventContext` (5 parâmetros) e testes ajustados. Durante a edição do `tasks.yaml` houve um erro de indentação YAML corrigido antes do commit.
+Ficheiros tocados: `app/core/events/*`, `tests/unit/test_events.py`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-01-004.md`.
+Testes executados: 11 testes de eventos e 54 testes na regressão completa passam; `ruff check app tests/unit/test_events.py`, `mypy app`, `check_modules.py`, `check_file_size.py`, `check_traceability.py`, `validate_plan.py` e `plan_status.py` sem erros.
+Próxima acção: executar HCW-01-005 (logging com correlação e redacção).
+
 ## 2026-11-22 — HCW-01-003
 Feito: implementada a abstracção de segredos em `app/core/config/secrets.py` — `SecretStr` com `repr` redigido, `Secrets` com lista de nomes permitidos, `EnvironmentSecrets`, `SecretProvider` injectado e `redact()` para logs. API pública actualizada em `app/core/config/__init__.py`; README e module.yaml do módulo actualizados.
 Falhou / por resolver: nada na implementação. Durante a regressão, o teste de «só biblioteca padrão» precisou de incluir `re` (módulo padrão recém-usado); corrigido. `ruff check .` global permanece com 5 erros pré-existentes em `scripts/`.
