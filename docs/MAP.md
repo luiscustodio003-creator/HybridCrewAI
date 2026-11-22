@@ -6,7 +6,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 
 ## Estado real
 
-- Raiz do projecto com `app/core/` e `app/cli/` criados na Fase 1; `app/llm/` ainda não existe.
+- Raiz do projecto com `app/core/`, `app/cli/` e `app/llm/contracts.py` criados; o gateway ainda não tem egress, roteador, budget nem providers.
 - Plano com 12 tarefas na Fase 0; 10 estão `VALIDATED`.
 - Repositório Git com `origin/master` e etiqueta `phase-00-start` no commit inicial `fd9ac9c`.
 - Ambiente controlado: `.venv` com Python 3.12.0; Python global 3.15.2 fora do projecto.
@@ -37,6 +37,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Requisitos | `docs/` | `requirements.yaml` | existente |
 | Decisão do motor | `docs/adr/` | `ADR-0001-motor-de-agentes.md` | ACEITE |
 | Decisão do gateway LLM | `docs/adr/` | `ADR-0002-gateway-de-modelos.md` | ACEITE |
+| Contratos do gateway LLM | `app/llm/` | `contracts.py` | validados em `HCW-02-003` |
 | Auditoria inicial | `docs/reports/` | `audit.md` | VALIDADA em HCW-00-001 |
 | Baseline de ambiente | `docs/reports/` | `baseline-freeze.txt` | VALIDADA em HCW-00-001 |
 | Baseline de testes | `docs/reports/` | `baseline-tests.txt` | histórico: sem testes iniciais |
@@ -58,12 +59,12 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 
 ## Estrutura prevista — em construção
 
-A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fase correspondente as exigir. A Fase 1 criou `app/core/` e `app/cli/` e está encerrada.
+A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fase correspondente as exigir. A Fase 1 criou `app/core/` e `app/cli/`; a Fase 2 já criou `app/llm/contracts.py`.
 
 | Responsabilidade futura | Pasta prevista | Fase |
 |---|---|---|
 | Configuração, eventos, tarefas, logs e resultados | `app/core/` | 1 (concluída) |
-| Fornecedores LLM, encaminhamento, egress e orçamento | `app/llm/` | 2 |
+| Fornecedores LLM, encaminhamento, egress e orçamento | `app/llm/` | 2 (contratos criados) |
 | Servidor e interface web | `app/ui/`, `app/ui/web/` | 3 |
 | Fluxo CREATE ponta a ponta | `app/workflows/create/` | 4 |
 | Workspace, ZIP, snapshots e auditoria | `app/workspace/` | 5 |
