@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — egress validado
+Feito: `HCW-02-004` validada; `app/llm/egress/` redige corpo, cabeçalhos e URL antes do envio, delimita conteúdo não confiável e recusa cloud sem consentimento antes de abrir socket; `docs/MAP.md` actualizado.
+Falhou / por resolver: nada nesta tarefa; `ruff check .` global continua com erros antigos em `scripts/`.
+Ficheiros tocados: `app/llm/egress/*`, `tests/security/test_egress.py`, `docs/reports/hcw-02-004.md`, `docs/MAP.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `pytest -q` → 103 passam; `ruff`/`mypy` nos ficheiros novos limpos; guardas sem erros.
+Próxima acção: executar `HCW-02-005`, registando consentimento cloud e tipo de conta sem gravar segredos.
+
 ## 2026-11-22 — contratos do gateway validados
 Feito: `HCW-02-003` validada; `app/llm/` criado com `ModelRequest`, `ModelResponse`, `ProviderError`, enumerações explícitas, timeout obrigatório e redacção nas representações; `docs/MAP.md` actualizado.
 Falhou / por resolver: um teste de integração `logs --follow` falhou uma vez na primeira execução em paralelo e passou isolado e na repetição completa; sem alteração de teste. `ruff check .` global continua com erros antigos em `scripts/`.

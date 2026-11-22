@@ -730,7 +730,7 @@ tasks:
 - id: HCW-02-004
   title: Implementar política de egress e redacção de payload
   phase: 2
-  status: APPROVED
+  status: VALIDATED
   priority: critical
   depends_on: [HCW-02-003]
   requirements: [SEC-002, FR-007]
@@ -742,9 +742,12 @@ tasks:
   - "Servidor HTTP local falso capta o pedido e a chave falsa AKIA... não aparece em corpo, cabeçalhos nem URL"
   - "Conteúdo não confiável segue em bloco delimitado; tentativa de forjar o marcador de fecho é rejeitada"
   - "Pedido cloud sem consentimento registado é recusado antes de qualquer socket"
-  evidence: []
-  validated_on: null
-  notes: Usar apenas stdlib (urllib e http.server); sem httpx nem requests no .venv.
+  evidence:
+  - docs/reports/hcw-02-004.md
+  - app/llm/egress/policy.py
+  - tests/security/test_egress.py
+  validated_on: 2026-11-22
+  notes: Política implementada só com stdlib; consentimento injectado e negação por omissão na HCW-02-005.
 - id: HCW-02-005
   title: Registar consentimento cloud e tipo de conta
   phase: 2

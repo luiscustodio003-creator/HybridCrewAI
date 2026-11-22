@@ -1,0 +1,7 @@
+name: llm-egress
+purpose: Política de saída com redacção de segredos e recusa de cloud sem consentimento
+public_api: [CloudConsent, CloudDenied, EgressError, EgressPolicy, UntrustedContentError, contem_segredo, redact_mapping, redact_text, wrap_untrusted]
+depends_on: [core-logging, llm]
+events_emitted: []
+events_consumed: []
+tests: [tests/security/test_egress.py]
