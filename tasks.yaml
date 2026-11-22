@@ -226,7 +226,7 @@ tasks:
 - id: HCW-00-008
   title: Configurar CI (GitHub Actions) em Windows e Linux
   phase: 0
-  status: NOT_STARTED
+  status: IMPLEMENTED
   priority: high
   depends_on:
   - HCW-00-004
@@ -241,7 +241,11 @@ tasks:
   tests: []
   acceptance:
   - CI verde nos dois sistemas operativos
-  evidence: []
+  evidence:
+  - .github/workflows/ci.yml
+  - docs/reports/hcw-00-008.txt
+  notes:
+  - Validação final depende do primeiro push e da execução real do GitHub Actions nos runners ubuntu-latest e windows-latest; sem push autorizado, a tarefa fica IMPLEMENTED e não VALIDATED.
   validated_on: null
 - id: HCW-00-009
   title: 'Spike do motor de agentes: núcleo próprio vs CrewAI vs LangGraph'

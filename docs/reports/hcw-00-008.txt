@@ -1,0 +1,30 @@
+Relatório de execução — HCW-00-008 (IMPLEMENTED, por validar)
+Data: 2026-11-22
+
+Ficheiro criado
+- `.github/workflows/ci.yml`: workflow `CI` com `push` e `pull_request`, permissão `contents: read`, matriz `ubuntu-latest` e `windows-latest`, `fail-fast: false`.
+- Passos: `actions/checkout@v4` com `persist-credentials: false`; `actions/setup-python@v5` com Python `3.12` e cache/pip apontando a `requirements.lock.txt`; instalação das versões fixadas; guardas do plano/documentação; `pytest`; verificação das versões de Ruff, mypy e pre-commit e validação da config do pre-commit.
+
+Versões confirmadas na documentação oficial
+- `actions/checkout@v4` — README oficial do repositório `actions/checkout`, tag `v4`.
+- `actions/setup-python@v5` — README oficial do repositório `actions/setup-python`, tag `v5`.
+
+Evidência local real
+- `yaml.safe_load` do workflow: `YAML_OK ['True', 'jobs', 'name', 'permissions']`; `MATRIX ['ubuntu-latest', 'windows-latest']`. (`True` é a chave `on` interpretada pelo PyYAML 1.1.)
+- Windows: `python -m pytest -q` → 18 testes, sucesso.
+- Windows: `python -m pre_commit validate-config .pre-commit-config.yaml` → sem erros.
+- Linux via WSL Ubuntu / Python 3.12.3: `validate_plan`, `check_traceability`, `check_file_size`, `lint_skills` e `check_modules` → todos OK; `WSL_EXIT=0`.
+
+Limitação que impede `VALIDATED`
+- O critério "CI verde nos dois sistemas operativos" exige a execução real do GitHub Actions nos runners `ubuntu-latest` e `windows-latest`.
+- Nenhum push foi autorizado, logo o workflow ainda não correu no GitHub. O WSL cobre a parte Linux dos guardas, mas não substitui o runner nem executa `pytest` em Linux (o pytest não está instalado no WSL e não foi autorizada instalação de pacotes).
+- Por isso a tarefa fica `IMPLEMENTED`, com esta evidência, e não é marcada `VALIDATED`.
+
+Revisão de segurança
+- Ameaça "Dependência ou ferramenta comprometida": contramedida — versões fixadas em `requirements.lock.txt`, apenas ações oficiais com versões confirmadas; teste — leitura dos README oficiais e validação local do workflow.
+- Ameaça "Acção reportada como feita sem o ter sido": contramedida — evidência por saída real e códigos de saída (`WSL_EXIT=0`); teste — execução dos guardas no Windows e no WSL.
+- Nenhum segredo, token ou credencial no workflow; `permissions: contents: read` e `persist-credentials: false`.
+- Nenhuma operação de rede, instalação de pacotes ou push foi executada localmente nesta tarefa.
+
+Observação
+- `ruff check` e `mypy` não são passos bloqueantes neste workflow porque `HCW-00-006` ainda está `IMPLEMENTED` com erros pré-existentes (5 de Ruff, 3 de mypy). O workflow valida apenas as versões e a config do pre-commit; esses checks entram quando `HCW-00-006` for corrigido.
