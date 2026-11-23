@@ -916,7 +916,7 @@ tasks:
   - "Evidências citam comandos executados e ficheiros reais, sem afirmar validação sem teste"
   evidence: [docs/reports/phase-02-security.md, THREAT_MODEL.md, docs/MAP.md]
   validated_on: 2026-11-23
-  notes: 'Validado em 2026-11-23 após aprovação do Utilizador: relatório de segurança com matriz, zero segredos, quotas e consentimento; THREAT_MODEL.md e docs/MAP.md actualizados; tests/security/test_egress.py → 3 passed. Gate da Fase 2 GO em 2026-11-23T16:58:59; etiqueta phase-02-go já existia em 6c0ecf7 e não foi reposicionada sem nova autorização.'
+  notes: 'Validado em 2026-11-23 após aprovação do Utilizador: relatório de segurança com matriz, zero segredos, quotas e consentimento; THREAT_MODEL.md e docs/MAP.md actualizados; tests/security/test_egress.py → 3 passed. Gate da Fase 2 GO em 2026-11-23T16:58:59; Fase 2 commitada, enviada para origin/master e etiqueta phase-02-go reposicionada com autorização.'
 - id: HCW-02-013
   title: Corrigir ProviderError para excepção normal
   phase: 2

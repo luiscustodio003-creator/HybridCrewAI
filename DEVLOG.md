@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-23 — Fase 2 commitada e enviada
+Feito: com autorização do Utilizador, as alterações pendentes de `HCW-02-012` a `HCW-02-014` foram commitadas, `origin/master` foi actualizado sem force-push de ramo e a etiqueta `phase-02-go` foi reposicionada para o commit final e enviada com actualização forçada da etiqueta. `git status -sb` ficou limpo e `git ls-remote --tags origin phase-02-go` confirmou a nova posição remota.
+Falhou / por resolver: nada. Fase 3 não foi iniciada; exige aprovação explícita.
+Ficheiros tocados: `STATE.md`, `DEVLOG.md`, `tasks.yaml`, `docs/MAP.md`, `docs/reports/hcw-02-013.md`, `docs/reports/hcw-02-014.md`, `docs/reports/phase-02-security.md`.
+Testes executados: não aplicável; gate da Fase 2 já tinha dado GO nesta sessão.
+Próxima acção: aguardar aprovação para iniciar a Fase 3.
+
 ## 2026-11-23 — Gate da Fase 2 GO
 Feito: o Utilizador autorizou correr o gate. `.venv\Scripts\python.exe scripts/run_gate.py --phase 2` → `# Gate da Fase 02 — GO`, data `2026-11-23T16:58:59`, com OK em `validate_plan`, `check_file_size`, `check_modules`, `lint_skills`, `check_traceability`, `pytest (23 ficheiros)` e `tarefas da fase concluídas`. `reports/phase-02/report.md` e `.json` foram regenerados. Relatórios de `HCW-02-013`, `HCW-02-014`, matriz de segurança, `docs/MAP.md`, `STATE.md` e `tasks.yaml` actualizados para `GO`.
 Falhou / por resolver: a etiqueta `phase-02-go` já existe em `6c0ecf7` (`HCW-02-011`), ou seja, aponta para commit anterior às alterações de `HCW-02-012` a `HCW-02-014`. Não foi movida. É preciso autorização explícita para commit das alterações pendentes, reposicionar a etiqueta e decidir push.

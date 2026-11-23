@@ -116,7 +116,7 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 - Lacuna aberta: endereços de fornecedores não são carregados por `Settings`/`load_settings()`; `HCW-02-014` implementou apenas `HCW_OLLAMA_MODEL`, `POST /api/generate` e corpo restrito. Endereços Gemini continuam sem configuração.
 - Correcção implementada: `HCW-02-013` corrige `ProviderError` como excepção normal, prova a propagação via `@contextmanager` e vigia outras excepções frozen; relatório em `docs/reports/hcw-02-013.md`.
 - Correcção implementada: `HCW-02-014` usa `POST /api/generate`, rejeita NDJSON/`done:false`, retira metadados internos do corpo e protege a serialização JSON no egress; relatório em `docs/reports/hcw-02-014.md` e saída real em `docs/reports/hcw-02-014-real.txt`.
-- Gate da Fase 2 **GO** em 2026-11-23T16:58:59 (`reports/phase-02/report.md`); `HCW-02-999` permanece `NOT_STARTED`. A etiqueta `phase-02-go` já existia em `6c0ecf7` e não foi reposicionada; sem push. Commits locais de `HCW-02-013` executado; alterações de `HCW-02-012` a `HCW-02-014` ficam sem commit nesta sessão.
+- Gate da Fase 2 **GO** em 2026-11-23T16:58:59 (`reports/phase-02/report.md`); `HCW-02-999` permanece `NOT_STARTED`. Fase 2 commitada e enviada para `origin/master`; etiqueta `phase-02-go` reposicionada para o commit final.
 - Teste real de `tests/integration/test_llm_real.py` com `qwen3.5:4b` passou com timeout de 900 s em 896,82 s; o modelo tem `thinking default true` e o contrato aprovado não permite enviar `think: false`. Gemini continua skipped por falta de endpoint/credencial.
 
 ## Como usar este mapa
