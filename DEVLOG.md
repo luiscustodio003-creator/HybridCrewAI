@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-23 — hcw llm ping validado
+Feito: `HCW-02-011` validada; `app/cli/llm_ping.py` demonstra o gateway com modo simulado por omissão, endpoints locais opcionais, consentimento explícito para cloud, latência em ms e pré-visualizações redigidas. `app/cli/main.py` regista `llm ping` com imports explícitos no topo; `app/cli/README.txt`, `app/cli/module.yaml` e `docs/MAP.md` actualizados.
+Falhou / por resolver: o teste `logs --follow` era sensível ao arranque do subprocesso; a espera passou de 0,3 s para 1,0 s sem alterar a asserção. O utilizador autorizou o commit local; sem push. `HCW-00-006` continua `IMPLEMENTED`; `STATE.antigo.md` permanece untracked.
+Ficheiros tocados: `app/cli/llm_ping.py` (novo), `app/cli/main.py`, `app/cli/README.txt`, `app/cli/module.yaml`, `tests/integration/test_llm_ping.py` (novo), `tests/integration/test_cli.py`, `docs/reports/hcw-02-011.md`, `docs/MAP.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `pytest -q tests/integration/test_llm_ping.py` → 4 passam; `pytest -q tests/integration/test_cli.py tests/integration/test_llm_ping.py` → 7 passam; `pytest -o addopts="" --tb=no -ra` → 131 passam, 2 ignorados; `ruff`/`mypy` nos ficheiros Python tocados limpos; guardas `check_file_size`, `check_modules`, `validate_plan` e `check_traceability` sem erros; `plan_status.py` → Fase 02 `11/13`.
+Próxima acção: executar `HCW-02-012 — Consolidar segurança e evidências da Fase 2` com `hcw-implement`, `hcw-security-review` e `hcw-test-gate`.
+
 ## 2026-11-22 — adaptadores sem SDK externo validados
 Feito: `HCW-02-010` validada; `app/llm/providers/` contém `ModelProvider`, transporte via `EgressPolicy`, adaptadores Gemini texto e Ollama e `LiveSession` como `Protocol` com criação protegida por consentimento. Nenhum SDK externo instalado ou importado.
 Falhou / por resolver: nada nesta tarefa. Sessão live real continua bloqueada até aprovação de dependência de voz; testes reais são opcionais por env.

@@ -879,21 +879,26 @@ tasks:
 - id: HCW-02-011
   title: Adicionar comando hcw llm ping
   phase: 2
-  status: APPROVED
+  status: VALIDATED
   priority: medium
   depends_on: [HCW-02-010]
   requirements: [OPS-004, OPS-005, FR-005]
   modules: [app/cli]
   files_new: [app/cli/llm_ping.py]
-  files_change: [app/cli/main.py, app/cli/README.txt, app/cli/module.yaml]
-  tests: [tests/integration/test_llm_ping.py]
+  files_change: [app/cli/main.py, app/cli/README.txt, app/cli/module.yaml, tests/integration/test_cli.py]
+  tests: [tests/integration/test_llm_ping.py, tests/integration/test_cli.py]
   acceptance:
   - "Sem --allow-cloud, o comando usa apenas fornecedor local ou modo simulado"
   - "Saída mostra fornecedor, latência em ms e pré-visualização integralmente redigida"
   - "Falha de consentimento ou timeout termina com código de saída diferente de zero e mensagem sem segredo"
-  evidence: []
-  validated_on: null
-  notes: Demonstração da Fase 2; manter app/cli/main.py abaixo de 300 linhas.
+  evidence:
+  - docs/reports/hcw-02-011.md
+  - app/cli/llm_ping.py
+  - app/cli/main.py
+  - tests/integration/test_llm_ping.py
+  - tests/integration/test_cli.py
+  validated_on: 2026-11-23
+  notes: Demonstração da Fase 2; manter app/cli/main.py abaixo de 300 linhas; imports explícitos no topo evitam PLC0415.
 - id: HCW-02-012
   title: Consolidar segurança e evidências da Fase 2
   phase: 2

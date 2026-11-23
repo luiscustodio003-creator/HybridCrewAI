@@ -6,7 +6,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 
 ## Estado real
 
-- Raiz do projecto com `app/core/`, `app/cli/` e `app/llm/` criados; o gateway tem contratos, egress, consentimento, prompts, budget, roteador e adaptadores HTTP sem SDK externo.
+- Raiz do projecto com `app/core/`, `app/cli/` e `app/llm/` criados; o gateway tem contratos, egress, consentimento, prompts, budget, roteador e adaptadores HTTP sem SDK externo, com demonstração segura em `hcw llm ping`.
 - Plano com 12 tarefas na Fase 0; 10 estão `VALIDATED`.
 - Repositório Git com `origin/master` e etiqueta `phase-00-start` no commit inicial `fd9ac9c`.
 - Ambiente controlado: `.venv` com Python 3.12.0; Python global 3.15.2 fora do projecto.
@@ -44,6 +44,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Orçamento de modelo | `app/llm/budget/` | `tokens.py`, `tools_budget.py` | validado em `HCW-02-007` |
 | Resiliência e escada do roteador | `app/llm/router/` | `errors.py`, `cooldown.py`, `ladder.py` | validada em `HCW-02-008` e `HCW-02-009` |
 | Adaptadores sem SDK externo | `app/llm/providers/` | `common.py`, `gemini_text.py`, `ollama.py`, `gemini_live.py` | validados em `HCW-02-010` |
+| Demonstração do gateway na CLI | `app/cli/` | `llm_ping.py`, `main.py` | implementada em `HCW-02-011` |
 | Auditoria inicial | `docs/reports/` | `audit.md` | VALIDADA em HCW-00-001 |
 | Baseline de ambiente | `docs/reports/` | `baseline-freeze.txt` | VALIDADA em HCW-00-001 |
 | Baseline de testes | `docs/reports/` | `baseline-tests.txt` | histórico: sem testes iniciais |
@@ -65,12 +66,12 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 
 ## Estrutura prevista — em construção
 
-A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fase correspondente as exigir. A Fase 1 criou `app/core/` e `app/cli/`; a Fase 2 já criou `app/llm/contracts.py`.
+A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fase correspondente as exigir. A Fase 1 criou `app/core/` e `app/cli/`; a Fase 2 criou os módulos de `app/llm/` e ligou a CLI ao gateway.
 
 | Responsabilidade futura | Pasta prevista | Fase |
 |---|---|---|
 | Configuração, eventos, tarefas, logs e resultados | `app/core/` | 1 (concluída) |
-| Fornecedores LLM, encaminhamento, egress e orçamento | `app/llm/` | 2 (contratos criados) |
+| Fornecedores LLM, encaminhamento, egress e orçamento | `app/llm/` | 2 (gateway com adaptadores e demonstração na CLI) |
 | Servidor e interface web | `app/ui/`, `app/ui/web/` | 3 |
 | Fluxo CREATE ponta a ponta | `app/workflows/create/` | 4 |
 | Workspace, ZIP, snapshots e auditoria | `app/workspace/` | 5 |
@@ -81,7 +82,7 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 | Ferramentas de computador, rede e engenharia reversa | `app/tools/` | 12 e 13 |
 | Autonomia, rotinas e checkpoints | `app/autonomy/` | 9 |
 | Aprovações por token e diff | `app/approvals/` | 4 e 12 |
-| CLI de utilizador | `app/cli/` | 1 (logs/doctor, concluída) e 14 |
+| CLI de utilizador | `app/cli/` | 1 (logs/doctor, concluída), 2 (`llm ping`) e 14 |
 | Dados locais e relatórios gerados | `config/`, `data/`, `projects/`, `reports/`, `logs/` | conforme necessário |
 | Testes por natureza | `tests/unit/`, `integration/`, `contracts/`, `security/`, `recovery/`, `ui/`, `eval/`, `fixtures/` | fases seguintes |
 

@@ -78,7 +78,7 @@ def test_logs_follow_mostra_evento_em_tempo_real(tmp_path: Path) -> None:
         encoding="utf-8",
         errors="replace",
     )
-    time.sleep(0.3)
+    time.sleep(1.0)
     JsonlSink(caminho).write(
         new_event(contexto, kind="cli.integration", message="evento em tempo real")
     )
