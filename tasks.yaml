@@ -964,7 +964,7 @@ tasks:
 - id: HCW-02-999
   title: Gate da Fase 2
   phase: 2
-  status: NOT_STARTED
+  status: VALIDATED
   priority: critical
   depends_on:
   - HCW-02-001
@@ -989,26 +989,203 @@ tasks:
   acceptance:
   - run_gate.py --phase 2 devolve GO
   - etiqueta phase-02-go criada
-  evidence: []
-  validated_on: null
-  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+  evidence: [reports/phase-02/report.md, reports/phase-02/report.json]
+  validated_on: 2026-11-23
+  notes: 'GO em 2026-11-23T16:58:59 com OK em validate_plan, check_file_size, check_modules, lint_skills, check_traceability, pytest (23 ficheiros) e tarefas da fase concluídas. Etiqueta phase-02-go criada/reposicionada e enviada para origin/master.'
 - id: HCW-03-001
   title: Planear em detalhe a Fase 3 com a Skill hcw-plan
   phase: 3
-  status: NOT_STARTED
+  status: VALIDATED
   priority: high
   depends_on:
   - HCW-02-999
-  requirements: []
+  requirements: [UI-001, UI-002, UI-003, UI-004, UI-005, UI-006, UI-007, UI-008]
   modules: []
   files_new: []
   files_change: []
   tests: []
   acceptance:
   - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: [tasks.yaml, docs/requirements.yaml]
+  validated_on: 2026-11-23
+  notes: 'Plano aprovado pelo Utilizador em 2026-11-23, incluindo Playwright e browser local em HCW-03-010. validate_plan e check_traceability passaram sem erros nem avisos.'
+- id: HCW-03-002
+  title: Criar módulo ui e configuração da feature flag
+  phase: 3
+  status: VALIDATED
+  priority: high
+  depends_on: [HCW-03-001]
+  requirements: [UI-001, NFR-001, DOC-001]
+  modules: [app/ui, app/core/config]
+  files_new: [app/ui/__init__.py, app/ui/README.txt, app/ui/module.yaml, app/ui/config.py]
+  files_change: [app/core/config/schema.py, app/core/config/defaults.py, app/core/config/loader.py, app/core/config/README.txt]
+  tests: [tests/unit/test_ui_config.py]
+  acceptance:
+  - "Settings expõe ui_enabled e ui_token sem valor por omissão inseguro e sem gravar segredos"
+  - "load_settings lê HCW_UI_ENABLED e HCW_UI_TOKEN do ambiente e rejeita ui_enabled sem token"
+  - "app/ui publica API fechada em __all__ e tem README.txt e module.yaml válidos"
+  evidence: [reports/tasks/HCW-03-002.md, tests/unit/test_ui_config.py]
+  validated_on: 2026-11-23
+  notes: 'Validado com GO em reports/tasks/HCW-03-002.md: pytest tests/unit (97 passa), ruff e mypy scoped OK, check_file_size 0 erros/1 aviso pré-existente, check_modules OK. Segurança: token em SecretStr e ausente de repr/str; ataque de Origin fica para HCW-03-004.'
+- id: HCW-03-003
+  title: Criar servidor local com verificação de saúde
+  phase: 3
+  status: VALIDATED
+  priority: high
+  depends_on: [HCW-03-002]
+  requirements: [UI-001, NFR-002, DOC-001]
+  modules: [app/ui/server]
+  files_new: [app/ui/server/__init__.py, app/ui/server/README.txt, app/ui/server/module.yaml, app/ui/server/app.py]
+  files_change: [app/ui/__init__.py]
+  tests: [tests/integration/test_ui_server.py]
+  acceptance:
+  - "create_server vincula apenas 127.0.0.1 e falha com qualquer outro endereço"
+  - "GET /health responde 200 somente quando ui_enabled é verdadeiro"
+  - "O servidor usa ThreadingHTTPServer da stdlib, sem nova dependência web"
+  evidence: [reports/tasks/HCW-03-003.md, tests/integration/test_ui_server.py]
+  validated_on: 2026-11-23
+  notes: 'Validado com GO em reports/tasks/HCW-03-003.md: create_server só vincula 127.0.0.1, GET /health depende de ui_enabled e implementação usa apenas ThreadingHTTPServer da stdlib. Segurança: bind loopback e ausência de logs de pedidos testados; token/Origin ficam para HCW-03-004.'
+- id: HCW-03-004
+  title: Proteger o servidor com token e validação de Origin
+  phase: 3
+  status: VALIDATED
+  priority: critical
+  depends_on: [HCW-03-003]
+  requirements: [UI-002, SEC-001, SEC-002]
+  modules: [app/ui/server]
+  files_new: [app/ui/server/auth.py]
+  files_change: [app/ui/server/app.py, app/ui/server/__init__.py, tests/integration/test_ui_server.py]
+  tests: [tests/security/test_ui_local.py]
+  acceptance:
+  - "Pedido sem Bearer <token> devolve 401 e não executa a rota protegida"
+  - "Origin fora de http://127.0.0.1 com a porta do servidor devolve 403"
+  - "Nenhum token, segredo ou prompt completo aparece em logs, HTML ou respostas"
+  evidence: [reports/tasks/HCW-03-004.md, tests/security/test_ui_local.py]
+  validated_on: 2026-11-23
+  notes: 'Validado com GO em reports/tasks/HCW-03-004.md: Bearer token com SecretStr.reveal() e compare_digest, Origin exata http://127.0.0.1:<porta>, 401 sem execução da rota, 403 para origens inválidas e nenhum segredo em logs/respostas.'
+- id: HCW-03-005
+  title: Expor tarefas e histórico persistido
+  phase: 3
+  status: VALIDATED
+  priority: high
+  depends_on: [HCW-03-004]
+  requirements: [UI-003, FR-003, NFR-004]
+  modules: [app/ui/server, app/core/tasks]
+  files_new: [app/ui/server/routes_tasks.py, tests/unit/test_ui_tasks.py, tests/integration/test_ui_tasks.py]
+  files_change: [app/ui/server/app.py, app/ui/server/__init__.py, app/ui/server/README.txt, app/ui/server/module.yaml, tests/unit/__init__.py, tests/integration/__init__.py]
+  tests: [tests/unit/test_ui_tasks.py, tests/integration/test_ui_tasks.py]
+  acceptance:
+  - "GET /api/tasks devolve tarefas do SqliteTaskStore com estado e correlation_id"
+  - "O histórico sobrevive a reinício do servidor com o mesmo ficheiro SQLite temporário"
+  - "Nenhuma rota aceita parâmetros de consulta para escrita"
+  evidence: [reports/tasks/HCW-03-005.md, tests/unit/test_ui_tasks.py, tests/integration/test_ui_tasks.py]
+  validated_on: 2026-11-23
+  notes: 'Validado com GO em reports/tasks/HCW-03-005.md: GET /api/tasks protegido, histórico SQLite sobrevive a reinício, parâmetros de consulta ignorados, suíte completa, ruff/mypy scoped e guardas OK.'
+- id: HCW-03-006
+  title: Transmitir eventos com filtros e latência real
+  phase: 3
+  status: VALIDATED
+  priority: high
+  depends_on: [HCW-03-004]
+  requirements: [UI-004, OPS-004, FR-002]
+  modules: [app/ui/server, app/core/events]
+  files_new: [app/ui/server/routes_events.py, app/ui/server/event_filters.py, tests/unit/test_ui_events.py, tests/integration/test_ui_events_stream.py]
+  files_change: [app/ui/server/app.py, app/ui/server/__init__.py, app/ui/server/README.txt, app/ui/server/module.yaml, tests/integration/test_ui_server.py, tests/security/test_ui_local.py, docs/MAP.md]
+  tests: [tests/unit/test_ui_events.py, tests/integration/test_ui_events_stream.py, tests/security/test_ui_local.py]
+  acceptance:
+  - "GET /api/events com correlation_id e level filtra eventos pelos dois critérios"
+  - "Evento escrito no JSONL aparece no stream em menos de 1 s medido por timestamp"
+  - "O stream usa text/event-stream da stdlib e termina ao cancelar a ligação"
+  evidence: [reports/tasks/HCW-03-006.md, tests/unit/test_ui_events.py, tests/integration/test_ui_events_stream.py, tests/security/test_ui_local.py]
+  validated_on: 2026-11-23
+  notes: 'Validado com GO em reports/tasks/HCW-03-006.md: stream SSE filtrado, latência medida abaixo de 1 s, cancelamento detectado, barreiras Bearer/Origin testadas na rota de eventos, suíte completa, ruff/mypy scoped e guardas OK.'
+- id: HCW-03-007
+  title: Registar e consultar chamadas LLM observáveis
+  phase: 3
+  status: APPROVED
+  priority: high
+  depends_on: [HCW-03-004]
+  requirements: [UI-005, OPS-005, SEC-002]
+  modules: [app/ui/server, app/llm]
+  files_new: [app/llm/observability.py, app/ui/server/routes_llm_calls.py]
+  files_change: [app/llm/providers/common.py, app/llm/__init__.py, app/ui/server/app.py, app/ui/server/__init__.py]
+  tests: [tests/unit/test_llm_observability.py]
+  acceptance:
+  - "Cada chamada regista provider, modelo, latency_ms, tokens e task_id e correlation_id em JSONL"
+  - "A pré-visualização do prompt é redigida e não contém segredos nem prompt completo"
+  - "GET /api/llm-calls devolve registos ordenados e filtra por correlation_id"
   evidence: []
   validated_on: null
-  notes: Usar docs/phases/phase-03.md como base.
+- id: HCW-03-008
+  title: Implementar chat de texto com persistência
+  phase: 3
+  status: APPROVED
+  priority: high
+  depends_on: [HCW-03-006, HCW-03-007]
+  requirements: [UI-006, FR-005, SEC-002]
+  modules: [app/ui/server, app/llm]
+  files_new: [app/ui/server/chat.py, app/ui/server/routes_chat.py]
+  files_change: [app/ui/server/app.py, app/ui/server/__init__.py]
+  tests: [tests/integration/test_ui_chat.py]
+  acceptance:
+  - "A mensagem do chat usa prompt versionado e delimita o conteúdo do utilizador como não confiável"
+  - "O histórico da conversa persiste no SQLite e sobrevive a reinício do servidor"
+  - "A chamada ao gateway exige task_id e correlation_id e propaga ProviderError redigido"
+  evidence: []
+  validated_on: null
+- id: HCW-03-009
+  title: Criar cliente web local e desenho de ecrãs
+  phase: 3
+  status: APPROVED
+  priority: high
+  depends_on: [HCW-03-005, HCW-03-006, HCW-03-007, HCW-03-008]
+  requirements: [UI-007, NFR-001, DOC-001]
+  modules: [app/ui/web]
+  files_new: [app/ui/web/index.html, app/ui/web/styles.css, app/ui/web/logs.js, app/ui/web/tasks.js, app/ui/web/llm_calls.js, app/ui/web/chat.js, DESIGN.md]
+  files_change: [app/ui/server/app.py]
+  tests: [tests/unit/test_ui_web_assets.py]
+  acceptance:
+  - "Todos os recursos são servidos localmente e não há URLs http ou https externas em HTML, CSS ou JS"
+  - "A página mostra tarefas, eventos, chamadas LLM e chat com filtros por correlation_id e nível"
+  - "DESIGN.md descreve ecrãs, estados e interações em PT-PT"
+  evidence: []
+  validated_on: null
+- id: HCW-03-010
+  title: Produzir evidência real de browser e capturas
+  phase: 3
+  status: APPROVED
+  priority: critical
+  depends_on: [HCW-03-009]
+  requirements: [UI-008, UI-004, UI-006]
+  modules: [app/ui/web]
+  files_new: [tests/ui/test_browser.py, docs/reports/phase-03-ui-evidence.md, screenshots/phase-03/.gitkeep]
+  files_change: [requirements.lock.txt]
+  tests: [tests/ui/test_browser.py]
+  acceptance:
+  - "Playwright e browser local ficam fixados em requirements.lock.txt após aprovação explícita"
+  - "Teste real verifica evento no ecrã em menos de 1 s, filtros e envio de mensagem no chat"
+  - "Capturas de ecrã reais são gravadas em screenshots/phase-03 e citadas no relatório"
+  - "Sem browser instalado o teste falha com mensagem clara e nunca é marcado como PASSA"
+  evidence: []
+  validated_on: null
+  notes: Instalação e fixação de Playwright e browser local aprovadas pelo Utilizador em 2026-11-23.
+- id: HCW-03-011
+  title: Consolidar segurança e documentação da Fase 3
+  phase: 3
+  status: APPROVED
+  priority: high
+  depends_on: [HCW-03-004, HCW-03-007, HCW-03-008, HCW-03-010]
+  requirements: [SEC-001, DOC-001, OPS-004]
+  modules: [app/ui]
+  files_new: [docs/reports/phase-03-security.md]
+  files_change: [THREAT_MODEL.md, docs/MAP.md, DEVLOG.md]
+  tests: [tests/security/test_ui_local.py]
+  acceptance:
+  - "THREAT_MODEL.md liga token, Origin, 127.0.0.1 e prompt injection a testes reais"
+  - "O relatório cita comandos executados, ficheiros e capturas sem afirmar validação sem teste"
+  - "Nenhum segredo, token real ou prompt completo aparece em relatórios, logs ou Git"
+  evidence: []
+  validated_on: null
 - id: HCW-03-999
   title: Gate da Fase 3
   phase: 3
@@ -1016,7 +1193,17 @@ tasks:
   priority: critical
   depends_on:
   - HCW-03-001
-  requirements: []
+  - HCW-03-002
+  - HCW-03-003
+  - HCW-03-004
+  - HCW-03-005
+  - HCW-03-006
+  - HCW-03-007
+  - HCW-03-008
+  - HCW-03-009
+  - HCW-03-010
+  - HCW-03-011
+  requirements: [UI-001, UI-002, UI-003, UI-004, UI-005, UI-006, UI-007, UI-008]
   modules: []
   files_new: []
   files_change: []

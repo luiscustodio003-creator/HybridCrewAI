@@ -1,0 +1,7 @@
+name: ui
+purpose: Expor a configuração da interface web local sem revelar o token
+public_api: [ui_enabled, require_ui_token]
+depends_on: [core-config]
+events_emitted: []
+events_consumed: []
+tests: [tests/unit/test_ui_config.py]

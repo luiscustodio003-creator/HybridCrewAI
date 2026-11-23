@@ -1,6 +1,6 @@
 # Mapa do projecto
 
-Data: 2026-11-23 · Responsabilidade: DOC-001 · Estado: mapa vivo; Fases 0 e 1 encerradas, Fase 2 em curso
+Data: 2026-11-23 · Responsabilidade: DOC-001 · Estado: mapa vivo; Fases 0, 1 e 2 encerradas, Fase 3 em execução
 
 Este ficheiro responde a «onde está o quê». Distingue o que existe em disco do que apenas está previsto no plano. O conteúdo dos ficheiros listados é a fonte de verdade; este mapa é um índice, não substitui os relatórios de evidência.
 
@@ -45,6 +45,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Resiliência e escada do roteador | `app/llm/router/` | `errors.py`, `cooldown.py`, `ladder.py` | validada em `HCW-02-008` e `HCW-02-009` |
 | Adaptadores sem SDK externo | `app/llm/providers/` | `common.py`, `gemini_text.py`, `ollama.py`, `gemini_live.py` | validados em `HCW-02-010` |
 | Demonstração do gateway na CLI | `app/cli/` | `llm_ping.py`, `main.py` | implementada em `HCW-02-011` |
+| Servidor local e API de tarefas/eventos | `app/ui/server/` | `app.py`, `routes_tasks.py`, `routes_events.py`, `event_filters.py`, `auth.py` | validado em `HCW-03-003` a `HCW-03-006` |
 | Auditoria inicial | `docs/reports/` | `audit.md` | VALIDADA em HCW-00-001 |
 | Baseline de ambiente | `docs/reports/` | `baseline-freeze.txt` | VALIDADA em HCW-00-001 |
 | Baseline de testes | `docs/reports/` | `baseline-tests.txt` | histórico: sem testes iniciais |
@@ -71,7 +72,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 
 ## Estrutura prevista — em construção
 
-A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fase correspondente as exigir. A Fase 1 criou `app/core/` e `app/cli/`; a Fase 2 criou os módulos de `app/llm/` e ligou a CLI ao gateway.
+A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fase correspondente as exigir. A Fase 1 criou `app/core/` e `app/cli/`; a Fase 2 criou os módulos de `app/llm/` e ligou a CLI ao gateway; a Fase 3 criou `app/ui/` com servidor local, autenticação, API de tarefas e stream SSE de eventos.
 
 | Responsabilidade futura | Pasta prevista | Fase |
 |---|---|---|

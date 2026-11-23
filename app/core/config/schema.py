@@ -5,7 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from app.core.config.defaults import ALLOWED_LOG_LEVELS
+from app.core.config.defaults import ALLOWED_LOG_LEVELS, MIN_UI_TOKEN_CHARS
+from app.core.config.secrets import SecretStr
 
 
 class ConfigError(ValueError):
@@ -34,6 +35,15 @@ def validate_ollama_model(value: str) -> str:
     return modelo
 
 
+def validate_ui_token(value: SecretStr) -> SecretStr:
+    """Valida o comprimento do token da interface sem revelar o valor."""
+    if len(value.reveal()) < MIN_UI_TOKEN_CHARS:
+        raise ConfigError(
+            f"HCW_UI_TOKEN tem de ter pelo menos {MIN_UI_TOKEN_CHARS} caracteres."
+        )
+    return value
+
+
 @dataclass(frozen=True, slots=True)
 class Settings:
     """Configuração validada, sem segredos e sem efeitos secundários."""
@@ -48,6 +58,8 @@ class Settings:
     cloud_enabled: bool
     max_file_lines: int
     ollama_model: str | None = None
+    ui_enabled: bool = False
+    ui_token: SecretStr | None = None
 
     def __post_init__(self) -> None:
         """Normaliza e valida os valores após a construção."""
@@ -62,6 +74,12 @@ class Settings:
             raise ConfigError("HCW_MAX_FILE_LINES tem de ser maior que zero.")
         if self.ollama_model is not None:
             validate_ollama_model(self.ollama_model)
+        if self.ui_token is not None:
+            validate_ui_token(self.ui_token)
+        if self.ui_enabled and self.ui_token is None:
+            raise ConfigError(
+                "HCW_UI_ENABLED=true exige HCW_UI_TOKEN; defina um token no ambiente."
+            )
         for name, path in self._managed_paths():
             if not path.is_relative_to(self.base_dir):
                 raise ConfigError(f"{name} tem de ficar dentro de {self.base_dir}.")

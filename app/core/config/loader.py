@@ -17,13 +17,17 @@ from app.core.config.defaults import (
     MAX_FILE_LINES,
     OLLAMA_MODEL,
     SQLITE_PATH,
+    UI_ENABLED,
+    UI_TOKEN,
 )
 from app.core.config.schema import (
     ConfigError,
     Settings,
     validate_ollama_model,
     validate_relative_path,
+    validate_ui_token,
 )
+from app.core.config.secrets import SecretStr
 
 
 def _text_value(environ: Mapping[str, str], key: str, default: str) -> str:
@@ -54,6 +58,16 @@ def _path_value(environ: Mapping[str, str], key: str, default: str, base_dir: Pa
     return (base_dir / relative).resolve()
 
 
+def _secret_value(environ: Mapping[str, str], key: str, default: str | None) -> SecretStr | None:
+    """Lê um segredo do ambiente sem o gravar nem revelar em mensagens."""
+    valor = environ.get(f"{ENV_PREFIX}{key}", default)
+    if valor is None:
+        return None
+    if not valor.strip():
+        raise ConfigError(f"{ENV_PREFIX}{key} não pode estar vazio; defina um valor no ambiente.")
+    return validate_ui_token(SecretStr(valor))
+
+
 def _model_value(environ: Mapping[str, str]) -> str | None:
     """Lê o modelo local sem aplicar nomes por omissão."""
     valor = environ.get(f"{ENV_PREFIX}OLLAMA_MODEL", OLLAMA_MODEL)
@@ -64,7 +78,7 @@ def load_settings(
     environ: Mapping[str, str] | None = None,
     base_dir: Path | None = None,
 ) -> Settings:
-    """Carrega e valida a configuração sem gravar ficheiros nem ler segredos."""
+    """Carrega e valida a configuração sem gravar ficheiros nem revelar segredos."""
     environment = os.environ if environ is None else environ
     root = (base_dir or Path(__file__).resolve().parents[3]).resolve()
     level = _text_value(environment, "LOG_LEVEL", LOG_LEVEL).strip().upper()
@@ -79,4 +93,6 @@ def load_settings(
         cloud_enabled=_bool_value(environment, "CLOUD_ENABLED", CLOUD_ENABLED),
         max_file_lines=_int_value(environment, "MAX_FILE_LINES", MAX_FILE_LINES),
         ollama_model=_model_value(environment),
+        ui_enabled=_bool_value(environment, "UI_ENABLED", UI_ENABLED),
+        ui_token=_secret_value(environment, "UI_TOKEN", UI_TOKEN),
     )

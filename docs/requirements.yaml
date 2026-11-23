@@ -60,3 +60,27 @@ requirements:
 - id: DOC-001
   text: Documentação em PT-PT, README.txt e module.yaml por módulo
   status: ACTIVE
+- id: UI-001
+  text: Interface local activável por configuração, sem segredos gravados em ficheiros
+  status: ACTIVE
+- id: UI-002
+  text: Acesso restrito a 127.0.0.1 com token e validação de Origin
+  status: ACTIVE
+- id: UI-003
+  text: Listagem de tarefas com histórico persistido
+  status: ACTIVE
+- id: UI-004
+  text: Eventos em tempo real com filtros por correlation_id e nível e latência inferior a 1 s
+  status: ACTIVE
+- id: UI-005
+  text: Consulta de chamadas LLM observáveis, ordenadas e com pré-visualização redigida
+  status: ACTIVE
+- id: UI-006
+  text: Chat de texto com histórico persistido e ligação ao gateway
+  status: ACTIVE
+- id: UI-007
+  text: Cliente web servido localmente, funcional offline e sem recursos externos
+  status: ACTIVE
+- id: UI-008
+  text: Evidência de browser com testes reais e capturas de ecrã
+  status: ACTIVE

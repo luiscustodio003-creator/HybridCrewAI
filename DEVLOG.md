@@ -1,6 +1,48 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-23 — HCW-03-006 validada
+Feito: escrevi primeiro `tests/unit/test_ui_events.py` e `tests/integration/test_ui_events_stream.py` e confirmei falta de `app.ui.server.event_filters` e `app.ui.server.routes_events`. Implementei filtros por `correlation_id`/`level`, leitura do JSONL com sondagem de 0,1 s, quadros SSE com keepalive de 1 s, detecção de cancelamento e `GET /api/events` protegido pelas mesmas barreiras Bearer/`Origin`.
+Falhou / por resolver: o primeiro teste de cancelamento usava `HTTPConnection.close()` sem fechar `HTTPResponse`, pelo que o socket não era libertado; corrigi o teste. No Windows, `ConnectionAbortedError` obrigou a tratar `OSError` na escrita do stream. Nada bloqueia a próxima tarefa.
+Ficheiros tocados: `app/ui/server/event_filters.py`, `app/ui/server/routes_events.py`, `app/ui/server/app.py`, `app/ui/server/__init__.py`, `app/ui/server/README.txt`, `app/ui/server/module.yaml`, `tests/unit/test_ui_events.py`, `tests/integration/test_ui_events_stream.py`, `tests/integration/test_ui_server.py`, `tests/security/test_ui_local.py`, `docs/MAP.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-03-006.md`.
+Testes executados: `pytest -q` → todos passa com 2 skips; `pytest tests/unit/test_ui_events.py tests/integration/test_ui_events_stream.py tests/security/test_ui_local.py` → 17 passa; ruff e mypy scoped OK; `check_file_size.py` → 0 erros/1 aviso; `check_modules.py`, `validate_plan.py` e `check_traceability.py` → 0 erros/0 avisos.
+Próxima acção: executar `HCW-03-007` com `hcw-implement`, registando chamadas LLM observáveis e expondo `GET /api/llm-calls`.
+
+## 2026-11-23 — HCW-03-005 validada
+Feito: escrevi primeiro `tests/unit/test_ui_tasks.py` e `tests/integration/test_ui_tasks.py` e confirmei erro de importação de `app.ui.server.routes_tasks`. Implementei `serializar_tarefa` e `listar_tarefas`, liguei `GET /api/tasks` ao `SqliteTaskStore` de `settings.sqlite_path` e mantive Bearer token e `Origin` antes da rota.
+Falhou / por resolver: os dois ficheiros de teste com o mesmo nome colidiram no modo de importação do pytest; adicionei `tests/unit/__init__.py` e `tests/integration/__init__.py` para nomes de módulo únicos.
+Ficheiros tocados: `app/ui/server/routes_tasks.py`, `app/ui/server/app.py`, `app/ui/server/__init__.py`, `app/ui/server/README.txt`, `app/ui/server/module.yaml`, `tests/unit/test_ui_tasks.py`, `tests/integration/test_ui_tasks.py`, `tests/unit/__init__.py`, `tests/integration/__init__.py`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-03-005.md`.
+Testes executados: `pytest -q` → todos passa com 2 skips; `pytest tests/unit/test_ui_tasks.py tests/integration/test_ui_tasks.py` → 7 passa; ruff e mypy scoped OK; `check_file_size.py` → 0 erros/1 aviso; `check_modules.py`, `validate_plan.py` e `check_traceability.py` → 0 erros/0 avisos.
+Próxima acção: executar `HCW-03-006` com `hcw-implement`, transmitindo eventos com filtros e latência real.
+
+## 2026-11-23 — HCW-03-004 validada
+Feito: criei `app/ui/server/auth.py` com `origem_valida`, `origin_local` e `pedido_autorizado`, usando `SecretStr.reveal()` e `hmac.compare_digest`. `do_GET` aplica `Origin` e Bearer antes de chamar `_health`. Escrevi primeiro `tests/security/test_ui_local.py` e confirmei 5 falhas/2 passagens antes da implementação.
+Falhou / por resolver: um primeiro rascunho usou `get_secret_value()`, que não existe no `SecretStr` deste projecto; corrigi para `reveal()`. Ajustei também `tests/integration/test_ui_server.py` para enviar cabeçalhos válidos.
+Ficheiros tocados: `app/ui/server/auth.py`, `app/ui/server/app.py`, `app/ui/server/__init__.py`, `app/ui/server/README.txt`, `app/ui/server/module.yaml`, `tests/security/test_ui_local.py`, `tests/integration/test_ui_server.py`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-03-004.md`.
+Testes executados: `pytest -q` → todos passa com 2 skips; `pytest tests/integration/test_ui_server.py tests/security/test_ui_local.py` → 17 passa; ruff e mypy scoped OK; `check_file_size.py` → 0 erros/1 aviso; `check_modules.py`, `validate_plan.py` e `check_traceability.py` → 0 erros/0 avisos.
+Próxima acção: executar `HCW-03-005` com `hcw-implement`, expondo tarefas persistidas via `GET /api/tasks`.
+
+## 2026-11-23 — HCW-03-003 validada
+Feito: criei `app/ui/server` com `create_server`, baseado em `ThreadingHTTPServer` e vinculado apenas a `127.0.0.1`. `GET /health` responde `{"status":"ok","phase":3}` somente com `ui_enabled`; outros endereços e caminhos são recusados. Primeiro escrevi `tests/integration/test_ui_server.py` e confirmei a falha por módulo ausente antes de implementar.
+Falhou / por resolver: nada nesta tarefa. Um teste inicial esqueceu `json` na lista de importações permitidas; corrigi o teste. `ruff check .` global e `HCW-00-006` continuam com erros pré-existentes em `scripts/`.
+Ficheiros tocados: `app/ui/server/*`, `app/ui/__init__.py`, `tests/integration/test_ui_server.py`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-03-003.md`.
+Testes executados: `pytest -q` → todos passa com 2 skips; `pytest tests/integration/test_ui_server.py` → 10 passa; ruff e mypy scoped OK; `check_file_size.py` → 0 erros/1 aviso; `check_modules.py`, `validate_plan.py` e `check_traceability.py` → 0 erros/0 avisos.
+Próxima acção: executar `HCW-03-004` com `hcw-implement`, protegendo o servidor com Bearer token e validação de `Origin`.
+
+## 2026-11-23 — HCW-03-002 validada
+Feito: implementei `app/ui` com `ui_enabled`, `require_ui_token` e documentação do módulo; `Settings` e `load_settings` passaram a ler `HCW_UI_ENABLED`/`HCW_UI_TOKEN`, com token em `SecretStr`, mínimo de 16 caracteres e recusa de configuração sem token. Primeiro escrevi `tests/unit/test_ui_config.py` e confirmei a falha por módulo ausente antes de implementar.
+Falhou / por resolver: nada nesta tarefa. `ruff check .` global e `HCW-00-006` continuam com erros pré-existentes em `scripts/`; `tests/unit/test_providers.py` mantém o aviso de tamanho.
+Ficheiros tocados: `app/ui/*`, `app/core/config/*`, `tests/unit/test_ui_config.py`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-03-002.md`.
+Testes executados: `pytest tests/unit` → 97 passa; `pytest tests/unit/test_ui_config.py tests/unit/test_config.py` → 24 passa; ruff e mypy scoped OK; `check_file_size.py` → 0 erros/1 aviso; `check_modules.py`, `validate_plan.py` e `check_traceability.py` → 0 erros/0 avisos.
+Próxima acção: executar `HCW-03-003` com `hcw-implement`, criando o servidor local stdlib com verificação de saúde.
+
+## 2026-11-23 — aprovação do plano da Fase 3
+Feito: `HCW-02-999` passou a `VALIDATED` com o relatório do gate e a etiqueta `phase-02-go`. `hcw-plan` detalhou a Fase 3 em 10 tarefas (`HCW-03-002` a `HCW-03-011`), acrescentou os requisitos `UI-001` a `UI-008` e ligou todas ao gate `HCW-03-999`. O Utilizador aprovou tudo, incluindo Playwright e browser local em `HCW-03-010`; `HCW-03-001` ficou `VALIDATED` e as restantes `APPROVED`.
+Falhou / por resolver: nada no plano. `HCW-00-006` continua por validar e `ruff check .` global falha por erros pré-existentes em `scripts/`. Nenhuma dependência foi instalada nesta sessão.
+Ficheiros tocados: `STATE.md`, `DEVLOG.md`, `tasks.yaml`, `docs/requirements.yaml`.
+Testes executados: `python -B scripts/validate_plan.py` → 0 erros, 0 avisos; `python -B scripts/check_traceability.py` → 0 erros, 0 avisos; `python -B scripts/plan_status.py` → Fase 3 `1/12`, próxima `HCW-03-002`.
+Próxima acção: executar `HCW-03-002` com `hcw-implement`, começando pelo módulo `app/ui` e pela configuração da feature flag `ui`.
+
 ## 2026-11-23 — Fase 2 commitada e enviada
 Feito: com autorização do Utilizador, as alterações pendentes de `HCW-02-012` a `HCW-02-014` foram commitadas, `origin/master` foi actualizado sem force-push de ramo e a etiqueta `phase-02-go` foi reposicionada para o commit final e enviada com actualização forçada da etiqueta. `git status -sb` ficou limpo e `git ls-remote --tags origin phase-02-go` confirmou a nova posição remota.
 Falhou / por resolver: nada. Fase 3 não foi iniciada; exige aprovação explícita.

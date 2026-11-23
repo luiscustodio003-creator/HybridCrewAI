@@ -1,0 +1,7 @@
+name: ui-server
+purpose: Servir verificação de saúde, histórico de tarefas e eventos em 127.0.0.1
+public_api: [EVENTS_PATH, TAREFAS_PATH, EventFilter, analisar_filtros, create_server, filtrar_evento, filtrar_eventos, gerar_eventos_sse, listar_tarefas, origin_local, origem_valida, pedido_autorizado, serializar_tarefa]
+depends_on: [core-config, core-events, core-tasks, ui]
+events_emitted: []
+events_consumed: [event-stream-jsonl]
+tests: [tests/unit/test_ui_events.py, tests/unit/test_ui_tasks.py, tests/integration/test_ui_server.py, tests/integration/test_ui_tasks.py, tests/integration/test_ui_events_stream.py, tests/security/test_ui_local.py]

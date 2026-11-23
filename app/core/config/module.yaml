@@ -1,6 +1,6 @@
 name: core-config
 purpose: Carregar uma configuração imutável e validada sem gravar ficheiros nem ler segredos
-public_api: [Settings, ConfigError, load_settings, validate_ollama_model, Secrets, SecretStr, EnvironmentSecrets, SecretError, redact]
+public_api: [Settings, ConfigError, load_settings, validate_ollama_model, validate_ui_token, Secrets, SecretStr, EnvironmentSecrets, SecretError, redact]
 depends_on: []
 events_emitted: []
 events_consumed: []
