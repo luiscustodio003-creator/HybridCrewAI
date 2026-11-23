@@ -15,9 +15,15 @@ from app.core.config.defaults import (
     LOG_DIR,
     LOG_LEVEL,
     MAX_FILE_LINES,
+    OLLAMA_MODEL,
     SQLITE_PATH,
 )
-from app.core.config.schema import ConfigError, Settings, validate_relative_path
+from app.core.config.schema import (
+    ConfigError,
+    Settings,
+    validate_ollama_model,
+    validate_relative_path,
+)
 
 
 def _text_value(environ: Mapping[str, str], key: str, default: str) -> str:
@@ -48,6 +54,12 @@ def _path_value(environ: Mapping[str, str], key: str, default: str, base_dir: Pa
     return (base_dir / relative).resolve()
 
 
+def _model_value(environ: Mapping[str, str]) -> str | None:
+    """Lê o modelo local sem aplicar nomes por omissão."""
+    valor = environ.get(f"{ENV_PREFIX}OLLAMA_MODEL", OLLAMA_MODEL)
+    return None if valor is None else validate_ollama_model(valor)
+
+
 def load_settings(
     environ: Mapping[str, str] | None = None,
     base_dir: Path | None = None,
@@ -66,4 +78,5 @@ def load_settings(
         log_level=level,
         cloud_enabled=_bool_value(environment, "CLOUD_ENABLED", CLOUD_ENABLED),
         max_file_lines=_int_value(environment, "MAX_FILE_LINES", MAX_FILE_LINES),
+        ollama_model=_model_value(environment),
     )

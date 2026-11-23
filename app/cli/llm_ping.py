@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from uuid import uuid4
 
-from app.core.config import SecretStr, load_settings
+from app.core.config import SecretStr, Settings, load_settings
 from app.llm.consent import CloudConsentStore
 from app.llm.contracts import ModelRequest, ModelResponse, ProviderError, ProviderKind
 from app.llm.egress import CloudConsent, CloudDenied, EgressPolicy, redact_text
@@ -57,10 +57,9 @@ class SimulatedProvider:
 TipoProvider = SimulatedProvider | OllamaProvider | GeminiTextProvider
 
 
-def _consentimento(parametros: ParametrosPing) -> CloudConsent | None:
-    if not parametros.allow_cloud:
+def _consentimento(settings: Settings, allow_cloud: bool) -> CloudConsent | None:
+    if not allow_cloud:
         return None
-    settings = load_settings(None, parametros.base_dir)
     return CloudConsentStore(settings.sqlite_path)
 
 
@@ -71,10 +70,16 @@ def _construir_provider(parametros: ParametrosPing) -> TipoProvider:
         raise ValueError(
             f"--endpoint é obrigatório para o fornecedor {parametros.provider}."
         )
+    settings = load_settings(None, parametros.base_dir)
     egress = EgressPolicy(allow_cloud=parametros.allow_cloud)
-    consentimento = _consentimento(parametros)
+    consentimento = _consentimento(settings, parametros.allow_cloud)
     if parametros.provider == "ollama":
-        return OllamaProvider(parametros.endpoint, egress, consentimento)
+        return OllamaProvider(
+            parametros.endpoint,
+            egress,
+            consentimento,
+            model=settings.ollama_model or "",
+        )
     chave = os.environ.get(parametros.api_key_env, "").strip()
     api_key = SecretStr(chave) if chave else None
     return GeminiTextProvider(

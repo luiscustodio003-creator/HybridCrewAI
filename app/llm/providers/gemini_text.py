@@ -42,7 +42,7 @@ class GeminiTextProvider:
             self.egress,
             self.endpoint,
             cabecalhos,
-            corpo_pedido(request),
+            corpo_pedido(request.model, request.prompt),
             ContextoEnvio(request, self.consent),
         )
         return resposta_modelo(self.provider, request, dados, inicio)

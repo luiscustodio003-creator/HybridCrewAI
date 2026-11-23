@@ -61,13 +61,12 @@ def validar_adaptador(provider: ProviderKind, request: ModelRequest) -> None:
         )
 
 
-def corpo_pedido(request: ModelRequest) -> dict[str, object]:
-    """Constrói o corpo interno do gateway antes da redacção de egress."""
+def corpo_pedido(model: str, prompt: str) -> dict[str, object]:
+    """Constrói o corpo externo sem identificadores internos nem segredos."""
     return {
-        "model": request.model,
-        "prompt": request.prompt,
-        "task_id": request.task_id,
-        "correlation_id": request.correlation_id,
+        "model": model,
+        "prompt": prompt,
+        "stream": False,
     }
 
 
@@ -87,6 +86,11 @@ def _erro(provider: ProviderKind, request: ModelRequest, message: str) -> Provid
     return ProviderError(
         provider, ErrorKind.INVALID_RESPONSE, message, request.task_id, request.correlation_id
     )
+
+
+def _e_timeout(motivo: object) -> bool:
+    texto = str(motivo).lower()
+    return isinstance(motivo, TimeoutError) or "timed out" in texto or "timeout" in texto
 
 
 def post_json(
@@ -122,7 +126,7 @@ def post_json(
     except urllib.error.URLError as erro:
         mensagem = "Tempo limite esgotado antes da resposta."
         categoria = ErrorKind.TIMEOUT
-        if not isinstance(erro.reason, TimeoutError):
+        if not _e_timeout(erro.reason):
             mensagem = "Falha de rede ao contactar o fornecedor."
             categoria = ErrorKind.NETWORK
         raise ProviderError(

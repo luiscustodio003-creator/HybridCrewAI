@@ -1,7 +1,7 @@
 {
   "phase": 2,
-  "verdict": "NO-GO",
-  "when": "2026-11-23T10:51:49",
+  "verdict": "GO",
+  "when": "2026-11-23T16:58:59",
   "results": [
     {
       "check": "validate_plan",
@@ -11,7 +11,7 @@
     {
       "check": "check_file_size",
       "ok": true,
-      "output": "[OK] check_file_size: 0 erro(s), 0 aviso(s)"
+      "output": "AVISO  tests\\unit\\test_providers.py: 296 linhas (aviso aos 200)\n[OK] check_file_size: 0 erro(s), 1 aviso(s)"
     },
     {
       "check": "check_modules",
@@ -31,12 +31,12 @@
     {
       "check": "pytest (23 ficheiros)",
       "ok": true,
-      "output": "........................................................................ [ 53%]\n.........................................................ss....          [100%]"
+      "output": "........................................................................ [ 49%]\n..................................................................ss.... [ 99%]\n.                                                                        [100%]"
     },
     {
       "check": "tarefas da fase concluídas",
-      "ok": false,
-      "output": "pendentes: ['HCW-02-012', 'HCW-02-014']"
+      "ok": true,
+      "output": "todas concluídas"
     }
   ]
 }

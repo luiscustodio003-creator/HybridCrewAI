@@ -24,6 +24,16 @@ def validate_relative_path(value: str, name: str) -> str:
     return value
 
 
+def validate_ollama_model(value: str) -> str:
+    """Valida o nome do modelo local sem inventar valores por omissão."""
+    modelo = value.strip()
+    if not modelo:
+        raise ConfigError(
+            "HCW_OLLAMA_MODEL não pode estar vazio; indique o nome devolvido por 'ollama list'."
+        )
+    return modelo
+
+
 @dataclass(frozen=True, slots=True)
 class Settings:
     """Configuração validada, sem segredos e sem efeitos secundários."""
@@ -37,6 +47,7 @@ class Settings:
     log_level: str
     cloud_enabled: bool
     max_file_lines: int
+    ollama_model: str | None = None
 
     def __post_init__(self) -> None:
         """Normaliza e valida os valores após a construção."""
@@ -49,6 +60,8 @@ class Settings:
             raise ConfigError(f"HCW_LOG_LEVEL inválido {self.log_level!r}; use {allowed}.")
         if self.max_file_lines < 1:
             raise ConfigError("HCW_MAX_FILE_LINES tem de ser maior que zero.")
+        if self.ollama_model is not None:
+            validate_ollama_model(self.ollama_model)
         for name, path in self._managed_paths():
             if not path.is_relative_to(self.base_dir):
                 raise ConfigError(f"{name} tem de ficar dentro de {self.base_dir}.")

@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import threading
 import time
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -15,12 +16,21 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parents[2]
 LIMITE = 10
 SEGREDO = "sk-falso-nao-e-segredo"
+MODELO_LOCAL = "modelo-local"
 
 
-def _executar(*argumentos: str) -> subprocess.CompletedProcess[str]:
+def _executar(
+    *argumentos: str, env: Mapping[str, str] | None = None
+) -> subprocess.CompletedProcess[str]:
+    ambiente = os.environ.copy()
+    if env is None:
+        ambiente.pop("HCW_OLLAMA_MODEL", None)
+    else:
+        ambiente.update(env)
     return subprocess.run(
         [sys.executable, "-m", "app.cli", "llm", "ping", *argumentos],
         cwd=RAIZ,
+        env=ambiente,
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -35,15 +45,9 @@ def _servidor(*, atraso: float = 0.0) -> Iterator[tuple[str, dict[str, str]]]:
     captura: dict[str, str] = {}
 
     class Manipulador(BaseHTTPRequestHandler):
-        def do_POST(self) -> None:
-            tamanho = int(self.headers.get("Content-Length", "0"))
-            captura["body"] = self.rfile.read(tamanho).decode("utf-8", errors="replace")
-            if atraso:
-                time.sleep(atraso)
-            corpo = json.dumps(
-                {"text": "pong local", "tokens_used": 2}, ensure_ascii=False
-            ).encode("utf-8")
-            self.send_response(200)
+        def _responder(self, codigo: int, texto: str) -> None:
+            corpo = texto.encode("utf-8")
+            self.send_response(codigo)
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", str(len(corpo)))
             self.end_headers()
@@ -52,6 +56,40 @@ def _servidor(*, atraso: float = 0.0) -> Iterator[tuple[str, dict[str, str]]]:
             except OSError:
                 return
 
+        def do_POST(self) -> None:
+            tamanho = int(self.headers.get("Content-Length", "0"))
+            captura["body"] = self.rfile.read(tamanho).decode("utf-8", errors="replace")
+            captura["method"] = self.command
+            captura["path"] = self.path
+            if self.path != "/api/generate":
+                self._responder(404, '{"erro":"caminho"}')
+                return
+            try:
+                carga = json.loads(captura["body"])
+            except json.JSONDecodeError:
+                self._responder(400, '{"erro":"json"}')
+                return
+            if not isinstance(carga, dict) or set(carga) != {"model", "prompt", "stream"}:
+                self._responder(400, '{"erro":"corpo"}')
+                return
+            if carga["model"] != MODELO_LOCAL or carga["stream"] is not False:
+                self._responder(400, '{"erro":"modelo"}')
+                return
+            if atraso:
+                time.sleep(atraso)
+            self._responder(
+                200,
+                json.dumps(
+                    {"response": "pong local", "done": True, "eval_count": 2},
+                    ensure_ascii=False,
+                ),
+            )
+
+        def do_GET(self) -> None:
+            captura["method"] = self.command
+            captura["path"] = self.path
+            self._responder(405, '{"erro":"metodo"}')
+
         def log_message(self, formato: str, *argumentos: object) -> None:
             return
 
@@ -59,7 +97,7 @@ def _servidor(*, atraso: float = 0.0) -> Iterator[tuple[str, dict[str, str]]]:
     tarefa = threading.Thread(target=servidor.serve_forever, daemon=True)
     tarefa.start()
     try:
-        yield f"http://127.0.0.1:{servidor.server_port}/ping", captura
+        yield f"http://127.0.0.1:{servidor.server_port}", captura
     finally:
         servidor.shutdown()
         servidor.server_close()
@@ -85,13 +123,35 @@ def test_ping_local_contacta_ollama_falso_e_nao_reenvia_segredo() -> None:
             endpoint,
             "--prompt",
             f"api_key={SEGREDO}",
+            env={"HCW_OLLAMA_MODEL": MODELO_LOCAL},
         )
 
+    carga = json.loads(captura["body"])
     assert resultado.returncode == 0, resultado.stderr
     assert "fornecedor: ollama" in resultado.stdout
     assert "pong local" in resultado.stdout
+    assert captura["method"] == "POST"
+    assert captura["path"] == "/api/generate"
+    assert set(carga) == {"model", "prompt", "stream"}
+    assert carga["model"] == MODELO_LOCAL
     assert SEGREDO not in captura["body"]
     assert "***REDACTED***" in captura["body"]
+
+
+def test_ping_local_sem_modelo_configurado_falha_com_mensagem_clara() -> None:
+    resultado = _executar(
+        "--provider",
+        "ollama",
+        "--endpoint",
+        "http://127.0.0.1:1",
+        "--prompt",
+        "Diz olá",
+        env={},
+    )
+
+    assert resultado.returncode != 0
+    assert "HCW_OLLAMA_MODEL" in resultado.stderr
+    assert "Diz olá" not in resultado.stderr
 
 
 def test_ping_cloud_sem_consentimento_falha_sem_mostrar_segredo(
@@ -101,7 +161,7 @@ def test_ping_cloud_sem_consentimento_falha_sem_mostrar_segredo(
         "--provider",
         "gemini",
         "--endpoint",
-        "https://exemplo.invalido/ping",
+        "https://exemplo.invalido/generate",
         "--allow-cloud",
         "--base-dir",
         str(tmp_path),
@@ -125,6 +185,7 @@ def test_ping_local_com_timeout_falha_sem_mostrar_segredo() -> None:
             "0.05",
             "--prompt",
             f"token={SEGREDO}",
+            env={"HCW_OLLAMA_MODEL": MODELO_LOCAL},
         )
 
     assert resultado.returncode != 0

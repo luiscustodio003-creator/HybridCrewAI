@@ -4,4 +4,4 @@ public_api: [GeminiTextProvider, LiveSession, LiveSessionUnavailable, ModelProvi
 depends_on: [core-config, llm-contracts, llm-egress, llm-router]
 events_emitted: []
 events_consumed: []
-tests: [tests/unit/test_providers.py, tests/integration/test_llm_real.py]
+tests: [tests/unit/test_config.py, tests/unit/test_providers.py, tests/integration/test_llm_ping.py, tests/integration/test_llm_real.py]

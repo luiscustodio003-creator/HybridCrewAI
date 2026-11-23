@@ -38,7 +38,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Decisão do motor | `docs/adr/` | `ADR-0001-motor-de-agentes.md` | ACEITE |
 | Decisão do gateway LLM | `docs/adr/` | `ADR-0002-gateway-de-modelos.md` | ACEITE |
 | Contratos do gateway LLM | `app/llm/` | `contracts.py` | validados em `HCW-02-003` |
-| Redacção e egress | `app/llm/egress/` | `policy.py`, `secret_scan.py`, `untrusted_wrap.py` | validados em `HCW-02-004` |
+| Redacção e egress | `app/llm/egress/` | `policy.py`, `secret_scan.py`, `untrusted_wrap.py` | validados em `HCW-02-004`; redacção de corpo JSON reforçada em `HCW-02-014` |
 | Consentimento cloud | `app/llm/` | `consent.py` | validado em `HCW-02-005` |
 | Prompts versionados | `app/llm/prompts/` | `registry.py`, `system.md`, `revisao.md` | validados em `HCW-02-006` |
 | Orçamento de modelo | `app/llm/budget/` | `tokens.py`, `tools_budget.py` | validado em `HCW-02-007` |
@@ -52,7 +52,9 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Evidências por tarefa | `docs/reports/` | `hcw-00-003.txt` a `hcw-00-008.txt` | existentes |
 | Relatório `hcw llm ping` | `docs/reports/` | `hcw-02-011.md` | VALIDADO em HCW-02-011 |
 | Relatório `ProviderError` | `docs/reports/` | `hcw-02-013.md` | IMPLEMENTADO em HCW-02-013; excepção normal e auditoria frozen |
-| Matriz de segurança da Fase 2 | `docs/reports/` | `phase-02-security.md` | criada em HCW-02-012; lacuna de endpoints em configuração; HCW-02-013 implementada e HCW-02-014 aprovada |
+| Relatório do adaptador Ollama | `docs/reports/` | `hcw-02-014.md` | VALIDADO em HCW-02-014; `/api/generate`, corpo restrito e `HCW_OLLAMA_MODEL`; teste real passou com timeout de 900 s |
+| Saída do teste real Ollama | `docs/reports/` | `hcw-02-014-real.txt` | evidência: 653,46 s medidos pelo Utilizador e teste real passou em 896,82 s com `qwen3.5:4b` |
+| Matriz de segurança da Fase 2 | `docs/reports/` | `phase-02-security.md` | validada em HCW-02-012; lacuna de endpoints em configuração; HCW-02-013 implementada e HCW-02-014 validada com teste real Ollama |
 | Mapa do código | `docs/` | `MAP.md` | este ficheiro |
 | Plano de origem | `docs/` | `HybridCrewAI — Relatório Completo do Projecto e Plano Mestre v3.md` | referência histórica, não instrução |
 | Skills do projecto | `.opencode/skills/` | `hcw-*/SKILL.md` | 10 Skills validadas pelo lint |
@@ -111,10 +113,11 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 
 - Matriz em `docs/reports/phase-02-security.md`: fallback, timeout, egress com servidor falso, consentimento, prompt injection e orçamento de ferramentas têm testes executados.
 - `THREAT_MODEL.md` liga egress, prompt injection e falha de fornecedor aos testes concretos; custos e quotas apontam para `tests/unit/test_llm_budget.py` e `tests/unit/test_llm_contracts.py`.
-- Lacuna aberta: endereços de fornecedores não são carregados por `Settings`/`load_settings()`; `HCW-02-014` cobre apenas `HCW_OLLAMA_MODEL`, estado `APPROVED`, ainda não implementada. Endereços Gemini continuam sem configuração.
+- Lacuna aberta: endereços de fornecedores não são carregados por `Settings`/`load_settings()`; `HCW-02-014` implementou apenas `HCW_OLLAMA_MODEL`, `POST /api/generate` e corpo restrito. Endereços Gemini continuam sem configuração.
 - Correcção implementada: `HCW-02-013` corrige `ProviderError` como excepção normal, prova a propagação via `@contextmanager` e vigia outras excepções frozen; relatório em `docs/reports/hcw-02-013.md`.
-- Gate da Fase 2 não fechado: `HCW-02-999` permanece `NOT_STARTED`; sem etiqueta `phase-02-go` e sem push. Commit local de `HCW-02-013` autorizado e executado nesta sessão.
-- Testes reais `tests/integration/test_llm_real.py` ficaram com 2 skipped por falta de endpoints/credenciais fornecidos pelo Utilizador.
+- Correcção implementada: `HCW-02-014` usa `POST /api/generate`, rejeita NDJSON/`done:false`, retira metadados internos do corpo e protege a serialização JSON no egress; relatório em `docs/reports/hcw-02-014.md` e saída real em `docs/reports/hcw-02-014-real.txt`.
+- Gate da Fase 2 **GO** em 2026-11-23T16:58:59 (`reports/phase-02/report.md`); `HCW-02-999` permanece `NOT_STARTED`. A etiqueta `phase-02-go` já existia em `6c0ecf7` e não foi reposicionada; sem push. Commits locais de `HCW-02-013` executado; alterações de `HCW-02-012` a `HCW-02-014` ficam sem commit nesta sessão.
+- Teste real de `tests/integration/test_llm_real.py` com `qwen3.5:4b` passou com timeout de 900 s em 896,82 s; o modelo tem `thinking default true` e o contrato aprovado não permite enviar `think: false`. Gemini continua skipped por falta de endpoint/credencial.
 
 ## Como usar este mapa
 

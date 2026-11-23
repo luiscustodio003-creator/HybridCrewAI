@@ -902,7 +902,7 @@ tasks:
 - id: HCW-02-012
   title: Consolidar segurança e evidências da Fase 2
   phase: 2
-  status: IN_PROGRESS
+  status: VALIDATED
   priority: high
   depends_on: [HCW-02-004, HCW-02-009, HCW-02-011]
   requirements: [SEC-002, DOC-001, OPS-005]
@@ -914,9 +914,9 @@ tasks:
   - "Relatório apresenta matriz de fallback, zero segredos no payload, quotas activas e consentimento verificado"
   - "THREAT_MODEL.md regista ameaças de egress, prompt injection e falha de fornecedor com testes correspondentes"
   - "Evidências citam comandos executados e ficheiros reais, sem afirmar validação sem teste"
-  evidence: []
-  validated_on: null
-  notes: Fechar com hcw-security-review antes do gate.
+  evidence: [docs/reports/phase-02-security.md, THREAT_MODEL.md, docs/MAP.md]
+  validated_on: 2026-11-23
+  notes: 'Validado em 2026-11-23 após aprovação do Utilizador: relatório de segurança com matriz, zero segredos, quotas e consentimento; THREAT_MODEL.md e docs/MAP.md actualizados; tests/security/test_egress.py → 3 passed. Gate da Fase 2 GO em 2026-11-23T16:58:59; etiqueta phase-02-go já existia em 6c0ecf7 e não foi reposicionada sem nova autorização.'
 - id: HCW-02-013
   title: Corrigir ProviderError para excepção normal
   phase: 2
@@ -942,14 +942,14 @@ tasks:
 - id: HCW-02-014
   title: Corrigir adaptador Ollama e exigir HCW_OLLAMA_MODEL
   phase: 2
-  status: APPROVED
+  status: VALIDATED
   priority: critical
   depends_on: [HCW-02-010, HCW-02-013]
   requirements: [FR-005, NFR-001, NFR-003, DOC-001]
-  modules: [app/core/config, app/llm/providers]
-  files_new: [docs/reports/hcw-02-014.md]
-  files_change: [app/core/config/defaults.py, app/core/config/schema.py, app/core/config/loader.py, app/core/config/__init__.py, app/core/config/README.txt, app/llm/providers/ollama.py, app/llm/providers/README.txt, tests/unit/test_config.py, tests/unit/test_providers.py, tests/integration/test_llm_ping.py]
-  tests: [tests/unit/test_config.py, tests/unit/test_providers.py, tests/integration/test_llm_ping.py]
+  modules: [app/core/config, app/llm/egress, app/llm/providers, app/cli]
+  files_new: [docs/reports/hcw-02-014.md, docs/reports/hcw-02-014-real.txt]
+  files_change: [app/core/config/defaults.py, app/core/config/schema.py, app/core/config/loader.py, app/core/config/__init__.py, app/core/config/module.yaml, app/core/config/README.txt, app/llm/egress/secret_scan.py, app/llm/egress/policy.py, app/llm/egress/__init__.py, app/llm/egress/module.yaml, app/llm/egress/README.txt, app/llm/providers/common.py, app/llm/providers/ollama.py, app/llm/providers/gemini_text.py, app/llm/providers/README.txt, app/llm/providers/module.yaml, app/cli/llm_ping.py, app/cli/README.txt, tests/unit/test_config.py, tests/unit/test_providers.py, tests/integration/test_llm_ping.py, tests/integration/test_llm_real.py, docs/MAP.md, docs/reports/phase-02-security.md, THREAT_MODEL.md, STATE.md, DEVLOG.md]
+  tests: [tests/unit/test_config.py, tests/unit/test_providers.py, tests/integration/test_llm_ping.py, tests/integration/test_llm_real.py, tests/security/test_egress.py]
   acceptance:
   - "Confirmação na documentação oficial registada em docs/reports/hcw-02-014.md, com ligação: POST /api/generate, corpo com model/prompt/stream, modo sem streaming stream=false, resposta JSON com response/done/eval_count e streaming application/x-ndjson (GenerateStreamEvent)"
   - "OllamaProvider faz POST exactamente para {endpoint sem barra final}/api/generate; o servidor falso rigoroso rejeita método ou caminho diferente e o teste falha se o adaptador usar a raiz"
@@ -958,9 +958,9 @@ tasks:
   - "A resposta não streaming é normalizada a partir de response e eval_count; uma resposta NDJSON de streaming não é aceite como resposta única sem tratamento explícito"
   - "Servidor falso rigoroso cobre método, caminho, campos desconhecidos, modelo inexistente e ligação recusada, com mensagens de erro claras"
   - "HCW-02-014 só passa a VALIDATED com a saída do teste real contra o Ollama local; o Utilizador vai correr ollama list e fornecer o nome do modelo"
-  evidence: []
-  validated_on: null
-  notes: 'Aprovado pelo Utilizador com ajustes; depende de HCW-02-013. Fonte oficial: https://docs.ollama.com/api/generate. Sem teste real contra Ollama local não há validação final.'
+  evidence: [docs/reports/hcw-02-014.md, docs/reports/hcw-02-014-real.txt]
+  validated_on: 2026-11-23
+  notes: 'Validado em 2026-11-23: 37 passed, 2 skipped nos ficheiros da tarefa; 143 passed, 2 skipped na suíte completa; ruff e mypy limpos nos ficheiros alterados. Fonte oficial: https://docs.ollama.com/api/generate. Teste real com qwen3.5:4b em http://127.0.0.1:11434 passou com timeout de 900 s: 1 passed, 1 deselected in 896.82s. O Utilizador mediu 653,46 s na mesma chamada; o modelo tem thinking default true e a margem de timeout é estreita.'
 - id: HCW-02-999
   title: Gate da Fase 2
   phase: 2

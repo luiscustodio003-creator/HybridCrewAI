@@ -33,3 +33,11 @@ def contem_segredo(texto: str) -> bool:
 def redact_mapping(valores: Mapping[str, str]) -> dict[str, str]:
     """Redige valores de cabeçalhos ou parâmetros sem alterar as chaves."""
     return {chave: redact_text(str(valor)) for chave, valor in valores.items()}
+
+
+def redact_body(valores: Mapping[str, object]) -> dict[str, object]:
+    """Redige apenas valores de texto antes de serializar o pedido."""
+    return {
+        chave: redact_text(valor) if isinstance(valor, str) else valor
+        for chave, valor in valores.items()
+    }

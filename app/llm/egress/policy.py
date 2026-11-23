@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from typing import Protocol
 from urllib.parse import urlsplit
 
-from app.llm.egress.secret_scan import redact_mapping, redact_text
+from app.llm.egress.secret_scan import redact_body, redact_mapping, redact_text
 
 _LOCAIS = frozenset({"localhost", "127.0.0.1", "::1"})
 
@@ -82,14 +82,14 @@ class EgressPolicy:
         if isinstance(body, str):
             corpo = body
         elif isinstance(body, Mapping):
-            corpo = json.dumps(body, ensure_ascii=False, sort_keys=True)
+            corpo = json.dumps(redact_body(body), ensure_ascii=False, sort_keys=True)
         else:
             raise TypeError("body tem de ser mapping ou string.")
         cabecalhos = redact_mapping(headers)
         cabecalhos.setdefault("Content-Type", "application/json")
         pedido = urllib.request.Request(
             redact_text(url),
-            data=redact_text(corpo).encode("utf-8"),
+            data=corpo.encode("utf-8"),
             headers=cabecalhos,
             method="POST",
         )

@@ -31,6 +31,7 @@ def test_valores_por_omissao_sao_seguros(tmp_path: Path) -> None:
     assert settings.max_file_lines == MAX_FILE_LINES
     assert settings.data_dir == settings.base_dir / "data"
     assert settings.log_dir == settings.base_dir / "logs"
+    assert settings.ollama_model is None
 
 
 def test_variaveis_de_ambiente_sobrescrevem_omissoes(tmp_path: Path) -> None:
@@ -46,6 +47,17 @@ def test_variaveis_de_ambiente_sobrescrevem_omissoes(tmp_path: Path) -> None:
     assert settings.cloud_enabled is True
     assert settings.max_file_lines == CUSTOM_MAX_FILE_LINES
     assert settings.data_dir == base / "estado"
+
+
+def test_modelo_ollama_e_lido_da_configuracao(tmp_path: Path) -> None:
+    settings = load_settings({"HCW_OLLAMA_MODEL": "modelo-local"}, base_dir=_base_dir(tmp_path))
+    assert settings.ollama_model == "modelo-local"
+
+
+@pytest.mark.parametrize("valor", ["", "   "])
+def test_modelo_ollama_vazio_e_rejeitado(tmp_path: Path, valor: str) -> None:
+    with pytest.raises(ConfigError, match="HCW_OLLAMA_MODEL"):
+        load_settings({"HCW_OLLAMA_MODEL": valor}, base_dir=_base_dir(tmp_path))
 
 
 @pytest.mark.parametrize("valor", ["TRACE", "", "VERBOSE"])
