@@ -1,8 +1,8 @@
 # Estado do projecto
-Fase actual: 2 · Gate: pendente (11/13 validadas)
+Fase actual: 2 · Gate: pendente (11/13 tarefas originais validadas; 1 nova implementada; 1 nova aprovada)
 Última tarefa validada: HCW-02-011 (2026-11-23) — `hcw llm ping` em `app/cli/llm_ping.py`, registado em `app/cli/main.py`, evidência em `docs/reports/hcw-02-011.md`.
-A meio: `HCW-02-012` está `APPROVED`. `HCW-00-006` continua `IMPLEMENTED` (5 erros de `ruff`, 3 de `mypy`).
-Bloqueios: nenhum para o encerramento local de `HCW-02-011`; sem push sem aprovação explícita; nenhuma dependência de LLM/voz/rede foi instalada; etiquetas locais `phase-00-go` e `phase-01-go`;
- `ruff check .` global ainda falha por erros pré-existentes em `scripts/`.
-Próxima acção exacta: executar `HCW-02-012 — Consolidar segurança e evidências da Fase 2` com `hcw-implement`, `hcw-security-review` e `hcw-test-gate`.
+Última tarefa implementada: HCW-02-013 (2026-11-23) — `ProviderError` como excepção normal, evidência em `docs/reports/hcw-02-013.md`; 133 testes passaram, 2 ignorados.
+A meio: `HCW-02-012` está `IN_PROGRESS` com relatório `GO`; `HCW-02-013` está `IMPLEMENTED` e aguarda validação final; `HCW-02-014` está `APPROVED` e depende de `HCW-02-013`. `HCW-00-006` continua `IMPLEMENTED` (5 erros de `ruff`, 3 de `mypy`).
+Bloqueios: gate da Fase 2 `NO-GO`; `HCW-02-014` não pode ser validada sem o nome real do modelo Ollama e o teste real fornecidos pelo Utilizador; commit local destas alterações autorizado e executado na mesma sessão; sem push, sem etiqueta e sem fechar o gate; nenhuma dependência de LLM/voz/rede foi instalada; etiquetas locais `phase-00-go` e `phase-01-go`; `ruff check .` global ainda falha por erros pré-existentes em `scripts/`.
+Próxima acção exacta: parar após o commit local de `HCW-02-013`; não implementar `HCW-02-014`, não fechar o gate e não fazer push ou etiqueta sem nova instrução.
 Decisões pendentes: validação de `HCW-00-006`; renomear `STATE.antigo.md` (fora do Git); P-02 ferramentas de redes; P-03 finalidade do REA; P-04 hardware; P-05 tipo de conta Gemini — já tratado como negação segura em `HCW-02-005`. Push das fases 0 e 1 só com aprovação explícita (sem `--force`, sem mudar histórico, sem apagar ramos).

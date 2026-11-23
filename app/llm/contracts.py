@@ -69,7 +69,7 @@ def _validar_numero(valor: object, nome: str, *, positivo: bool) -> float:
     return numero
 
 
-def _validar_enum(valor: object, tipo: type[Enum], nome: str) -> Enum:
+def _validar_enum[T: Enum](valor: object, tipo: type[T], nome: str) -> T:
     if not isinstance(valor, tipo):
         raise TypeError(f"{nome} tem de ser {tipo.__name__}.")
     return valor
@@ -151,30 +151,27 @@ class ModelResponse:
         )
 
 
-@dataclass(frozen=True, repr=False)
 class ProviderError(Exception):
     """Falha de fornecedor com categoria estável e mensagem redigida."""
 
-    provider: ProviderKind
-    kind: ErrorKind
-    message: str
-    task_id: str
-    correlation_id: str
-    retryable: bool = False
-
-    def __post_init__(self) -> None:
-        object.__setattr__(
-            self, "provider", _validar_enum(self.provider, ProviderKind, "provider")
-        )
-        object.__setattr__(self, "kind", _validar_enum(self.kind, ErrorKind, "kind"))
-        object.__setattr__(self, "message", _validar_texto(self.message, "message"))
-        object.__setattr__(self, "task_id", _validar_texto(self.task_id, "task_id"))
-        object.__setattr__(
-            self, "correlation_id", _validar_texto(self.correlation_id, "correlation_id")
-        )
-        if not isinstance(self.retryable, bool):
+    def __init__(  # noqa: PLR0913, PLR0917
+        self,
+        provider: ProviderKind,
+        kind: ErrorKind,
+        message: str,
+        task_id: str,
+        correlation_id: str,
+        retryable: bool = False,
+    ) -> None:
+        self.provider = _validar_enum(provider, ProviderKind, "provider")
+        self.kind = _validar_enum(kind, ErrorKind, "kind")
+        self.message = _validar_texto(message, "message")
+        self.task_id = _validar_texto(task_id, "task_id")
+        self.correlation_id = _validar_texto(correlation_id, "correlation_id")
+        if not isinstance(retryable, bool):
             raise ValueError("retryable tem de ser booleano.")
-        object.__setattr__(self, "args", (self.__str__(),))
+        self.retryable = retryable
+        super().__init__(_redigir(self.message))
 
     def __repr__(self) -> str:
         return (

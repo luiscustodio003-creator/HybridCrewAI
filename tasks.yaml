@@ -902,7 +902,7 @@ tasks:
 - id: HCW-02-012
   title: Consolidar segurança e evidências da Fase 2
   phase: 2
-  status: APPROVED
+  status: IN_PROGRESS
   priority: high
   depends_on: [HCW-02-004, HCW-02-009, HCW-02-011]
   requirements: [SEC-002, DOC-001, OPS-005]
@@ -917,6 +917,50 @@ tasks:
   evidence: []
   validated_on: null
   notes: Fechar com hcw-security-review antes do gate.
+- id: HCW-02-013
+  title: Corrigir ProviderError para excepção normal
+  phase: 2
+  status: IMPLEMENTED
+  priority: high
+  depends_on: [HCW-02-003]
+  requirements: [FR-005, NFR-001]
+  modules: [app/llm]
+  files_new: [docs/reports/hcw-02-013.md]
+  files_change: [app/llm/contracts.py, tests/unit/test_llm_contracts.py]
+  tests: [tests/unit/test_llm_contracts.py]
+  acceptance:
+  - "ProviderError deixa de ser dataclass frozen; herda de Exception de forma normal e chama super().__init__ com a mensagem já redigida"
+  - "ProviderError conserva provider, kind, message, task_id, correlation_id e retryable como atributos, sem object.__setattr__ na inicialização"
+  - "Um ProviderError criado dentro de @contextmanager e propagado para fora continua a ser o mesmo objecto, sem FrozenInstanceError, com kind e message intactos"
+  - "test_modelos_sao_imutaveis passa a verificar apenas ModelRequest e ModelResponse; a expectativa de FrozenInstanceError em ProviderError é removida"
+  - "repr e str de ProviderError continuam a redigir segredos e não revelam prompt nem chaves"
+  - "Auditoria registada em docs/reports/hcw-02-013.md: não existem outras excepções definidas como dataclass frozen em app/; as restantes classes frozen são modelos, políticas ou decisões, não excepções"
+  evidence:
+  - docs/reports/hcw-02-013.md
+  validated_on: null
+  notes: 'Implementado e testado em 2026-11-23: 133 passed, 2 skipped; ruff e mypy limpos nos ficheiros alterados. Aprovado pelo Utilizador com auditoria de outras excepções frozen. Bug observado: a dataclass frozen mascarava a falha real ao atravessar contextlib.contextmanager.'
+- id: HCW-02-014
+  title: Corrigir adaptador Ollama e exigir HCW_OLLAMA_MODEL
+  phase: 2
+  status: APPROVED
+  priority: critical
+  depends_on: [HCW-02-010, HCW-02-013]
+  requirements: [FR-005, NFR-001, NFR-003, DOC-001]
+  modules: [app/core/config, app/llm/providers]
+  files_new: [docs/reports/hcw-02-014.md]
+  files_change: [app/core/config/defaults.py, app/core/config/schema.py, app/core/config/loader.py, app/core/config/__init__.py, app/core/config/README.txt, app/llm/providers/ollama.py, app/llm/providers/README.txt, tests/unit/test_config.py, tests/unit/test_providers.py, tests/integration/test_llm_ping.py]
+  tests: [tests/unit/test_config.py, tests/unit/test_providers.py, tests/integration/test_llm_ping.py]
+  acceptance:
+  - "Confirmação na documentação oficial registada em docs/reports/hcw-02-014.md, com ligação: POST /api/generate, corpo com model/prompt/stream, modo sem streaming stream=false, resposta JSON com response/done/eval_count e streaming application/x-ndjson (GenerateStreamEvent)"
+  - "OllamaProvider faz POST exactamente para {endpoint sem barra final}/api/generate; o servidor falso rigoroso rejeita método ou caminho diferente e o teste falha se o adaptador usar a raiz"
+  - "O corpo enviado contém apenas model, prompt e stream=false; task_id e correlation_id aparecem só em eventos e logs, nunca no corpo; o mesmo é verificado no adaptador Gemini"
+  - "HCW_OLLAMA_MODEL é lido por load_settings() para Settings.ollama_model e é a única origem do modelo; sem essa variável o adaptador falha com ConfigError claro, sem recorrer a ModelRequest.model e sem nome inventado"
+  - "A resposta não streaming é normalizada a partir de response e eval_count; uma resposta NDJSON de streaming não é aceite como resposta única sem tratamento explícito"
+  - "Servidor falso rigoroso cobre método, caminho, campos desconhecidos, modelo inexistente e ligação recusada, com mensagens de erro claras"
+  - "HCW-02-014 só passa a VALIDATED com a saída do teste real contra o Ollama local; o Utilizador vai correr ollama list e fornecer o nome do modelo"
+  evidence: []
+  validated_on: null
+  notes: 'Aprovado pelo Utilizador com ajustes; depende de HCW-02-013. Fonte oficial: https://docs.ollama.com/api/generate. Sem teste real contra Ollama local não há validação final.'
 - id: HCW-02-999
   title: Gate da Fase 2
   phase: 2
@@ -935,6 +979,8 @@ tasks:
   - HCW-02-010
   - HCW-02-011
   - HCW-02-012
+  - HCW-02-013
+  - HCW-02-014
   requirements: []
   modules: []
   files_new: []

@@ -2,10 +2,16 @@
 
 from __future__ import annotations
 
-from dataclasses import FrozenInstanceError
+import importlib
+import inspect
+import pkgutil
+from collections.abc import Iterator
+from contextlib import contextmanager
+from dataclasses import FrozenInstanceError, is_dataclass
 
 import pytest
 
+import app
 from app.llm import (
     ErrorKind,
     ModelRequest,
@@ -40,19 +46,51 @@ def test_modelos_sao_imutaveis() -> None:
         correlation_id="corr-1",
         latency_ms=12.5,
     )
-    erro = ProviderError(
-        provider=ProviderKind.FAKE,
-        kind=ErrorKind.TIMEOUT,
-        message="expirou",
-        task_id="HCW-02-003",
-        correlation_id="corr-1",
-    )
     with pytest.raises(FrozenInstanceError):
         pedido.prompt = "outro"  # type: ignore[misc]
     with pytest.raises(FrozenInstanceError):
         resposta.text = "outro"  # type: ignore[misc]
-    with pytest.raises(FrozenInstanceError):
-        erro.message = "outro"  # type: ignore[misc]
+
+
+def test_provider_error_atravessa_contextmanager() -> None:
+    erro = ProviderError(
+        provider=ProviderKind.FAKE,
+        kind=ErrorKind.TIMEOUT,
+        message="expirou",
+        task_id="HCW-02-013",
+        correlation_id="corr-ctx",
+    )
+
+    @contextmanager
+    def lancar() -> Iterator[None]:
+        raise erro
+        yield
+
+    with pytest.raises(ProviderError) as capturado:
+        with lancar():
+            pytest.fail("o contexto não devia continuar após a excepção")
+
+    assert capturado.value is erro
+    assert capturado.value.kind is ErrorKind.TIMEOUT
+    assert capturado.value.message == "expirou"
+    assert capturado.value.args == ("expirou",)
+
+
+def test_outras_excecoes_nao_sao_dataclasses_frozen() -> None:
+    problemas: list[str] = []
+    for modulo in pkgutil.walk_packages(app.__path__, "app."):
+        if modulo.name.endswith(".__main__"):
+            continue
+        carregado = importlib.import_module(modulo.name)
+        for nome, cls in inspect.getmembers(carregado, inspect.isclass):
+            if cls.__module__ != modulo.name:
+                continue
+            if not issubclass(cls, BaseException):
+                continue
+            if is_dataclass(cls) and cls.__dataclass_params__.frozen:
+                problemas.append(f"{modulo.name}.{nome}")
+
+    assert problemas == [], f"Excepções frozen encontradas: {problemas}"
 
 
 def test_provider_tem_de_ser_tipo_explicito() -> None:
@@ -100,5 +138,10 @@ def test_erro_e_uma_excecao_com_codigo_explicito() -> None:
         retryable=True,
     )
     assert isinstance(erro, Exception)
+    assert erro.provider is ProviderKind.OLLAMA
     assert erro.kind is ErrorKind.NETWORK
+    assert erro.message == "sem ligação"
+    assert erro.task_id == "HCW-02-003"
+    assert erro.correlation_id == "corr-1"
     assert erro.retryable is True
+    assert erro.args == ("sem ligação",)
