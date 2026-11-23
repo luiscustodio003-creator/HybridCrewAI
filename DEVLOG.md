@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-22 — adaptadores sem SDK externo validados
+Feito: `HCW-02-010` validada; `app/llm/providers/` contém `ModelProvider`, transporte via `EgressPolicy`, adaptadores Gemini texto e Ollama e `LiveSession` como `Protocol` com criação protegida por consentimento. Nenhum SDK externo instalado ou importado.
+Falhou / por resolver: nada nesta tarefa. Sessão live real continua bloqueada até aprovação de dependência de voz; testes reais são opcionais por env.
+Ficheiros tocados: `app/llm/providers/__init__.py`, `app/llm/providers/common.py`, `app/llm/providers/gemini_text.py`, `app/llm/providers/gemini_live.py`, `app/llm/providers/ollama.py`, `app/llm/providers/README.txt`, `app/llm/providers/module.yaml`, `tests/unit/test_providers.py`, `tests/integration/test_llm_real.py`, `app/llm/README.txt`, `app/llm/module.yaml`, `docs/reports/hcw-02-010.md`, `docs/MAP.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `pytest -q` → 127 passam, 2 ignorados; `ruff`/`mypy` nos ficheiros Python tocados limpos; guardas sem erros.
+Próxima acção: executar `HCW-02-011`, comando `hcw llm ping` sem contacto a fornecedores por omissão.
+
 ## 2026-11-22 — escada de modelos validada
 Feito: `HCW-02-009` validada; `app/llm/router/ladder.py` carrega escadas de JSON e aplica a matriz Gemini→Gemini automático, outro cloud só com autorização e Ollama apenas em tarefa leve.
 Falhou / por resolver: nada nesta tarefa.

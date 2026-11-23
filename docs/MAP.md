@@ -6,7 +6,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 
 ## Estado real
 
-- Raiz do projecto com `app/core/`, `app/cli/` e `app/llm/contracts.py` criados; o gateway ainda não tem egress, roteador, budget nem providers.
+- Raiz do projecto com `app/core/`, `app/cli/` e `app/llm/` criados; o gateway tem contratos, egress, consentimento, prompts, budget, roteador e adaptadores HTTP sem SDK externo.
 - Plano com 12 tarefas na Fase 0; 10 estão `VALIDATED`.
 - Repositório Git com `origin/master` e etiqueta `phase-00-start` no commit inicial `fd9ac9c`.
 - Ambiente controlado: `.venv` com Python 3.12.0; Python global 3.15.2 fora do projecto.
@@ -43,6 +43,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Prompts versionados | `app/llm/prompts/` | `registry.py`, `system.md`, `revisao.md` | validados em `HCW-02-006` |
 | Orçamento de modelo | `app/llm/budget/` | `tokens.py`, `tools_budget.py` | validado em `HCW-02-007` |
 | Resiliência e escada do roteador | `app/llm/router/` | `errors.py`, `cooldown.py`, `ladder.py` | validada em `HCW-02-008` e `HCW-02-009` |
+| Adaptadores sem SDK externo | `app/llm/providers/` | `common.py`, `gemini_text.py`, `ollama.py`, `gemini_live.py` | validados em `HCW-02-010` |
 | Auditoria inicial | `docs/reports/` | `audit.md` | VALIDADA em HCW-00-001 |
 | Baseline de ambiente | `docs/reports/` | `baseline-freeze.txt` | VALIDADA em HCW-00-001 |
 | Baseline de testes | `docs/reports/` | `baseline-tests.txt` | histórico: sem testes iniciais |

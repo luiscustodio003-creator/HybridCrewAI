@@ -1,0 +1,7 @@
+name: llm-providers
+purpose: Adaptadores Gemini texto, Ollama e sessão live sobre o contrato comum, sem SDK externo
+public_api: [GeminiTextProvider, LiveSession, LiveSessionUnavailable, ModelProvider, OllamaProvider, create_live_session]
+depends_on: [core-config, llm-contracts, llm-egress, llm-router]
+events_emitted: []
+events_consumed: []
+tests: [tests/unit/test_providers.py, tests/integration/test_llm_real.py]

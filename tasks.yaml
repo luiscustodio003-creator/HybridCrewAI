@@ -857,20 +857,24 @@ tasks:
 - id: HCW-02-010
   title: Criar adaptadores Gemini Live, Gemini texto e Ollama
   phase: 2
-  status: APPROVED
+  status: VALIDATED
   priority: critical
   depends_on: [HCW-02-006, HCW-02-007, HCW-02-009]
   requirements: [FR-005, NFR-003, OPS-005]
   modules: [app/llm/providers]
-  files_new: [app/llm/providers/__init__.py, app/llm/providers/gemini_text.py, app/llm/providers/gemini_live.py, app/llm/providers/ollama.py, app/llm/providers/README.txt, app/llm/providers/module.yaml]
+  files_new: [app/llm/providers/__init__.py, app/llm/providers/common.py, app/llm/providers/gemini_text.py, app/llm/providers/gemini_live.py, app/llm/providers/ollama.py, app/llm/providers/README.txt, app/llm/providers/module.yaml]
   files_change: []
   tests: [tests/unit/test_providers.py, tests/integration/test_llm_real.py]
   acceptance:
   - "Adaptadores usam apenas contratos de app/llm/contracts.py e nenhum import de SDK externo"
   - "Servidor HTTP falso valida pedido, timeout e payload redigido; Ollama real e Gemini real ficam opcionais por env"
   - "LiveSession é uma Protocol; sessão real só é criada quando ADR-0002 e consentimento autorizam"
-  evidence: []
-  validated_on: null
+  evidence:
+  - docs/reports/hcw-02-010.md
+  - app/llm/providers/common.py
+  - tests/unit/test_providers.py
+  - tests/integration/test_llm_real.py
+  validated_on: 2026-11-22
   notes: URLs base vêm de configuração; não inventar endpoints nem instalar dependências.
 - id: HCW-02-011
   title: Adicionar comando hcw llm ping
