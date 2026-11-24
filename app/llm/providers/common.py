@@ -17,6 +17,7 @@ from app.llm.contracts import (
     ProviderKind,
 )
 from app.llm.egress import CloudConsent, CloudDenied, EgressPolicy
+from app.llm.observability import registar_chamada
 
 _HTTP_ERRO = 400
 _HTTP_SERVIDOR = 500
@@ -93,7 +94,48 @@ def _e_timeout(motivo: object) -> bool:
     return isinstance(motivo, TimeoutError) or "timed out" in texto or "timeout" in texto
 
 
+def _tokens_dos_dados(dados: dict[str, object]) -> int | None:
+    """Extrai tokens normalizados ou o contador nativo do adaptador."""
+    for chave in ("tokens_used", "eval_count"):
+        valor = dados.get(chave)
+        if isinstance(valor, int) and not isinstance(valor, bool) and valor >= 0:
+            return valor
+    return None
+
+
 def post_json(
+    egress: EgressPolicy,
+    endpoint: str,
+    headers: dict[str, str],
+    body: dict[str, object],
+    contexto: ContextoEnvio,
+) -> dict[str, object]:
+    """Envia JSON e regista a chamada, com sucesso ou falha."""
+    inicio = time.perf_counter()
+    request = contexto.request
+    modelo = body.get("model")
+    nome_modelo = modelo if isinstance(modelo, str) and modelo.strip() else request.model
+    try:
+        dados = _post_json(egress, endpoint, headers, body, contexto)
+    except Exception:
+        registar_chamada(
+            request,
+            latency_ms=(time.perf_counter() - inicio) * 1000,
+            model=nome_modelo,
+            status="erro",
+        )
+        raise
+    registar_chamada(
+        request,
+        latency_ms=(time.perf_counter() - inicio) * 1000,
+        model=nome_modelo,
+        tokens_used=_tokens_dos_dados(dados),
+        status="ok",
+    )
+    return dados
+
+
+def _post_json(
     egress: EgressPolicy,
     endpoint: str,
     headers: dict[str, str],

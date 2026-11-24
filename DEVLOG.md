@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-23 — HCW-03-007 validada
+Feito: escrevi primeiro `tests/unit/test_llm_observability.py` e confirmei falta de `configure_observability`. Implementei `app/llm/observability.py` com JSONL sequencial, redacção/truncamento da pré-visualização e leitura filtrada; instrumentei `post_json` para registar sucesso/falha, tokens, latência, `task_id` e `correlation_id`; liguei `GET /api/llm-calls` ao mesmo par Bearer/`Origin` dos outros endpoints.
+Falhou / por resolver: o primeiro teste de ordenação esperava sequências globais exactas; como a suíte partilha o contador do processo, passei a comparar apenas a ordem decrescente. Nada bloqueia a próxima tarefa.
+Ficheiros tocados: `app/llm/observability.py`, `app/llm/providers/common.py`, `app/llm/__init__.py`, `app/llm/README.txt`, `app/llm/module.yaml`, `app/ui/server/routes_llm_calls.py`, `app/ui/server/app.py`, `app/ui/server/__init__.py`, `app/ui/server/README.txt`, `app/ui/server/module.yaml`, `tests/unit/test_llm_observability.py`, `docs/MAP.md`, `THREAT_MODEL.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-03-007.md`.
+Testes executados: `pytest -q tests/unit/test_llm_observability.py` → 8 passam; `pytest -q` → todos passam com 2 skips; regressão focada → 40 passam; ruff e mypy scoped OK; `check_file_size.py` → 0 erros/3 avisos (dois novos, sem erro); `check_modules.py`, `validate_plan.py` e `check_traceability.py` → 0 erros/0 avisos; `git diff --check` sem erros.
+Próxima acção: executar `HCW-03-008` com `hcw-implement`, implementando chat de texto com persistência.
+
 ## 2026-11-23 — HCW-03-006 validada
 Feito: escrevi primeiro `tests/unit/test_ui_events.py` e `tests/integration/test_ui_events_stream.py` e confirmei falta de `app.ui.server.event_filters` e `app.ui.server.routes_events`. Implementei filtros por `correlation_id`/`level`, leitura do JSONL com sondagem de 0,1 s, quadros SSE com keepalive de 1 s, detecção de cancelamento e `GET /api/events` protegido pelas mesmas barreiras Bearer/`Origin`.
 Falhou / por resolver: o primeiro teste de cancelamento usava `HTTPConnection.close()` sem fechar `HTTPResponse`, pelo que o socket não era libertado; corrigi o teste. No Windows, `ConnectionAbortedError` obrigou a tratar `OSError` na escrita do stream. Nada bloqueia a próxima tarefa.

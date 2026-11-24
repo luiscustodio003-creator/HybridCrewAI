@@ -43,9 +43,10 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Prompts versionados | `app/llm/prompts/` | `registry.py`, `system.md`, `revisao.md` | validados em `HCW-02-006` |
 | Orçamento de modelo | `app/llm/budget/` | `tokens.py`, `tools_budget.py` | validado em `HCW-02-007` |
 | Resiliência e escada do roteador | `app/llm/router/` | `errors.py`, `cooldown.py`, `ladder.py` | validada em `HCW-02-008` e `HCW-02-009` |
-| Adaptadores sem SDK externo | `app/llm/providers/` | `common.py`, `gemini_text.py`, `ollama.py`, `gemini_live.py` | validados em `HCW-02-010` |
+| Adaptadores sem SDK externo | `app/llm/providers/` | `common.py`, `gemini_text.py`, `ollama.py`, `gemini_live.py` | validados em `HCW-02-010`; instrumentação central em `HCW-03-007` |
+| Observabilidade redigida das chamadas LLM | `app/llm/` | `observability.py` | implementada em `HCW-03-007` |
 | Demonstração do gateway na CLI | `app/cli/` | `llm_ping.py`, `main.py` | implementada em `HCW-02-011` |
-| Servidor local e API de tarefas/eventos | `app/ui/server/` | `app.py`, `routes_tasks.py`, `routes_events.py`, `event_filters.py`, `auth.py` | validado em `HCW-03-003` a `HCW-03-006` |
+| Servidor local e API de tarefas/eventos/chamadas | `app/ui/server/` | `app.py`, `routes_tasks.py`, `routes_events.py`, `routes_llm_calls.py`, `event_filters.py`, `auth.py` | validado em `HCW-03-003` a `HCW-03-006`; chamadas em `HCW-03-007` |
 | Auditoria inicial | `docs/reports/` | `audit.md` | VALIDADA em HCW-00-001 |
 | Baseline de ambiente | `docs/reports/` | `baseline-freeze.txt` | VALIDADA em HCW-00-001 |
 | Baseline de testes | `docs/reports/` | `baseline-tests.txt` | histórico: sem testes iniciais |

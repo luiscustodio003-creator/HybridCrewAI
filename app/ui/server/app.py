@@ -14,9 +14,15 @@ from urllib.parse import urlsplit
 
 from app.core.config import ConfigError, Settings
 from app.core.tasks import SqliteTaskStore
+from app.llm import configure_observability
 from app.ui.server.auth import origem_valida, pedido_autorizado
 from app.ui.server.event_filters import analisar_filtros
 from app.ui.server.routes_events import EVENTS_PATH, gerar_eventos_sse
+from app.ui.server.routes_llm_calls import (
+    LLM_CALLS_PATH,
+    analisar_filtro_correlacao,
+    listar_chamadas,
+)
 from app.ui.server.routes_tasks import TAREFAS_PATH, listar_tarefas
 
 LOCAL_HOST: Final = "127.0.0.1"
@@ -47,6 +53,11 @@ class UiServer(ThreadingHTTPServer):
         super().__init__(address, handler)
 
     @property
+    def llm_calls_path(self) -> Path:
+        """Caminho derivado do log de eventos para as chamadas LLM."""
+        return self.event_path.parent / "llm_calls.jsonl"
+
+    @property
     def streams(self) -> int:
         """Número de streams SSE actualmente abertos."""
         with self._stream_lock:
@@ -71,7 +82,7 @@ class _Handler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         """Aplica as barreiras locais antes de servir a rota protegida."""
         caminho = urlsplit(self.path).path
-        rotas = {HEALTH_PATH, TAREFAS_PATH, EVENTS_PATH}
+        rotas = {HEALTH_PATH, TAREFAS_PATH, EVENTS_PATH, LLM_CALLS_PATH}
         if caminho not in rotas or not self.server.settings.ui_enabled:
             self.send_error(HTTPStatus.NOT_FOUND, "Recurso não encontrado")
             return
@@ -85,6 +96,8 @@ class _Handler(BaseHTTPRequestHandler):
             self._health()
         elif caminho == TAREFAS_PATH:
             self._tasks()
+        elif caminho == LLM_CALLS_PATH:
+            self._llm_calls()
         else:
             self._events()
 
@@ -95,6 +108,16 @@ class _Handler(BaseHTTPRequestHandler):
     def _tasks(self) -> None:
         """Devolve o histórico persistido sem aceitar escrita por consulta."""
         self._json(HTTPStatus.OK, listar_tarefas(self.server.store))
+
+    def _llm_calls(self) -> None:
+        """Devolve chamadas LLM registadas, sem prompt completo nem segredos."""
+        try:
+            correlacao = analisar_filtro_correlacao(urlsplit(self.path).query)
+            chamadas = listar_chamadas(self.server.llm_calls_path, correlacao)
+        except ValueError as exc:
+            self.send_error(HTTPStatus.BAD_REQUEST, str(exc))
+            return
+        self._json(HTTPStatus.OK, chamadas)
 
     def _events(self) -> None:
         """Transmite eventos filtrados em formato Server-Sent Events."""
@@ -163,4 +186,5 @@ def create_server(
     armazenamento = store or SqliteTaskStore(settings.sqlite_path)
     armazenamento.initialize()
     caminho_eventos = event_path or settings.event_log
+    configure_observability(caminho_eventos.parent / "llm_calls.jsonl")
     return UiServer((host, port), _Handler, settings, armazenamento, caminho_eventos)

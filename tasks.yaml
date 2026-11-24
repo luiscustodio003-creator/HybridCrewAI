@@ -1102,20 +1102,21 @@ tasks:
 - id: HCW-03-007
   title: Registar e consultar chamadas LLM observáveis
   phase: 3
-  status: APPROVED
+  status: VALIDATED
   priority: high
   depends_on: [HCW-03-004]
   requirements: [UI-005, OPS-005, SEC-002]
   modules: [app/ui/server, app/llm]
-  files_new: [app/llm/observability.py, app/ui/server/routes_llm_calls.py]
-  files_change: [app/llm/providers/common.py, app/llm/__init__.py, app/ui/server/app.py, app/ui/server/__init__.py]
+  files_new: [app/llm/observability.py, app/ui/server/routes_llm_calls.py, tests/unit/test_llm_observability.py, reports/tasks/HCW-03-007.md]
+  files_change: [app/llm/providers/common.py, app/llm/__init__.py, app/llm/README.txt, app/llm/module.yaml, app/ui/server/app.py, app/ui/server/__init__.py, app/ui/server/README.txt, app/ui/server/module.yaml, docs/MAP.md, THREAT_MODEL.md]
   tests: [tests/unit/test_llm_observability.py]
   acceptance:
   - "Cada chamada regista provider, modelo, latency_ms, tokens e task_id e correlation_id em JSONL"
   - "A pré-visualização do prompt é redigida e não contém segredos nem prompt completo"
   - "GET /api/llm-calls devolve registos ordenados e filtra por correlation_id"
-  evidence: []
-  validated_on: null
+  evidence: [reports/tasks/HCW-03-007.md, tests/unit/test_llm_observability.py]
+  validated_on: 2026-11-23
+  notes: 'Validado com GO em reports/tasks/HCW-03-007.md: JSONL por chamada com latência, tokens, task_id/correlation_id, pré-visualização redigida e truncada, GET /api/llm-calls protegido e filtrável, oito testes dedicados, suíte completa, ruff/mypy scoped e guardas OK.'
 - id: HCW-03-008
   title: Implementar chat de texto com persistência
   phase: 3

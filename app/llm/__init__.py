@@ -7,6 +7,12 @@ from app.llm.contracts import (
     ProviderError,
     ProviderKind,
 )
+from app.llm.observability import (
+    configure_observability,
+    ler_chamadas,
+    previsualizacao_prompt,
+    registar_chamada,
+)
 
 __all__ = [
     "ErrorKind",
@@ -14,4 +20,8 @@ __all__ = [
     "ModelResponse",
     "ProviderError",
     "ProviderKind",
+    "configure_observability",
+    "ler_chamadas",
+    "previsualizacao_prompt",
+    "registar_chamada",
 ]

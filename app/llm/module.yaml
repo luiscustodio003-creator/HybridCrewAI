@@ -1,7 +1,7 @@
 name: llm
-purpose: Contratos, consentimento cloud, egress, orçamento, resiliência, escada de fallback e adaptadores HTTP do gateway de modelos
-public_api: [AccountType, BudgetExceeded, BudgetLimits, CloudConsentStore, EgressPolicy, ErrorKind, ModelRequest, ModelResponse, PromptRecord, PromptRegistry, ProviderError, ProviderKind, TokenBudget, ToolSpec, estimate_tokens, select_tools, classify_error, RetryPolicy, RetryDecision, CooldownTracker, FakeClock, Ladder, LadderStep, RouteStep, StepAction, TaskKind, load_ladder, plan_fallback, GeminiTextProvider, OllamaProvider, LiveSession, LiveSessionUnavailable, ModelProvider, create_live_session]
+purpose: Contratos, consentimento cloud, egress, orçamento, resiliência, escada de fallback, adaptadores HTTP e observabilidade redigida do gateway de modelos
+public_api: [AccountType, BudgetExceeded, BudgetLimits, CloudConsentStore, EgressPolicy, ErrorKind, ModelRequest, ModelResponse, PromptRecord, PromptRegistry, ProviderError, ProviderKind, TokenBudget, ToolSpec, estimate_tokens, select_tools, configure_observability, registar_chamada, ler_chamadas, previsualizacao_prompt, classify_error, RetryPolicy, RetryDecision, CooldownTracker, FakeClock, Ladder, LadderStep, RouteStep, StepAction, TaskKind, load_ladder, plan_fallback, GeminiTextProvider, OllamaProvider, LiveSession, LiveSessionUnavailable, ModelProvider, create_live_session]
 depends_on: [core-config, core-events, core-logging]
 events_emitted: [budget.exceeded]
 events_consumed: []
-tests: [tests/unit/test_llm_contracts.py, tests/unit/test_llm_consent.py, tests/unit/test_llm_budget.py, tests/unit/test_prompt_registry.py, tests/unit/test_router_cooldown.py, tests/unit/test_ladder.py, tests/unit/test_providers.py, tests/integration/test_llm_real.py, tests/security/test_egress.py]
+tests: [tests/unit/test_llm_contracts.py, tests/unit/test_llm_consent.py, tests/unit/test_llm_budget.py, tests/unit/test_prompt_registry.py, tests/unit/test_router_cooldown.py, tests/unit/test_ladder.py, tests/unit/test_providers.py, tests/unit/test_llm_observability.py, tests/integration/test_llm_real.py, tests/security/test_egress.py]

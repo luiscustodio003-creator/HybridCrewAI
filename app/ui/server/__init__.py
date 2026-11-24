@@ -9,6 +9,11 @@ from app.ui.server.event_filters import (
     filtrar_eventos,
 )
 from app.ui.server.routes_events import EVENTS_PATH, gerar_eventos_sse
+from app.ui.server.routes_llm_calls import (
+    LLM_CALLS_PATH,
+    analisar_filtro_correlacao,
+    listar_chamadas,
+)
 from app.ui.server.routes_tasks import (
     TAREFAS_PATH,
     listar_tarefas,
@@ -17,13 +22,16 @@ from app.ui.server.routes_tasks import (
 
 __all__ = [
     "EVENTS_PATH",
+    "LLM_CALLS_PATH",
     "TAREFAS_PATH",
     "EventFilter",
+    "analisar_filtro_correlacao",
     "analisar_filtros",
     "create_server",
     "filtrar_evento",
     "filtrar_eventos",
     "gerar_eventos_sse",
+    "listar_chamadas",
     "listar_tarefas",
     "origin_local",
     "origem_valida",
