@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-24 — HCW-03-008 validada
+Feito: escrevi primeiro `tests/integration/test_ui_chat.py` e confirmei falta de `app.ui.server.chat`. Implementei `ChatMessage`, `ChatStore` SQLite, `LocalChatProvider` determinístico e `ChatService` com prompt `sistema` versão 1, redacção prévia e identificadores de rastreabilidade; criei `routes_chat.py` e liguei `POST /api/chat` e `GET /api/chat` ao mesmo par Bearer/`Origin` das outras rotas, com `ProviderError` redigido em `502`.
+Falhou / por resolver: o primeiro teste integrado falhou por `sqlite3.OperationalError: no such table: chat_messages`, pelo que `ChatService` passou a inicializar o armazém; `LocalChatProvider` deixou de ser `frozen` para satisfazer o `Protocol`; ruff obrigou a mover a atribuição de `chat_service` para `create_server`; mypy obrigou a tipar o corpo de teste como `Mapping[str, object]`. Nada bloqueia a próxima tarefa.
+Ficheiros tocados: `app/ui/server/chat.py`, `app/ui/server/routes_chat.py`, `app/ui/server/app.py`, `app/ui/server/__init__.py`, `app/ui/server/README.txt`, `app/ui/server/module.yaml`, `tests/integration/test_ui_chat.py`, `tests/integration/test_ui_server.py`, `docs/MAP.md`, `THREAT_MODEL.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-03-008.md`.
+Testes executados: `pytest -o addopts="" --tb=no -q tests/integration/test_ui_chat.py` → 6 passam; suíte focada → 54 passam; `pytest -o addopts="" --tb=no -q` → 200 passam e 2 skips; ruff e mypy scoped OK; `check_file_size.py` → 0 erros/6 avisos (dois novos, sem erro); `check_modules.py`, `validate_plan.py` e `check_traceability.py` → 0 erros/0 avisos; `git diff --check` sem erros.
+Próxima acção: executar `HCW-03-009` com `hcw-implement`, criando cliente web local e desenho de ecrãs.
+
 ## 2026-11-23 — HCW-03-007 validada
 Feito: escrevi primeiro `tests/unit/test_llm_observability.py` e confirmei falta de `configure_observability`. Implementei `app/llm/observability.py` com JSONL sequencial, redacção/truncamento da pré-visualização e leitura filtrada; instrumentei `post_json` para registar sucesso/falha, tokens, latência, `task_id` e `correlation_id`; liguei `GET /api/llm-calls` ao mesmo par Bearer/`Origin` dos outros endpoints.
 Falhou / por resolver: o primeiro teste de ordenação esperava sequências globais exactas; como a suíte partilha o contador do processo, passei a comparar apenas a ordem decrescente. Nada bloqueia a próxima tarefa.

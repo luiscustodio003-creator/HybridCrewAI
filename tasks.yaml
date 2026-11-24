@@ -1120,20 +1120,21 @@ tasks:
 - id: HCW-03-008
   title: Implementar chat de texto com persistência
   phase: 3
-  status: APPROVED
+  status: VALIDATED
   priority: high
   depends_on: [HCW-03-006, HCW-03-007]
   requirements: [UI-006, FR-005, SEC-002]
   modules: [app/ui/server, app/llm]
   files_new: [app/ui/server/chat.py, app/ui/server/routes_chat.py]
-  files_change: [app/ui/server/app.py, app/ui/server/__init__.py]
+  files_change: [app/ui/server/app.py, app/ui/server/__init__.py, tests/integration/test_ui_server.py]
   tests: [tests/integration/test_ui_chat.py]
   acceptance:
   - "A mensagem do chat usa prompt versionado e delimita o conteúdo do utilizador como não confiável"
   - "O histórico da conversa persiste no SQLite e sobrevive a reinício do servidor"
   - "A chamada ao gateway exige task_id e correlation_id e propaga ProviderError redigido"
-  evidence: []
-  validated_on: null
+  evidence: [reports/tasks/HCW-03-008.md, tests/integration/test_ui_chat.py]
+  validated_on: 2026-11-24
+  notes: 'Validado com GO em reports/tasks/HCW-03-008.md: chat protegido por Bearer token e Origin local, prompt sistema versão 1 com conteúdo do utilizador delimitado e redigido, histórico SQLite persistido entre reinícios, task_id/correlation_id obrigatórios e ProviderError redigido; seis testes dedicados, 200 passam na suíte completa, ruff/mypy scoped e guardas OK.'
 - id: HCW-03-009
   title: Criar cliente web local e desenho de ecrãs
   phase: 3

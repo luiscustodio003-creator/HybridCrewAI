@@ -14,9 +14,16 @@ from urllib.parse import urlsplit
 
 from app.core.config import ConfigError, Settings
 from app.core.tasks import SqliteTaskStore
-from app.llm import configure_observability
+from app.llm import ProviderError, configure_observability
 from app.ui.server.auth import origem_valida, pedido_autorizado
+from app.ui.server.chat import ChatService, ChatStore, serializar_mensagem
 from app.ui.server.event_filters import analisar_filtros
+from app.ui.server.routes_chat import (
+    CHAT_PATH,
+    MAX_CORPO_BYTES,
+    analisar_corpo,
+    analisar_filtro_tarefa,
+)
 from app.ui.server.routes_events import EVENTS_PATH, gerar_eventos_sse
 from app.ui.server.routes_llm_calls import (
     LLM_CALLS_PATH,
@@ -36,6 +43,7 @@ class UiServer(ThreadingHTTPServer):
 
     allow_reuse_address = True
     daemon_threads = True
+    chat_service: ChatService
 
     def __init__(
         self,
@@ -82,7 +90,7 @@ class _Handler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         """Aplica as barreiras locais antes de servir a rota protegida."""
         caminho = urlsplit(self.path).path
-        rotas = {HEALTH_PATH, TAREFAS_PATH, EVENTS_PATH, LLM_CALLS_PATH}
+        rotas = {HEALTH_PATH, TAREFAS_PATH, EVENTS_PATH, LLM_CALLS_PATH, CHAT_PATH}
         if caminho not in rotas or not self.server.settings.ui_enabled:
             self.send_error(HTTPStatus.NOT_FOUND, "Recurso não encontrado")
             return
@@ -98,8 +106,24 @@ class _Handler(BaseHTTPRequestHandler):
             self._tasks()
         elif caminho == LLM_CALLS_PATH:
             self._llm_calls()
+        elif caminho == CHAT_PATH:
+            self._chat_historico()
         else:
             self._events()
+
+    def do_POST(self) -> None:
+        """Recebe mensagens de chat após aplicar as barreiras locais."""
+        caminho = urlsplit(self.path).path
+        if caminho != CHAT_PATH or not self.server.settings.ui_enabled:
+            self.send_error(HTTPStatus.NOT_FOUND, "Recurso não encontrado")
+            return
+        if not origem_valida(self.headers.get("Origin"), self.server.server_port):
+            self.send_error(HTTPStatus.FORBIDDEN, "Origem não autorizada")
+            return
+        if not pedido_autorizado(dict(self.headers.items()), self.server.settings):
+            self.send_error(HTTPStatus.UNAUTHORIZED, "Não autorizado")
+            return
+        self._chat_post()
 
     def _health(self) -> None:
         """Devolve o estado mínimo do servidor sem dados sensíveis."""
@@ -118,6 +142,44 @@ class _Handler(BaseHTTPRequestHandler):
             self.send_error(HTTPStatus.BAD_REQUEST, str(exc))
             return
         self._json(HTTPStatus.OK, chamadas)
+
+    def _chat_historico(self) -> None:
+        """Devolve o histórico persistido, opcionalmente filtrado por tarefa."""
+        try:
+            tarefa = analisar_filtro_tarefa(urlsplit(self.path).query)
+        except ValueError as exc:
+            self.send_error(HTTPStatus.BAD_REQUEST, str(exc))
+            return
+        mensagens = self.server.chat_service.store.list_messages(tarefa)
+        self._json(HTTPStatus.OK, [serializar_mensagem(item) for item in mensagens])
+
+    def _chat_post(self) -> None:
+        """Envia a mensagem ao gateway e devolve a resposta persistida."""
+        try:
+            tamanho = int(self.headers.get("Content-Length", "0"))
+            if not 0 < tamanho <= MAX_CORPO_BYTES:
+                raise ValueError("O corpo do pedido é obrigatório e está limitado.")
+            mensagem, tarefa, correlacao = analisar_corpo(self.rfile.read(tamanho))
+            resposta = self.server.chat_service.enviar(
+                mensagem, task_id=tarefa, correlation_id=correlacao
+            )
+        except ValueError as exc:
+            self._json(HTTPStatus.BAD_REQUEST, {"error": {"message": str(exc)}})
+            return
+        except ProviderError as exc:
+            self._json(
+                HTTPStatus.BAD_GATEWAY,
+                {
+                    "error": {
+                        "kind": exc.kind.value,
+                        "message": str(exc),
+                        "task_id": exc.task_id,
+                        "correlation_id": exc.correlation_id,
+                    }
+                },
+            )
+            return
+        self._json(HTTPStatus.OK, serializar_mensagem(resposta))
 
     def _events(self) -> None:
         """Transmite eventos filtrados em formato Server-Sent Events."""
@@ -185,6 +247,10 @@ def create_server(
         raise ConfigError(f"porta inválida {port!r}; use um valor entre 0 e {MAX_PORT}.")
     armazenamento = store or SqliteTaskStore(settings.sqlite_path)
     armazenamento.initialize()
+    chat_store = ChatStore(armazenamento.path)
+    chat_store.initialize()
     caminho_eventos = event_path or settings.event_log
     configure_observability(caminho_eventos.parent / "llm_calls.jsonl")
-    return UiServer((host, port), _Handler, settings, armazenamento, caminho_eventos)
+    servidor = UiServer((host, port), _Handler, settings, armazenamento, caminho_eventos)
+    servidor.chat_service = ChatService(chat_store)
+    return servidor
