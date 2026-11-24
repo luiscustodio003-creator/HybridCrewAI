@@ -1,0 +1,42 @@
+{
+  "phase": 3,
+  "verdict": "GO",
+  "when": "2026-11-24T23:31:28",
+  "results": [
+    {
+      "check": "validate_plan",
+      "ok": true,
+      "output": "[OK] validate_plan: 0 erro(s), 0 aviso(s)"
+    },
+    {
+      "check": "check_file_size",
+      "ok": true,
+      "output": "AVISO  app\\llm\\providers\\common.py: 224 linhas (aviso aos 200)\n  AVISO  app\\ui\\server\\app.py: 282 linhas (aviso aos 200)\n  AVISO  app\\ui\\server\\chat.py: 244 linhas (aviso aos 200)\n  AVISO  tests\\integration\\test_ui_chat.py: 275 linhas (aviso aos 200)\n  AVISO  tests\\integration\\test_ui_server.py: 214 linhas (aviso aos 200)\n  AVISO  tests\\security\\test_ui_local.py: 226 linhas (aviso aos 200)\n  AVISO  tests\\ui\\test_browser.py: 298 linhas (aviso aos 200)\n  AVISO  tests\\unit\\test_llm_observability.py: 247 linhas (aviso aos 200)\n  AVISO  tests\\unit\\test_providers.py: 296 linhas (aviso aos 200)\n[OK] check_file_size: 0 erro(s), 9 aviso(s)"
+    },
+    {
+      "check": "check_modules",
+      "ok": true,
+      "output": "[OK] check_modules: 0 erro(s), 0 aviso(s)"
+    },
+    {
+      "check": "lint_skills",
+      "ok": true,
+      "output": "[OK] lint_skills (10 Skills): 0 erro(s), 0 aviso(s)"
+    },
+    {
+      "check": "check_traceability",
+      "ok": true,
+      "output": "[OK] check_traceability: 0 erro(s), 0 aviso(s)"
+    },
+    {
+      "check": "pytest (34 ficheiros)",
+      "ok": true,
+      "output": "........................................................................ [ 33%]\n..................................................................ss.... [ 66%]\n........................................................................ [ 99%]\n..                                                                       [100%]"
+    },
+    {
+      "check": "tarefas da fase concluídas",
+      "ok": true,
+      "output": "todas concluídas"
+    }
+  ]
+}

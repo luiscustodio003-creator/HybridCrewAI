@@ -22,6 +22,10 @@ if TYPE_CHECKING:
 
     from app.core.config import Settings
 
+RAIZ = Path(__file__).resolve().parents[2]
+MODELO_AMEACAS = RAIZ / "THREAT_MODEL.md"
+RELATORIO_SEGURANCA = RAIZ / "docs" / "reports" / "phase-03-security.md"
+RELATORIO_EVIDENCIA = RAIZ / "docs" / "reports" / "phase-03-ui-evidence.md"
 TOKEN_FALSO = "token-falso-com-16"
 SEGREDO_PROMPT = "prompt-confidencial-que-nao-deve-sair"
 CAMINHO_SAUDE = "/health"
@@ -193,3 +197,30 @@ def test_segredos_nao_aparecem_em_logs_nem_respostas(tmp_path: Path) -> None:
     observado = valido + sem_token + origem_falsa + logs.getvalue()
     assert TOKEN_FALSO not in observado
     assert SEGREDO_PROMPT not in observado
+
+
+def test_modelo_de_ameacas_da_fase_3_liga_ameacas_a_testes_reais() -> None:
+    """Verifica token, Origin, loopback e prompt injection no modelo de ameaças."""
+    linhas = MODELO_AMEACAS.read_text(encoding="utf-8").splitlines()
+    for termo in ("token", "Origin", "127.0.0.1", "prompt injection"):
+        correspondencias = [
+            linha
+            for linha in linhas
+            if linha.startswith("|")
+            and termo.lower() in linha.lower()
+            and "test_" in linha
+            and "PASSA" in linha
+        ]
+        assert correspondencias, termo
+
+
+def test_relatorios_da_fase_3_documentam_evidencia_sem_segredos() -> None:
+    """Exige comandos, ficheiros e capturas sem prompt completo nem token real."""
+    texto = RELATORIO_SEGURANCA.read_text(encoding="utf-8")
+    assert "Comandos executados" in texto
+    assert "tests/security/test_ui_local.py" in texto
+    assert "screenshots/phase-03/01-eventos.png" in texto
+    for caminho in (RELATORIO_SEGURANCA, RELATORIO_EVIDENCIA):
+        conteudo = caminho.read_text(encoding="utf-8")
+        assert SEGREDO_PROMPT not in conteudo
+        assert f"Bearer {TOKEN_FALSO}" not in conteudo

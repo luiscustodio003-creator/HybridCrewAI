@@ -1,6 +1,27 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-24 — Gate da Fase 3 com GO
+Feito: corri `.venv\Scripts\python.exe scripts/run_gate.py --phase 3`; o gate devolveu **GO** em `2026-11-24T23:31:28`, com 34 ficheiros de teste acumulados e todas as verificações OK. Escreveu `reports/phase-03/report.md` e `reports/phase-03/report.json`. `HCW-03-999` passou a `IN_PROGRESS` com o relatório como evidência; o gate fica por validar até a etiqueta existir.
+Falhou / por resolver: nada. O Utilizador aprovou o commit/push e a etiqueta; `HCW-03-999` passou a `VALIDATED` com `validated_on: 2026-11-24`.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/phase-03/report.md`, `reports/phase-03/report.json`.
+Testes executados: `python scripts/run_gate.py --phase 3` → `# Gate da Fase 03 — GO`; `validate_plan`, `check_file_size`, `check_modules`, `lint_skills`, `check_traceability`, `pytest (34 ficheiros)` e `tarefas da fase concluídas` → OK.
+Próxima acção: com aprovação, executar `HCW-04-001` com `hcw-plan` e detalhar as tarefas da Fase 4 em `tasks.yaml`.
+
+## 2026-11-24 — HCW-03-011 validada
+Feito: escrevi primeiro dois testes em `tests/security/test_ui_local.py` e confirmei falha por falta de `docs/reports/phase-03-security.md`. Actualizei `THREAT_MODEL.md` para ligar token, `Origin`, `127.0.0.1` e prompt injection a testes reais incluindo o browser real, criei `docs/reports/phase-03-security.md` e actualizei `docs/MAP.md` com capturas, relatório de segurança e as 27 dependências fixadas.
+Falhou / por resolver: o primeiro teste de relatório falhou por ficheiro ausente, como exigido; ruff/mypy passaram sem correcções adicionais. Nada bloqueia o gate da Fase 3.
+Ficheiros tocados: `tests/security/test_ui_local.py`, `THREAT_MODEL.md`, `docs/reports/phase-03-security.md`, `docs/MAP.md`, `reports/tasks/HCW-03-011.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `pytest -o addopts="" -q tests/security/test_ui_local.py` → 11 passam em 6.35s; `pytest -o addopts="" -q` → 216 passam e 2 skips em 43.56s; ruff e mypy scoped OK; `check_file_size.py` → 0 erros/9 avisos (um novo aviso em `tests/security/test_ui_local.py`, sem erro); `check_modules.py`, `validate_plan.py` e `check_traceability.py` → 0 erros/0 avisos; `git diff --check` sem erros.
+Próxima acção: executar `HCW-03-999` com `hcw-test-gate`, produzindo `reports/phase-03/report.md`/`report.json` e criando a etiqueta `phase-03-go` apenas com GO e aprovação explícita.
+
+## 2026-11-24 — HCW-03-010 validada
+Feito: escrevi primeiro `tests/ui/test_browser.py` e confirmei falha clara sem Playwright. Após aprovação do Utilizador, fixei `playwright==1.65.2` e `greenlet==3.5.6` em `requirements.lock.txt`, instalei o Chromium real e completei o teste com servidor local efémero: evento visível em menos de 1 s, filtros de correlação/nível/LLM, envio de mensagem no chat, verificação de pedidos externos e ausência de token persistido. Gravei `01-eventos.png` e `02-chat.png` e escrevi `docs/reports/phase-03-ui-evidence.md`.
+Falhou / por resolver: o teste inicial falhou por Playwright ausente, como exigido; a suíte completa revelou uma corrida em que a consulta LLM inicial sem filtro sobrescrevia a filtrada, corrigida ao esperar pelo carregamento inicial antes de aplicar o filtro. `ruff` exigiu imports no topo, ordem do bloco `TYPE_CHECKING` e remoção de variável não usada; `mypy` exigiu tipagem explícita das importações opcionais. Nada bloqueia a próxima tarefa.
+Ficheiros tocados: `tests/ui/test_browser.py`, `requirements.lock.txt`, `docs/reports/phase-03-ui-evidence.md`, `screenshots/phase-03/01-eventos.png`, `screenshots/phase-03/02-chat.png`, `screenshots/phase-03/.gitkeep`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `reports/tasks/HCW-03-010.md`.
+Testes executados: `pytest -o addopts="" -q tests/ui/test_browser.py` → 1 passa em 4.20s; `pytest -o addopts="" -q` → 214 passam e 2 skips em 41.89s; ruff e mypy scoped OK; `check_file_size.py` → 0 erros/8 avisos (um novo aviso em `tests/ui/test_browser.py`, sem erro); `check_modules.py`, `validate_plan.py` e `check_traceability.py` → 0 erros/0 avisos; `git diff --check` sem erros.
+Próxima acção: executar `HCW-03-011` com `hcw-implement`, `hcw-security-review` e `hcw-docs`, consolidando segurança e documentação da Fase 3 antes do gate.
+
 ## 2026-11-24 — HCW-03-009 validada
 Feito: escrevi primeiro `tests/unit/test_ui_web_assets.py` e confirmei falta de `app/ui/server/web_assets.py`. Implementei whitelist de recursos locais, leitura por caminho conhecido e MIME, liguei `GET /` e os recursos em `app/ui/server/app.py`, acrescentei `Sec-Fetch-Site: same-origin` em `origem_valida`, criei o cliente em `app/ui/web/` com tarefas, eventos, chamadas LLM e chat, e documentei ecrãs, estados e interações em `DESIGN.md`.
 Falhou / por resolver: o teste inicial falhou por módulo ausente; `test_pagina_liga_todos_os_recursos` falhou ao exigir ligação de `index.html` a si próprio e foi corrigido; a confiança cega no `Origin` ausente foi corrigida com `Sec-Fetch-Site`. Não há bloqueio técnico; capturas reais ficam para `HCW-03-010`.

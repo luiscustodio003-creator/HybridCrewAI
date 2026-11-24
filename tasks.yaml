@@ -1156,7 +1156,7 @@ tasks:
 - id: HCW-03-010
   title: Produzir evidência real de browser e capturas
   phase: 3
-  status: APPROVED
+  status: VALIDATED
   priority: critical
   depends_on: [HCW-03-009]
   requirements: [UI-008, UI-004, UI-006]
@@ -1169,13 +1169,18 @@ tasks:
   - "Teste real verifica evento no ecrã em menos de 1 s, filtros e envio de mensagem no chat"
   - "Capturas de ecrã reais são gravadas em screenshots/phase-03 e citadas no relatório"
   - "Sem browser instalado o teste falha com mensagem clara e nunca é marcado como PASSA"
-  evidence: []
-  validated_on: null
-  notes: Instalação e fixação de Playwright e browser local aprovadas pelo Utilizador em 2026-11-23.
+  evidence:
+  - docs/reports/phase-03-ui-evidence.md
+  - reports/tasks/HCW-03-010.md
+  - screenshots/phase-03/01-eventos.png
+  - screenshots/phase-03/02-chat.png
+  - requirements.lock.txt
+  validated_on: 2026-11-24
+  notes: Instalação e fixação de Playwright e browser local aprovadas pelo Utilizador em 2026-11-23; GO em reports/tasks/HCW-03-010.md.
 - id: HCW-03-011
   title: Consolidar segurança e documentação da Fase 3
   phase: 3
-  status: APPROVED
+  status: VALIDATED
   priority: high
   depends_on: [HCW-03-004, HCW-03-007, HCW-03-008, HCW-03-010]
   requirements: [SEC-001, DOC-001, OPS-004]
@@ -1187,12 +1192,18 @@ tasks:
   - "THREAT_MODEL.md liga token, Origin, 127.0.0.1 e prompt injection a testes reais"
   - "O relatório cita comandos executados, ficheiros e capturas sem afirmar validação sem teste"
   - "Nenhum segredo, token real ou prompt completo aparece em relatórios, logs ou Git"
-  evidence: []
-  validated_on: null
+  evidence:
+  - docs/reports/phase-03-security.md
+  - reports/tasks/HCW-03-011.md
+  - THREAT_MODEL.md
+  - docs/MAP.md
+  - tests/security/test_ui_local.py
+  validated_on: 2026-11-24
+  notes: GO em reports/tasks/HCW-03-011.md; sem segredos reais, tokens reais ou prompts completos em relatórios, logs ou Git.
 - id: HCW-03-999
   title: Gate da Fase 3
   phase: 3
-  status: NOT_STARTED
+  status: VALIDATED
   priority: critical
   depends_on:
   - HCW-03-001
@@ -1214,9 +1225,11 @@ tasks:
   acceptance:
   - run_gate.py --phase 3 devolve GO
   - etiqueta phase-03-go criada
-  evidence: []
-  validated_on: null
-  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+  evidence:
+  - reports/phase-03/report.md
+  - reports/phase-03/report.json
+  validated_on: 2026-11-24
+  notes: GO em reports/phase-03/report.md (2026-11-24T23:31:28, 34 ficheiros de teste, 0 falhas); etiqueta phase-03-go criada neste commit.
 - id: HCW-04-001
   title: Planear em detalhe a Fase 4 com a Skill hcw-plan
   phase: 4

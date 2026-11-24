@@ -47,7 +47,7 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Observabilidade redigida das chamadas LLM | `app/llm/` | `observability.py` | implementada em `HCW-03-007` |
 | Demonstração do gateway na CLI | `app/cli/` | `llm_ping.py`, `main.py` | implementada em `HCW-02-011` |
 | Servidor local e API de tarefas/eventos/chamadas/chat | `app/ui/server/` | `app.py`, `routes_tasks.py`, `routes_events.py`, `routes_llm_calls.py`, `chat.py`, `routes_chat.py`, `event_filters.py`, `auth.py`, `web_assets.py` | validado em `HCW-03-003` a `HCW-03-007`; chat persistido em `HCW-03-008`; recursos locais implementados em `HCW-03-009` |
-| Cliente web local e desenho de ecrãs | `app/ui/web/` | `index.html`, `styles.css`, `tasks.js`, `logs.js`, `llm_calls.js`, `chat.js`, `DESIGN.md` | implementado em `HCW-03-009`; capturas reais dependem de `HCW-03-010` |
+| Cliente web local e desenho de ecrãs | `app/ui/web/` | `index.html`, `styles.css`, `tasks.js`, `logs.js`, `llm_calls.js`, `chat.js`, `DESIGN.md` | implementado em `HCW-03-009`; filtros, chat e capturas reais validados em `HCW-03-010` |
 | Auditoria inicial | `docs/reports/` | `audit.md` | VALIDADA em HCW-00-001 |
 | Baseline de ambiente | `docs/reports/` | `baseline-freeze.txt` | VALIDADA em HCW-00-001 |
 | Baseline de testes | `docs/reports/` | `baseline-tests.txt` | histórico: sem testes iniciais |
@@ -58,13 +58,15 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Relatório do adaptador Ollama | `docs/reports/` | `hcw-02-014.md` | VALIDADO em HCW-02-014; `/api/generate`, corpo restrito e `HCW_OLLAMA_MODEL`; teste real passou com timeout de 900 s |
 | Saída do teste real Ollama | `docs/reports/` | `hcw-02-014-real.txt` | evidência: 653,46 s medidos pelo Utilizador e teste real passou em 896,82 s com `qwen3.5:4b` |
 | Matriz de segurança da Fase 2 | `docs/reports/` | `phase-02-security.md` | validada em HCW-02-012; lacuna de endpoints em configuração; HCW-02-013 implementada e HCW-02-014 validada com teste real Ollama |
+| Evidência real de interface da Fase 3 | `docs/reports/` | `phase-03-ui-evidence.md` | validada em HCW-03-010; capturas em `screenshots/phase-03/` |
+| Matriz de segurança da Fase 3 | `docs/reports/` | `phase-03-security.md` | consolidada em HCW-03-011; token, `Origin`, `127.0.0.1` e prompt injection ligados a testes reais |
 | Mapa do código | `docs/` | `MAP.md` | este ficheiro |
 | Plano de origem | `docs/` | `HybridCrewAI — Relatório Completo do Projecto e Plano Mestre v3.md` | referência histórica, não instrução |
 | Skills do projecto | `.opencode/skills/` | `hcw-*/SKILL.md` | 10 Skills validadas pelo lint |
 | CI | `.github/workflows/` | `ci.yml` | VALIDADA em HCW-00-008 |
 | Hooks locais | raiz | `.pre-commit-config.yaml` | VALIDADOS em HCW-00-007 |
 | Configuração de ferramentas | raiz | `pyproject.toml` | validada em HCW-00-004 |
-| Dependências fixadas | raiz | `requirements.lock.txt` | 25 pacotes |
+| Dependências fixadas | raiz | `requirements.lock.txt` | 27 pacotes, incluindo Playwright fixado em HCW-03-010 |
 | Ambiente virtual | `.venv/` | `pyvenv.cfg` | ignorado pelo Git |
 | Configuração do editor | `.vscode/` | `settings.json` | aponta para o `.venv` |
 
@@ -80,7 +82,7 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 |---|---|---|
 | Configuração, eventos, tarefas, logs e resultados | `app/core/` | 1 (concluída) |
 | Fornecedores LLM, encaminhamento, egress e orçamento | `app/llm/` | 2 (gateway com adaptadores e demonstração na CLI) |
-| Servidor e interface web | `app/ui/`, `app/ui/web/` | 3 (servidor validado; cliente local implementado em `HCW-03-009`) |
+| Servidor e interface web | `app/ui/`, `app/ui/web/` | 3 (servidor e cliente local validados; evidência real em `HCW-03-010`) |
 | Fluxo CREATE ponta a ponta | `app/workflows/create/` | 4 |
 | Workspace, ZIP, snapshots e auditoria | `app/workspace/` | 5 |
 | Execução isolada | `app/execution/` | 6 |
@@ -121,6 +123,14 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 - Correcção implementada: `HCW-02-014` usa `POST /api/generate`, rejeita NDJSON/`done:false`, retira metadados internos do corpo e protege a serialização JSON no egress; relatório em `docs/reports/hcw-02-014.md` e saída real em `docs/reports/hcw-02-014-real.txt`.
 - Gate da Fase 2 **GO** em 2026-11-23T16:58:59 (`reports/phase-02/report.md`); `HCW-02-999` permanece `NOT_STARTED`. Fase 2 commitada e enviada para `origin/master`; etiqueta `phase-02-go` reposicionada para o commit final.
 - Teste real de `tests/integration/test_llm_real.py` com `qwen3.5:4b` passou com timeout de 900 s em 896,82 s; o modelo tem `thinking default true` e o contrato aprovado não permite enviar `think: false`. Gemini continua skipped por falta de endpoint/credencial.
+
+## Consolidação de segurança da Fase 3
+
+- Matriz em `docs/reports/phase-03-security.md`: token em memória, `Origin`, `127.0.0.1`, CSP, whitelist local e prompt injection têm testes executados.
+- `THREAT_MODEL.md` liga token, `Origin`, loopback e prompt injection a testes concretos, incluindo `tests/ui/test_browser.py::test_evidencia_real_no_browser`.
+- Evidência real de browser em `docs/reports/phase-03-ui-evidence.md`, com capturas em `screenshots/phase-03/` e SHA-256 registado.
+- Dependências fixadas passaram a 27 pacotes com `playwright==1.65.2` e `greenlet==3.5.6`, após aprovação explícita do Utilizador.
+- Limitação aberta: o token ainda tem de ser reintroduzido após recarregar a página; a falha por Chromium ausente não foi simulada depois da instalação.
 
 ## Como usar este mapa
 
