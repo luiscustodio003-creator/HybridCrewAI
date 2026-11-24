@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HybridCrewAI — Painel local</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>HybridCrewAI</h1>
+    <p>Painel local de observação e chat</p>
+    <label for="token">Token da interface</label>
+    <input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="Introduza o token">
+    <button id="ligar" type="button">Ligar</button>
+    <span id="estado" role="status">Por ligar</span>
+  </header>
+
+  <main>
+    <section aria-labelledby="titulo-tarefas">
+      <h2 id="titulo-tarefas">Tarefas</h2>
+      <button id="atualizar-tarefas" type="button">Atualizar</button>
+      <ul id="tarefas"></ul>
+    </section>
+
+    <section aria-labelledby="titulo-eventos">
+      <h2 id="titulo-eventos">Eventos</h2>
+      <div class="filtros">
+        <label for="evento-correlacao">Correlation ID</label>
+        <input id="evento-correlacao" type="text" placeholder="correlation_id">
+        <label for="evento-nivel">Nível</label>
+        <select id="evento-nivel">
+          <option value="">Todos</option>
+          <option value="debug">debug</option>
+          <option value="info">info</option>
+          <option value="warning">warning</option>
+          <option value="error">error</option>
+        </select>
+        <button id="iniciar-eventos" type="button">Iniciar fluxo</button>
+        <button id="parar-eventos" type="button" disabled>Parar fluxo</button>
+      </div>
+      <ol id="eventos"></ol>
+    </section>
+
+    <section aria-labelledby="titulo-llm">
+      <h2 id="titulo-llm">Chamadas LLM</h2>
+      <div class="filtros">
+        <label for="llm-correlacao">Correlation ID</label>
+        <input id="llm-correlacao" type="text" placeholder="correlation_id">
+        <button id="atualizar-llm" type="button">Atualizar</button>
+      </div>
+      <ol id="llm"></ol>
+    </section>
+
+    <section aria-labelledby="titulo-chat">
+      <h2 id="titulo-chat">Chat</h2>
+      <div class="filtros">
+        <label for="chat-tarefa">Task ID</label>
+        <input id="chat-tarefa" type="text" placeholder="task_id">
+        <label for="chat-correlacao">Correlation ID</label>
+        <input id="chat-correlacao" type="text" placeholder="correlation_id">
+      </div>
+      <ol id="mensagens"></ol>
+      <form id="formulario-chat">
+        <label for="chat-mensagem">Mensagem</label>
+        <input id="chat-mensagem" type="text" maxlength="4000" placeholder="Escreva uma mensagem">
+        <button type="submit">Enviar</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="tasks.js"></script>
+  <script src="logs.js"></script>
+  <script src="llm_calls.js"></script>
+  <script src="chat.js"></script>
+</body>
+</html>

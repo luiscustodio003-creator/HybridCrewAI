@@ -1,0 +1,7 @@
+name: ui-web
+purpose: Cliente web local e estático para tarefas, eventos, chamadas LLM e chat sem recursos externos
+public_api: []
+depends_on: [ui-server]
+events_emitted: []
+events_consumed: [event-stream-jsonl]
+tests: [tests/unit/test_ui_web_assets.py]

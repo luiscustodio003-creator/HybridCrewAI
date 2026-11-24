@@ -31,6 +31,7 @@ from app.ui.server.routes_llm_calls import (
     listar_chamadas,
 )
 from app.ui.server.routes_tasks import TAREFAS_PATH, listar_tarefas
+from app.ui.server.web_assets import ler_asset
 
 LOCAL_HOST: Final = "127.0.0.1"
 HEALTH_PATH: Final = "/health"
@@ -88,13 +89,22 @@ class _Handler(BaseHTTPRequestHandler):
     server: UiServer
 
     def do_GET(self) -> None:
-        """Aplica as barreiras locais antes de servir a rota protegida."""
+        """Serve recursos locais ou aplica barreiras às rotas protegidas."""
         caminho = urlsplit(self.path).path
-        rotas = {HEALTH_PATH, TAREFAS_PATH, EVENTS_PATH, LLM_CALLS_PATH, CHAT_PATH}
-        if caminho not in rotas or not self.server.settings.ui_enabled:
+        if not self.server.settings.ui_enabled:
             self.send_error(HTTPStatus.NOT_FOUND, "Recurso não encontrado")
             return
-        if not origem_valida(self.headers.get("Origin"), self.server.server_port):
+        recurso = ler_asset(caminho)
+        if recurso is not None:
+            self._asset(*recurso)
+            return
+        rotas = {HEALTH_PATH, TAREFAS_PATH, EVENTS_PATH, LLM_CALLS_PATH, CHAT_PATH}
+        if caminho not in rotas:
+            self.send_error(HTTPStatus.NOT_FOUND, "Recurso não encontrado")
+            return
+        origem = self.headers.get("Origin")
+        sec_fetch_site = self.headers.get("Sec-Fetch-Site")
+        if not origem_valida(origem, self.server.server_port, sec_fetch_site):
             self.send_error(HTTPStatus.FORBIDDEN, "Origem não autorizada")
             return
         if not pedido_autorizado(dict(self.headers.items()), self.server.settings):
@@ -214,6 +224,22 @@ class _Handler(BaseHTTPRequestHandler):
             return self.connection.recv(1, socket.MSG_PEEK) == b""
         except OSError:
             return True
+
+    def _asset(self, corpo: bytes, tipo: str) -> None:
+        """Serve um recurso estático local com cabeçalhos de isolamento."""
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", tipo)
+        self.send_header("Content-Length", str(len(corpo)))
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header(
+            "Content-Security-Policy",
+            "default-src 'self'; script-src 'self'; style-src 'self'; "
+            "connect-src 'self'; object-src 'none'; frame-ancestors 'none'",
+        )
+        self.end_headers()
+        self.wfile.write(corpo)
 
     def _json(
         self,

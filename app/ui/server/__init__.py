@@ -21,12 +21,14 @@ from app.ui.server.routes_tasks import (
     listar_tarefas,
     serializar_tarefa,
 )
+from app.ui.server.web_assets import WEB_FILES, ler_asset
 
 __all__ = [
     "CHAT_PATH",
     "EVENTS_PATH",
     "LLM_CALLS_PATH",
     "TAREFAS_PATH",
+    "WEB_FILES",
     "ChatMessage",
     "ChatService",
     "ChatStore",
@@ -40,6 +42,7 @@ __all__ = [
     "filtrar_eventos",
     "gerar_eventos_sse",
     "listar_chamadas",
+    "ler_asset",
     "listar_tarefas",
     "origin_local",
     "origem_valida",

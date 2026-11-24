@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 TOKEN_FALSO = "token-falso-com-16"
 CAMINHO_SAUDE = "/health"
 OK = 200
+PROIBIDO = 403
 NAO_ENCONTRADO = 404
 
 
@@ -62,6 +63,21 @@ def _get(
         ligacao.request("GET", caminho, headers=dict(cabecalhos or {}))
         resposta = ligacao.getresponse()
         return resposta.status, resposta.read().decode("utf-8")
+    finally:
+        ligacao.close()
+
+
+def _get_com_cabecalhos(
+    servidor: ThreadingHTTPServer,
+    caminho: str,
+    cabecalhos: Mapping[str, str] | None = None,
+) -> tuple[int, str, Mapping[str, str]]:
+    """Faz um pedido real e devolve também os cabeçalhos da resposta."""
+    ligacao = HTTPConnection("127.0.0.1", servidor.server_port, timeout=2)
+    try:
+        ligacao.request("GET", caminho, headers=dict(cabecalhos or {}))
+        resposta = ligacao.getresponse()
+        return resposta.status, resposta.read().decode("utf-8"), dict(resposta.getheaders())
     finally:
         ligacao.close()
 
@@ -110,6 +126,54 @@ def test_caminho_desconhecido_devolve_404(tmp_path: Path) -> None:
         estado, _ = _get(servidor, "/desconhecido")
 
     assert estado == NAO_ENCONTRADO
+
+
+def test_pagina_local_e_servida_sem_autenticacao(tmp_path: Path) -> None:
+    with _servidor(_settings(tmp_path)) as servidor:
+        estado, corpo, cabecalhos = _get_com_cabecalhos(servidor, "/")
+
+    assert estado == OK
+    assert "<html" in corpo.lower()
+    assert cabecalhos["Content-Type"] == "text/html; charset=utf-8"
+    assert cabecalhos["Cache-Control"] == "no-store"
+    assert "default-src 'self'" in cabecalhos["Content-Security-Policy"]
+
+
+def test_recurso_local_desconhecido_devolve_404(tmp_path: Path) -> None:
+    with _servidor(_settings(tmp_path)) as servidor:
+        estado, _ = _get(servidor, "/favicon.ico")
+
+    assert estado == NAO_ENCONTRADO
+
+
+def test_pagina_local_nao_e_servida_com_interface_desabilitada(tmp_path: Path) -> None:
+    with _servidor(_settings(tmp_path, HCW_UI_ENABLED="false")) as servidor:
+        estado, _ = _get(servidor, "/")
+
+    assert estado == NAO_ENCONTRADO
+
+
+def test_pedido_de_mesma_origem_do_browser_e_aceite(tmp_path: Path) -> None:
+    cabecalhos = {
+        "Authorization": f"Bearer {TOKEN_FALSO}",
+        "Sec-Fetch-Site": "same-origin",
+    }
+    with _servidor(_settings(tmp_path)) as servidor:
+        estado, corpo = _get(servidor, CAMINHO_SAUDE, cabecalhos)
+
+    assert estado == OK
+    assert '"status": "ok"' in corpo
+
+
+def test_pedido_de_origem_cruzada_e_recusado(tmp_path: Path) -> None:
+    cabecalhos = {
+        "Authorization": f"Bearer {TOKEN_FALSO}",
+        "Sec-Fetch-Site": "cross-site",
+    }
+    with _servidor(_settings(tmp_path)) as servidor:
+        estado, _ = _get(servidor, CAMINHO_SAUDE, cabecalhos)
+
+    assert estado == PROIBIDO
 
 
 def test_servidor_usar_apenas_biblioteca_padrao() -> None:

@@ -46,7 +46,8 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Adaptadores sem SDK externo | `app/llm/providers/` | `common.py`, `gemini_text.py`, `ollama.py`, `gemini_live.py` | validados em `HCW-02-010`; instrumentação central em `HCW-03-007` |
 | Observabilidade redigida das chamadas LLM | `app/llm/` | `observability.py` | implementada em `HCW-03-007` |
 | Demonstração do gateway na CLI | `app/cli/` | `llm_ping.py`, `main.py` | implementada em `HCW-02-011` |
-| Servidor local e API de tarefas/eventos/chamadas/chat | `app/ui/server/` | `app.py`, `routes_tasks.py`, `routes_events.py`, `routes_llm_calls.py`, `chat.py`, `routes_chat.py`, `event_filters.py`, `auth.py` | validado em `HCW-03-003` a `HCW-03-007`; chat persistido em `HCW-03-008` |
+| Servidor local e API de tarefas/eventos/chamadas/chat | `app/ui/server/` | `app.py`, `routes_tasks.py`, `routes_events.py`, `routes_llm_calls.py`, `chat.py`, `routes_chat.py`, `event_filters.py`, `auth.py`, `web_assets.py` | validado em `HCW-03-003` a `HCW-03-007`; chat persistido em `HCW-03-008`; recursos locais implementados em `HCW-03-009` |
+| Cliente web local e desenho de ecrãs | `app/ui/web/` | `index.html`, `styles.css`, `tasks.js`, `logs.js`, `llm_calls.js`, `chat.js`, `DESIGN.md` | implementado em `HCW-03-009`; capturas reais dependem de `HCW-03-010` |
 | Auditoria inicial | `docs/reports/` | `audit.md` | VALIDADA em HCW-00-001 |
 | Baseline de ambiente | `docs/reports/` | `baseline-freeze.txt` | VALIDADA em HCW-00-001 |
 | Baseline de testes | `docs/reports/` | `baseline-tests.txt` | histórico: sem testes iniciais |
@@ -79,7 +80,7 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 |---|---|---|
 | Configuração, eventos, tarefas, logs e resultados | `app/core/` | 1 (concluída) |
 | Fornecedores LLM, encaminhamento, egress e orçamento | `app/llm/` | 2 (gateway com adaptadores e demonstração na CLI) |
-| Servidor e interface web | `app/ui/`, `app/ui/web/` | 3 |
+| Servidor e interface web | `app/ui/`, `app/ui/web/` | 3 (servidor validado; cliente local implementado em `HCW-03-009`) |
 | Fluxo CREATE ponta a ponta | `app/workflows/create/` | 4 |
 | Workspace, ZIP, snapshots e auditoria | `app/workspace/` | 5 |
 | Execução isolada | `app/execution/` | 6 |

@@ -17,11 +17,15 @@ def origin_local(porta: int) -> str:
     return f"{LOCAL_SCHEME}://{LOCAL_HOST}:{porta}"
 
 
-def origem_valida(origem: str | None, porta: int) -> bool:
-    """Aceita apenas a origem exata do servidor local."""
-    if origem is None:
-        return False
-    return compare_digest(origem.encode("utf-8"), origin_local(porta).encode("utf-8"))
+def origem_valida(
+    origem: str | None,
+    porta: int,
+    sec_fetch_site: str | None = None,
+) -> bool:
+    """Aceita a origem exata ou pedidos de mesma origem do browser."""
+    if origem is not None:
+        return compare_digest(origem.encode("utf-8"), origin_local(porta).encode("utf-8"))
+    return sec_fetch_site == "same-origin"
 
 
 def pedido_autorizado(cabecalhos: Mapping[str, str], settings: Settings) -> bool:

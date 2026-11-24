@@ -1138,20 +1138,21 @@ tasks:
 - id: HCW-03-009
   title: Criar cliente web local e desenho de ecrãs
   phase: 3
-  status: APPROVED
+  status: VALIDATED
   priority: high
   depends_on: [HCW-03-005, HCW-03-006, HCW-03-007, HCW-03-008]
   requirements: [UI-007, NFR-001, DOC-001]
-  modules: [app/ui/web]
-  files_new: [app/ui/web/index.html, app/ui/web/styles.css, app/ui/web/logs.js, app/ui/web/tasks.js, app/ui/web/llm_calls.js, app/ui/web/chat.js, DESIGN.md]
-  files_change: [app/ui/server/app.py]
-  tests: [tests/unit/test_ui_web_assets.py]
+  modules: [app/ui/web, app/ui/server]
+  files_new: [app/ui/web/index.html, app/ui/web/styles.css, app/ui/web/logs.js, app/ui/web/tasks.js, app/ui/web/llm_calls.js, app/ui/web/chat.js, app/ui/web/README.txt, app/ui/web/module.yaml, app/ui/server/web_assets.py, DESIGN.md]
+  files_change: [app/ui/server/app.py, app/ui/server/auth.py, app/ui/server/__init__.py, app/ui/server/README.txt, app/ui/server/module.yaml, docs/MAP.md, THREAT_MODEL.md]
+  tests: [tests/unit/test_ui_web_assets.py, tests/integration/test_ui_server.py]
   acceptance:
   - "Todos os recursos são servidos localmente e não há URLs http ou https externas em HTML, CSS ou JS"
   - "A página mostra tarefas, eventos, chamadas LLM e chat com filtros por correlation_id e nível"
   - "DESIGN.md descreve ecrãs, estados e interações em PT-PT"
-  evidence: []
-  validated_on: null
+  evidence: [reports/tasks/HCW-03-009.md, tests/unit/test_ui_web_assets.py, tests/integration/test_ui_server.py]
+  validated_on: 2026-11-24
+  notes: 'Validado com GO em reports/tasks/HCW-03-009.md: cliente local com whitelist de recursos, CSP restrita a mesma origem, token em memória, Sec-Fetch-Site same-origin e renderização sem innerHTML; 213 testes passam e 2 skipped na suíte completa, 32 testes focados passam, ruff/mypy scoped e guardas OK.'
 - id: HCW-03-010
   title: Produzir evidência real de browser e capturas
   phase: 3
