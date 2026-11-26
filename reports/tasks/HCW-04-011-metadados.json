@@ -1,0 +1,42 @@
+{
+  "comandos": [
+    "python -m pytest -q tests/eval/test_reference_cases.py tests/unit/test_final_report.py",
+    "python -m tests.eval.runner --saida reports/tasks/HCW-04-011-avaliacao.json",
+    "python -m pytest -q tests/eval/test_reference_cases.py tests/unit/test_final_report.py tests/integration/test_create_golden.py tests/integration/test_create_workflow_checkpoint.py tests/unit/test_agent_runner.py tests/security/test_approval_tokens.py tests/unit/test_simple_runner.py tests/security/test_simple_runner.py tests/ui/test_browser_phase04.py",
+    "python -m pytest -q --deselect tests/ui/test_browser.py::test_evidencia_real_no_browser",
+    "python -m ruff check tests/eval tests/unit/test_final_report.py reports/final_report.py",
+    "python -m ruff format --check tests/eval tests/unit/test_final_report.py reports/final_report.py",
+    "python -m mypy --explicit-package-bases tests/eval/cases.py tests/eval/scorer.py tests/eval/runner.py tests/eval/test_reference_cases.py tests/unit/test_final_report.py reports/final_report.py",
+    "python scripts/check_file_size.py",
+    "python scripts/validate_plan.py",
+    "python scripts/check_traceability.py",
+    "python scripts/check_modules.py",
+    "python scripts/plan_status.py",
+    "python -m reports.final_report --avaliacao reports/tasks/HCW-04-011-avaliacao.json --metadados reports/tasks/HCW-04-011-metadados.json --saida docs/reports/phase-04.md"
+  ],
+  "resultados": {
+    "harness": "10 passed",
+    "regressao_focada": "44 passed",
+    "regressao_ampla": "307 passed, 2 skipped, 1 deselected",
+    "ruff": "0 errors",
+    "ruff_format": "9 files already formatted",
+    "mypy": "0 issues",
+    "check_file_size": "0 errors, 22 warnings",
+    "validate_plan": "0 errors, 0 warnings",
+    "check_traceability": "0 errors, 0 warnings",
+    "check_modules": "0 errors, 0 warnings"
+  },
+  "evidencias": {
+    "diff_hash": "cc1631c25d9fe07728b20012b719d4692ef775b99b3a6464f15d3a5d922c4e21",
+    "token_hash": "f789d7fde3fa7a3283bae562890f99bf3b006ba29a5e370dd85d69024615ce72",
+    "stdout_sha256": "99cef98de12a8b8a90abbcb2033d076bfc563ea7951d4da90263da27288d16f6",
+    "relatorio_sha256": "b2779a4718dcf65330c83a2de96faafb3224417b4778dfe0d61601c0541592e5",
+    "digest_casos": "6934e53982ec6436e9c11dc407b44920ec82ffe364c00635b2e5fb8661e91bd9",
+    "captura_equipa_sha256": "2fcb7d9ee3ae950a72c1520bb6ece55cb4b7a62fa05fb84f1a7b7760f7898658",
+    "captura_aprovacao_sha256": "4fe88396458a0a36d072606e8ac58d0e621f133ec53110a0377cf4afab91e655"
+  },
+  "limitacoes": [
+    "A falha pre-existente em tests/ui/test_browser.py::test_evidencia_real_no_browser foi deseleccionada na regressao.",
+    "A captura 02-aprovacao.png foi actualizada nesta sessao e o digest usado e o actual."
+  ]
+}

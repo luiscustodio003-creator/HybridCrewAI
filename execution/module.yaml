@@ -4,4 +4,4 @@ public_api: [GUARDA_SUBPROCESSO, TIMEOUT_MAXIMO_S, TIMEOUT_PADRAO_S, ExecutionCo
 depends_on: [approvals-tokens, core-config, core-events, core-results]
 events_emitted: [execution.iniciado, execution.concluido, execution.falhado, execution.recusado]
 events_consumed: []
-tests: [tests/unit/test_simple_runner.py, tests/security/test_simple_runner.py]
+tests: [tests/unit/test_simple_runner.py, tests/security/test_simple_runner.py, tests/security/test_phase04_threats.py]

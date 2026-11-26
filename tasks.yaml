@@ -1409,41 +1409,77 @@ tasks:
 - id: HCW-04-011
   title: Criar harness de avaliação com cinco casos e relatório final
   phase: 4
-  status: APPROVED
+  status: VALIDATED
   priority: high
   depends_on: [HCW-04-008, HCW-04-009, HCW-04-010]
   requirements: [FR-012, NFR-006, DOC-001, SEC-001]
   modules: [tests/eval, reports]
-  files_new: [tests/eval/__init__.py, tests/eval/cases.py, tests/eval/scorer.py, tests/eval/test_reference_cases.py, reports/final_report.py, docs/reports/phase-04.md]
+  files_new: [tests/eval/__init__.py, tests/eval/cases.py, tests/eval/scorer.py, tests/eval/runner.py, tests/eval/test_reference_cases.py, tests/unit/test_final_report.py, reports/final_report.py, reports/tasks/HCW-04-011-avaliacao.json, reports/tasks/HCW-04-011-metadados.json, docs/reports/phase-04.md]
   files_change: []
-  tests: [tests/eval/test_reference_cases.py]
+  tests: [tests/eval/test_reference_cases.py, tests/unit/test_final_report.py]
   acceptance:
   - "Cinco casos de referência são pontuados e o caso dourado é obrigatório"
   - "Pontuação mínima é 4 em 5 e o relatório final inclui comandos, resultados e digests"
   - "Relatório não contém segredos, token real ou prompt completo"
-  evidence: []
-  validated_on: null
+  evidence: [reports/tasks/HCW-04-011.md, reports/tasks/HCW-04-011-tests.txt, reports/tasks/HCW-04-011-avaliacao.json, reports/tasks/HCW-04-011-metadados.json, docs/reports/phase-04.md]
+  validated_on: 2026-11-26
+  notes: 'Sem Git; harness com cinco casos, 10 testes próprios, 44 na regressão focada e 307 na integral; executor do caso dourado explicitamente não isolado.'
 - id: HCW-04-012
   title: Consolidar segurança e documentação da Fase 4
   phase: 4
-  status: APPROVED
+  status: VALIDATED
   priority: high
   depends_on: [HCW-04-011]
   requirements: [SEC-003, SEC-004, SEC-001, DOC-001, OPS-006]
-  modules: [docs, tests/security]
-  files_new: [docs/reports/phase-04-security.md, reports/tasks/HCW-04-012.md]
-  files_change: [THREAT_MODEL.md, docs/MAP.md, docs/reports/phase-04.md]
+  modules: [docs, execution, tests/security]
+  files_new: [docs/reports/phase-04-security.md, reports/tasks/HCW-04-012.md, tests/security/test_phase04_threats.py]
+  files_change: [THREAT_MODEL.md, execution/README.txt, execution/module.yaml, docs/MAP.md, docs/reports/phase-04.md]
   tests: [tests/security/test_phase04_threats.py]
   acceptance:
   - "Cada ameaça da Fase 4 em THREAT_MODEL.md aponta para teste real com resultado PASSA"
   - "Executor não isolado fica explicitamente documentado como tal e só aceita token válido"
   - "Nenhum segredo real, token real ou prompt completo aparece em ficheiros, logs ou relatórios"
-  evidence: []
-  validated_on: null
+  evidence: [reports/tasks/HCW-04-012.md, docs/reports/phase-04-security.md, docs/reports/phase-04.md, THREAT_MODEL.md]
+  validated_on: 2026-11-26
+  notes: 'Sem Git; segurança consolidada com 5 testes próprios, 30 na regressão focada e 312 na integral; executor documentado como não isolado; nenhum segredo real em ficheiros, logs ou relatórios; gate da Fase 4 ficou NO-GO por duas falhas de pytest fora do escopo.'
+- id: HCW-04-013
+  title: Tornar determinístico o filtro de chamadas LLM na interface
+  phase: 4
+  status: VALIDATED
+  priority: high
+  depends_on: [HCW-04-012]
+  requirements: [UI-009, NFR-006]
+  modules: [app/ui/web, tests/ui]
+  files_new: []
+  files_change: [app/ui/web/llm_calls.js, app/ui/web/README.txt, tests/ui/test_browser.py, docs/MAP.md]
+  tests: [tests/ui/test_browser.py]
+  acceptance:
+  - "Respostas antigas de /api/llm-calls não substituem a lista filtrada por correlation_id"
+  - "O teste tests/ui/test_browser.py::test_evidencia_real_no_browser passa em execução isolada e cumulativa com count() == 1"
+  evidence: [reports/tasks/HCW-04-013.md, app/ui/web/llm_calls.js, tests/ui/test_browser.py]
+  validated_on: 2026-11-26
+  notes: 'Sem Git; cliente descarta respostas desatualizadas e o teste espera o estado filtrado; browser passou 4 vezes e regressão focada com 28 testes.'
+- id: HCW-04-014
+  title: Drenar corpo de POST recusado antes de fechar a ligação
+  phase: 4
+  status: VALIDATED
+  priority: high
+  depends_on: [HCW-04-013]
+  requirements: [SEC-003, NFR-006]
+  modules: [app/ui/server, tests/integration]
+  files_new: []
+  files_change: [app/ui/server/app.py, app/ui/server/README.txt, tests/integration/test_ui_approvals.py, docs/MAP.md]
+  tests: [tests/integration/test_ui_approvals.py]
+  acceptance:
+  - "POST recusado por Origem ou Bearer inválidos lê até MAX_CORPO_BYTES antes de responder e não provoca ConnectionAbortedError"
+  - "O teste parametrizado test_post_approvals_recusa_pedidos_invalidos passa em execução isolada e cumulativa"
+  evidence: [reports/tasks/HCW-04-014.md, app/ui/server/app.py, tests/integration/test_ui_approvals.py]
+  validated_on: 2026-11-26
+  notes: 'Sem Git; recusas de POST drenam corpo até MAX_CORPO_BYTES; 12 testes isolados passaram e o pytest cumulativo do gate ficou OK em 51 ficheiros.'
 - id: HCW-04-999
   title: Gate da Fase 4
   phase: 4
-  status: NOT_STARTED
+  status: VALIDATED
   priority: critical
   depends_on:
   - HCW-04-001
@@ -1458,6 +1494,8 @@ tasks:
   - HCW-04-010
   - HCW-04-011
   - HCW-04-012
+  - HCW-04-013
+  - HCW-04-014
   requirements: [FR-008, FR-009, FR-010, FR-011, FR-012, UI-009, NFR-006, SEC-003, SEC-004, OPS-006, DOC-002]
   modules: []
   files_new: []
@@ -1466,9 +1504,9 @@ tasks:
   acceptance:
   - run_gate.py --phase 4 devolve GO
   - etiqueta phase-04-go criada
-  evidence: []
-  validated_on: null
-  notes: Etiqueta phase-04-go só após GO e aprovação explícita do Utilizador.
+  evidence: [reports/phase-04/report.md, reports/tasks/HCW-04-011.md, reports/tasks/HCW-04-012.md, reports/tasks/HCW-04-013.md, reports/tasks/HCW-04-014.md]
+  validated_on: 2026-11-26
+  notes: 'Gate GO às 16:39:38 com validadores OK e pytest cumulativo OK em 51 ficheiros; etiqueta phase-04-go criada sem --force e sem alterar histórico, após aprovação explícita do utilizador.'
 - id: HCW-05-001
   title: Planear em detalhe a Fase 5 com a Skill hcw-plan
   phase: 5

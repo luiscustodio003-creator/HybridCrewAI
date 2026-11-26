@@ -102,9 +102,8 @@ def _preparar_pagina(pagina: Page, base: str, marcador_llm: str) -> None:
     _esperar_texto(pagina, "#estado", "Tarefas atualizadas.")
     for seletor in ("#tarefas", "#eventos", "#llm", "#mensagens"):
         pagina.locator(seletor).wait_for(state="attached")
-    pagina.locator("#llm li", has_text=marcador_llm).wait_for(
-        state="visible", timeout=TEMPO_ESPERA_MS
-    )
+    item_llm = pagina.locator("#llm li", has_text=marcador_llm)
+    item_llm.wait_for(state="visible", timeout=TEMPO_ESPERA_MS)
 
 
 def _preparar_eventos(
@@ -165,9 +164,8 @@ def _verificar_evento(
             level=EventLevel.INFO,
         )
     )
-    pagina.locator("#eventos li", has_text=marcador).wait_for(
-        state="visible", timeout=TEMPO_EVENTO_MS
-    )
+    item_evento = pagina.locator("#eventos li", has_text=marcador)
+    item_evento.wait_for(state="visible", timeout=TEMPO_EVENTO_MS)
     latencia = time.perf_counter() - inicio
     pagina.wait_for_timeout(300)
     assert pagina.locator("#eventos li").count() == 1
@@ -182,8 +180,12 @@ def _verificar_llm(pagina: Page, correlacao: str, marcador: str) -> None:
     """Confirma que o filtro de correlação mostra só a chamada esperada."""
     pagina.locator("#llm-correlacao").fill(correlacao)
     pagina.locator("#atualizar-llm").click()
-    pagina.locator("#llm li", has_text=marcador).wait_for(state="visible", timeout=TEMPO_ESPERA_MS)
-    assert pagina.locator("#llm li").count() == 1
+    pagina.wait_for_function(
+        "(m) => { const i = document.querySelectorAll('#llm li'); "
+        "return i.length === 1 && i[0].textContent.includes(m); }",
+        arg=marcador,
+        timeout=TEMPO_ESPERA_MS,
+    )
 
 
 def _verificar_chat(pagina: Page, tarefa: str, correlacao: str, mensagem: str) -> None:

@@ -8,16 +8,15 @@ from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from http.client import HTTPConnection
 from pathlib import Path
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 import pytest
 
 from app.core.config import load_settings
-from app.ui.server import create_server
+from app.ui.server import UiServer, create_server
+from app.ui.server.routes_chat import MAX_CORPO_BYTES
 
 if TYPE_CHECKING:
-    from approvals.tokens import TokenStore
-
     from app.core.config import Settings
 
 TOKEN_FALSO = "token-falso-com-16"
@@ -49,7 +48,7 @@ def _settings(tmp_path: Path) -> Settings:
 
 
 @contextmanager
-def _servidor(settings: Settings) -> Iterator[object]:
+def _servidor(settings: Settings) -> Iterator[UiServer]:
     """Inicia e fecha um servidor real num porto efémero."""
     servidor = create_server(settings)
     tarefa = threading.Thread(target=servidor.serve_forever, daemon=True)
@@ -62,12 +61,12 @@ def _servidor(settings: Settings) -> Iterator[object]:
         tarefa.join(timeout=2)
 
 
-def _porta(servidor: object) -> int:
+def _porta(servidor: UiServer) -> int:
     """Lê o porto do servidor sem depender da classe concreta."""
     return int(servidor.server_port)
 
 
-def _cabecalhos(servidor: object) -> Mapping[str, str]:
+def _cabecalhos(servidor: UiServer) -> Mapping[str, str]:
     """Devolve cabeçalhos válidos para o porto do servidor."""
     return {
         "Origin": f"http://127.0.0.1:{_porta(servidor)}",
@@ -76,7 +75,7 @@ def _cabecalhos(servidor: object) -> Mapping[str, str]:
 
 
 def _pedido(
-    servidor: object,
+    servidor: UiServer,
     metodo: str,
     caminho: str,
     cabecalhos: Mapping[str, str],
@@ -164,7 +163,7 @@ def test_post_approvals_emite_token_valido(tmp_path: Path) -> None:
             _corpo(),
         )
         registro = json.loads(texto)
-        tokens = cast("TokenStore", servidor.tokens)
+        tokens = servidor.tokens
 
     assert estado == OK
     assert set(registro) == {
@@ -196,6 +195,7 @@ def test_post_approvals_emite_token_valido(tmp_path: Path) -> None:
             json.dumps({**json.loads(_corpo()), "approved": True}).encode("utf-8"),
             ERRO,
         ),
+        ({}, b"x" * MAX_CORPO_BYTES, PROIBIDO),
     ],
 )
 def test_post_approvals_recusa_pedidos_invalidos(

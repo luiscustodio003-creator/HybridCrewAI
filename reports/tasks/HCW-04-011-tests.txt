@@ -1,0 +1,80 @@
+# Relatório de testes — HCW-04-011
+
+Data: 2026-11-26 · Veredicto: GO
+
+## Comandos executados
+
+1. `& ".venv\Scripts\python.exe" -m pytest -q tests/eval/test_reference_cases.py tests/unit/test_final_report.py`
+2. `& ".venv\Scripts\python.exe" -m tests.eval.runner --saida reports/tasks/HCW-04-011-avaliacao.json`
+3. `& ".venv\Scripts\python.exe" -c "import json; from pathlib import Path; from tests.eval.scorer import ResultadoAvaliacao,digest_casos; a=ResultadoAvaliacao.de_dict(json.loads(Path('reports/tasks/HCW-04-011-avaliacao.json').read_text(encoding='utf-8'))); print(digest_casos(a)); print(a.pontuacao, a.total, a.minimo, a.aprovado)"`
+4. `& ".venv\Scripts\python.exe" -m pytest -q tests/eval/test_reference_cases.py tests/unit/test_final_report.py tests/integration/test_create_golden.py tests/integration/test_create_workflow_checkpoint.py tests/unit/test_agent_runner.py tests/security/test_approval_tokens.py tests/unit/test_simple_runner.py tests/security/test_simple_runner.py tests/ui/test_browser_phase04.py`
+5. `& ".venv\Scripts\python.exe" -m pytest -q --deselect tests/ui/test_browser.py::test_evidencia_real_no_browser`
+6. `& ".venv\Scripts\python.exe" -m ruff check --fix tests/eval tests/unit/test_final_report.py reports/final_report.py`
+7. `& ".venv\Scripts\python.exe" -m ruff format --check tests/eval tests/unit/test_final_report.py reports/final_report.py`
+8. `& ".venv\Scripts\python.exe" -m mypy --explicit-package-bases tests/eval/cases.py tests/eval/scorer.py tests/eval/runner.py tests/eval/test_reference_cases.py tests/unit/test_final_report.py reports/final_report.py`
+9. `& ".venv\Scripts\python.exe" scripts/check_file_size.py`
+10. `& ".venv\Scripts\python.exe" scripts/validate_plan.py`
+11. `& ".venv\Scripts\python.exe" scripts/check_traceability.py`
+12. `& ".venv\Scripts\python.exe" scripts/check_modules.py`
+13. `& ".venv\Scripts\python.exe" scripts/plan_status.py`
+14. `& ".venv\Scripts\python.exe" -m reports.final_report --avaliacao reports/tasks/HCW-04-011-avaliacao.json --metadados reports/tasks/HCW-04-011-metadados.json --saida docs/reports/phase-04.md`
+
+## Resultados (passam / falham / ignorados)
+
+| Comando | Resultado |
+|---|---|
+| Testes da tarefa | `10 passed` |
+| Runner de avaliação | JSON com cinco casos; `5 5 4 True` |
+| Regressão focada | `44 passed` |
+| Regressão integral | `307 passed, 2 skipped, 1 deselected` |
+| Ruff check | `All checks passed!` |
+| Ruff format | `9 files already formatted` |
+| Mypy | `Success: no issues found in 6 source files` |
+| `check_file_size.py` | `[OK] 0 erro(s), 22 aviso(s)` |
+| `validate_plan.py` | `[OK] 0 erro(s), 0 aviso(s)` |
+| `check_traceability.py` | `[OK] 0 erro(s), 0 aviso(s)` |
+| `check_modules.py` | `[OK] 0 erro(s), 0 aviso(s)` |
+| `plan_status.py` | Fase 4 `10/13`; `HCW-04-011 [IN_PROGRESS]` antes da validação |
+| Gerador do relatório | `docs/reports/phase-04.md` com 126 linhas |
+
+## Falhas intermédias e correções
+
+- A primeira versão do harness tinha 310 linhas em `scorer.py`; os dados e executores dos casos passaram para `cases.py`, ficando `scorer.py` com 245 e `cases.py` com 282.
+- `ruff` acusou `F821` para `PASSOS` depois da mudança de imports; `PASSOS` passou a ser importado explicitamente de `workflows.create`.
+- `mypy` apontou conversão ambígua em `que minimo`; passou a `int(str(minimo))` quando o valor não é `int`.
+- `mypy` apontou `Step | None` sem `.value` na retomada; foi acrescentada guarda para `last_completed_step`.
+- `mypy` apontou incompatibilidade entre `RecordingSink` do checkpoint e do runner; o runner usa `AgenteSink` como alias explícito.
+- `final_report.py` usava `resultado.case_id` como nome de verificação quando o nome continha a palavra «token»; foi criado `_nome_seguro` para preservar nomes descritivos sem permitir valores longos ou sensíveis.
+- A tentativa de `main()` dentro de `scorer.py` violou `PLC0415`; o comando passou para `tests/eval/runner.py` com imports no topo.
+- A limpeza de `TemporaryDirectory` falhou no Windows com `PermissionError` no SQLite aberto; passou a `ignore_cleanup_errors=True`.
+- A CLI de `final_report.py` perdeu aspas em argumentos JSON no Windows; passou a aceitar `--metadados` com um ficheiro JSON.
+- Os atributos `prompt`/`token` de nomes de verificações eram filtrados por engano; o filtro de valores sensíveis ficou separado do filtro de nomes curtos.
+
+## Critérios de aceitação (um por linha, com a prova)
+
+- [x] Cinco casos de referência são pontuados e o caso dourado é obrigatório — `test_caso_de_referencia` (5 parametrizações), `test_cinco_casos_pontuacao_minima_e_dourado_obrigatorio` e JSON com cinco resultados.
+- [x] Pontuação mínima é 4 em 5 e o relatório final inclui comandos, resultados e digests — JSON `5 5 4 True`; `docs/reports/phase-04.md` com secções «Comandos executados», «Resultados» e «Evidências».
+- [x] Relatório não contém segredos, token real ou prompt completo — `test_relatorio_nao_expoe_token_nem_prompt`, `test_relatorio_filtra_valores_sensiveis_e_digests_invalidos` e filtros de `final_report.py`.
+
+## Evidências (caminhos de relatórios, capturas, logs)
+
+- `reports/tasks/HCW-04-011.md`
+- `reports/tasks/HCW-04-011-avaliacao.json`
+- `reports/tasks/HCW-04-011-metadados.json`
+- `docs/reports/phase-04.md` — SHA-256 `ddb4abf92fce0e7e2238d0192705f1eab91f81d7d0688ffe4cf019f602e77d14`
+- `docs/reports/phase-04-golden.md`
+- `screenshots/phase-04/01-equipa.png` — 81070 bytes; SHA-256 `2fcb7d9ee3ae950a72c1520bb6ece55cb4b7a62fa05fb84f1a7b7760f7898658`
+- `screenshots/phase-04/02-aprovacao.png` — 84219 bytes; SHA-256 `4fe88396458a0a36d072606e8ac58d0e621f133ec53110a0377cf4afab91e655`
+- `digest_casos`: `6934e53982ec6436e9c11dc407b44920ec82ffe364c00635b2e5fb8661e91bd9`
+- `diff_hash`: `cc1631c25d9fe07728b20012b719d4692ef775b99b3a6464f15d3a5d922c4e21`
+- `token_hash`: `f789d7fde3fa7a3283bae562890f99bf3b006ba29a5e370dd85d69024615ce72`
+- `stdout_sha256`: `99cef98de12a8b8a90abbcb2033d076bfc563ea7951d4da90263da27288d16f6`
+- `relatorio_sha256`: `b2779a4718dcf65330c83a2de96faafb3224417b4778dfe0d61601c0541592e5`
+
+## Problemas pendentes e limitações conhecidas
+
+- A falha pré-existente em `tests/ui/test_browser.py::test_evidencia_real_no_browser` continua fora do escopo; a regressão integral é verde com esse teste deseleccionado.
+- `ruff check .` global falha por erros pré-existentes em `scripts/`; a verificação foi feita apenas nos ficheiros tocados.
+- O executor do caso dourado é não isolado; a guarda não é uma sandbox.
+- O gate da Fase 4 continua dependente de `HCW-04-012` e de autorização para etiquetar `phase-04-go`.
+- Nenhum commit, push ou tag foi criado.

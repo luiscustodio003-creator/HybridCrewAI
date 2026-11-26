@@ -2,7 +2,7 @@
 
 ## Objectivo
 
-Executar um comando aprovado num subprocesso vigiado, sem depender de contentores, com aprovação verificável, prazo, cancelamento e pasta temporária dentro do workspace.
+Executar um comando aprovado num subprocesso vigiado e não isolado, sem depender de contentores, com aprovação verificável, prazo, cancelamento e pasta temporária dentro do workspace.
 
 ## API pública
 
@@ -30,3 +30,4 @@ Executar um comando aprovado num subprocesso vigiado, sem depender de contentore
 
 - `tests/unit/test_simple_runner.py`
 - `tests/security/test_simple_runner.py`
+- `tests/security/test_phase04_threats.py`

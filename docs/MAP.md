@@ -1,6 +1,6 @@
 # Mapa do projecto
 
-Data: 2026-11-25 · Responsabilidade: DOC-001 · Estado: mapa vivo; Fases 0 a 3 encerradas, Fase 4 em execução
+Data: 2026-11-26 · Responsabilidade: DOC-001 · Estado: mapa vivo; Fases 0 a 3 encerradas, Fase 4 em fecho
 
 Este ficheiro responde a «onde está o quê». Distingue o que existe em disco do que apenas está previsto no plano. O conteúdo dos ficheiros listados é a fonte de verdade; este mapa é um índice, não substitui os relatórios de evidência.
 
@@ -61,6 +61,11 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Evidência real de interface da Fase 3 | `docs/reports/` | `phase-03-ui-evidence.md` | validada em HCW-03-010; capturas em `screenshots/phase-03/` |
 | Matriz de segurança da Fase 3 | `docs/reports/` | `phase-03-security.md` | consolidada em HCW-03-011; token, `Origin`, `127.0.0.1` e prompt injection ligados a testes reais |
 | Evidência real da equipa e aprovação da Fase 4 | `screenshots/phase-04/` | `01-equipa.png`, `02-aprovacao.png` | validada em HCW-04-010 com Chromium real sobre servidor local em porto efémero |
+| Harness de avaliação da Fase 4 | `tests/eval/` | `cases.py`, `scorer.py`, `runner.py`, `test_reference_cases.py` | validado em HCW-04-011; cinco casos, pontuação mínima de 4 em 5 e caso dourado obrigatório |
+| Gerador do relatório final | `reports/` | `final_report.py`, `tasks/HCW-04-011-avaliacao.json`, `tasks/HCW-04-011-metadados.json` | validado em HCW-04-011; `docs/reports/phase-04.md` sem segredos, token real ou prompt completo |
+| Consolidação de segurança da Fase 4 | `docs/reports/` | `phase-04-security.md` | validada em HCW-04-012; ameaças ligadas a testes reais, executor não isolado documentado e relatórios sem segredos |
+| Filtro determinístico de chamadas LLM | `app/ui/web/` | `llm_calls.js` | validado em HCW-04-013; respostas antigas de `/api/llm-calls` descartadas e teste real com um único item |
+| Recusa segura de POST | `app/ui/server/` | `app.py` | validado em HCW-04-014; corpo drenado até `MAX_CORPO_BYTES` antes de fechar ligações recusadas |
 | Mapa do código | `docs/` | `MAP.md` | este ficheiro |
 | Plano de origem | `docs/` | `HybridCrewAI — Relatório Completo do Projecto e Plano Mestre v3.md` | referência histórica, não instrução |
 | Skills do projecto | `.opencode/skills/` | `hcw-*/SKILL.md` | 10 Skills validadas pelo lint |
@@ -138,6 +143,13 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 - Evidência real de browser em `docs/reports/phase-03-ui-evidence.md`, com capturas em `screenshots/phase-03/` e SHA-256 registado.
 - Dependências fixadas passaram a 27 pacotes com `playwright==1.65.2` e `greenlet==3.5.6`, após aprovação explícita do Utilizador.
 - Limitação aberta: o token ainda tem de ser reintroduzido após recarregar a página; a falha por Chromium ausente não foi simulada depois da instalação.
+
+## Consolidação da Fase 4
+
+- Harness em `tests/eval/`: cinco casos de referência, `digest_casos` canónico e `ResultadoAvaliacao.aprovado` dependente do caso dourado e da pontuação mínima de 4 em 5.
+- Relatório final em `docs/reports/phase-04.md`: 126 linhas, comandos, resultados, critérios de aceitação, evidências, limitações e digests; gerado por `reports/final_report.py` com `--metadados`.
+- Evidência em `reports/tasks/HCW-04-011.md` e `reports/tasks/HCW-04-011-tests.txt`; 10 testes próprios, 44 na regressão focada e 307 na regressão integral com uma falha pré-existente deseleccionada.
+- Limitação aberta: o executor do caso dourado não é isolado; a guarda reduz ficheiros e rede, mas não é uma sandbox.
 
 ## Como usar este mapa
 

@@ -3,16 +3,20 @@
 
   const api = window.hcwApi;
   const lista = document.getElementById("llm");
+  let pedidoAtual = 0;
 
   function executar() {
+    const pedido = ++pedidoAtual;
     const correlacao = document.getElementById("llm-correlacao").value.trim();
     const caminho = correlacao
       ? "/api/llm-calls?correlation_id=" + encodeURIComponent(correlacao)
       : "/api/llm-calls";
     api.getJson(caminho)
-      .then(mostrar)
+      .then(function (dados) {
+        if (pedido === pedidoAtual) mostrar(dados);
+      })
       .catch(function (erro) {
-        api.aviso(erro.message);
+        if (pedido === pedidoAtual) api.aviso(erro.message);
       });
   }
 

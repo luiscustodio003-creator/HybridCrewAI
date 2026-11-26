@@ -131,6 +131,16 @@ class _Handler(BaseHTTPRequestHandler):
         else:
             self._events()
 
+    def _recusar_post(self, status: HTTPStatus, mensagem: str) -> None:
+        """Drena o corpo antes de recusar para não abortar a ligação do cliente."""
+        try:
+            tamanho = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            tamanho = 0
+        if tamanho > 0:
+            self.rfile.read(min(tamanho, MAX_CORPO_BYTES))
+        self.send_error(status, mensagem)
+
     def do_POST(self) -> None:
         """Recebe mensagens e aprovações após aplicar as barreiras locais."""
         caminho = urlsplit(self.path).path
@@ -138,15 +148,15 @@ class _Handler(BaseHTTPRequestHandler):
             caminho not in {CHAT_PATH, APPROVALS_PATH}
             or not self.server.settings.ui_enabled
         ):
-            self.send_error(HTTPStatus.NOT_FOUND, "Recurso não encontrado")
+            self._recusar_post(HTTPStatus.NOT_FOUND, "Recurso não encontrado")
             return
         origem = self.headers.get("Origin")
         sec_fetch_site = self.headers.get("Sec-Fetch-Site")
         if not origem_valida(origem, self.server.server_port, sec_fetch_site):
-            self.send_error(HTTPStatus.FORBIDDEN, "Origem não autorizada")
+            self._recusar_post(HTTPStatus.FORBIDDEN, "Origem não autorizada")
             return
         if not pedido_autorizado(dict(self.headers.items()), self.server.settings):
-            self.send_error(HTTPStatus.UNAUTHORIZED, "Não autorizado")
+            self._recusar_post(HTTPStatus.UNAUTHORIZED, "Não autorizado")
             return
         if caminho == CHAT_PATH:
             self._chat_post()
