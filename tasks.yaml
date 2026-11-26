@@ -1510,35 +1510,217 @@ tasks:
 - id: HCW-05-001
   title: Planear em detalhe a Fase 5 com a Skill hcw-plan
   phase: 5
-  status: NOT_STARTED
+  status: VALIDATED
   priority: high
   depends_on:
   - HCW-04-999
-  requirements: []
+  requirements: [FR-013, FR-014, FR-015, FR-016, SEC-005, SEC-006, SEC-007, UI-010, UI-011, OPS-007, NFR-007, DOC-003]
   modules: []
   files_new: []
-  files_change: []
+  files_change: [tasks.yaml, docs/requirements.yaml]
   tests: []
   acceptance:
-  - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  - Tarefas detalhadas criadas em tasks.yaml
+  - Plano apresentado ao utilizador para aprovação antes de qualquer implementação
+  evidence: [tasks.yaml, docs/requirements.yaml]
+  validated_on: 2026-11-26
+  notes: Plano aprovado pelo Utilizador em 2026-11-26; 10 tarefas detalhadas e HCW-05-002 passou a APPROVED; validate_plan e check_traceability passaram sem erros nem avisos.
+- id: HCW-05-002
+  title: Criar feature flags do workspace e limites validados
+  phase: 5
+  status: VALIDATED
+  priority: critical
+  depends_on: [HCW-05-001]
+  requirements: [FR-013, NFR-001, DOC-001, SEC-005]
+  modules: [app/core/config]
+  files_new: [reports/tasks/HCW-05-002.md]
+  files_change: [app/core/config/defaults.py, app/core/config/schema.py, app/core/config/loader.py, app/core/config/README.txt, app/core/config/module.yaml, tests/unit/test_config.py]
+  tests: [tests/unit/test_config.py]
+  acceptance:
+  - "load_settings expõe workspace_write, snapshots, diff, zip, attachments e permissions desligados por omissão"
+  - "Cada limite numérico é positivo e valores inválidos são rejeitados com mensagem que não revela segredos"
+  - "Nenhuma bandeira permite escrita fora do workspace"
+  evidence: [reports/tasks/HCW-05-002.md]
+  validated_on: 2026-11-26
+  notes: Validada com 63 testes focados e regressão de configuração, ruff, mypy e validadores; revisão de segurança em reports/tasks/HCW-05-002.md. Commit e push autorizados em 2026-11-26; sem tag da Fase 5.
+- id: HCW-05-003
+  title: Confinar caminhos do workspace e bloquear symlinks
+  phase: 5
+  status: PLANNED
+  priority: critical
+  depends_on: [HCW-05-002]
+  requirements: [SEC-005, FR-013, NFR-002]
+  modules: [app/workspace]
+  files_new: [app/workspace/__init__.py, app/workspace/paths.py, app/workspace/README.txt, app/workspace/module.yaml, tests/unit/test_workspace_paths.py, tests/security/test_phase05_paths.py]
+  files_change: []
+  tests: [tests/unit/test_workspace_paths.py, tests/security/test_phase05_paths.py]
+  acceptance:
+  - "Caminhos absolutos, '..', nomes reservados do Windows e caminhos longos são rejeitados"
+  - "Um symlink que resolve fora da raiz é rejeitado antes de qualquer abertura"
+  - "O caminho final pertence sempre à raiz resolvida do workspace"
   evidence: []
   validated_on: null
-  notes: Usar docs/phases/phase-05.md como base.
+  notes: Toca em sistema de ficheiros; executar hcw-security-review com teste de ataque de travessia.
+- id: HCW-05-004
+  title: Escanear workspace com cobertura e motivos de ignorado
+  phase: 5
+  status: PLANNED
+  priority: high
+  depends_on: [HCW-05-003]
+  requirements: [FR-014, UI-010, SEC-005]
+  modules: [app/workspace]
+  files_new: [app/workspace/scanner.py, tests/unit/test_workspace_scanner.py]
+  files_change: []
+  tests: [tests/unit/test_workspace_scanner.py]
+  acceptance:
+  - "A soma de ficheiros lidos e ignorados é igual ao número de ficheiros no disco"
+  - "Cada ficheiro ignorado tem um motivo explícito e estável"
+  - "O scanner não lê nem lista conteúdo fora do workspace"
+  evidence: []
+  validated_on: null
+  notes: A cobertura alimenta o relatório do chat; sem leitura fora da raiz.
+- id: HCW-05-005
+  title: Classificar ficheiros sensíveis e colocar anexos em quarentena
+  phase: 5
+  status: PLANNED
+  priority: critical
+  depends_on: [HCW-05-004]
+  requirements: [SEC-007, FR-014, DOC-003]
+  modules: [app/workspace]
+  files_new: [app/workspace/sensitive.py, app/workspace/quarantine.py, tests/security/test_phase05_quarantine.py]
+  files_change: []
+  tests: [tests/security/test_phase05_quarantine.py]
+  acceptance:
+  - "Ficheiros sensíveis são detectados sem escrever o conteúdo em logs ou relatórios"
+  - "Um anexo fica em quarentena e não entra no chat antes de aprovação explícita"
+  - "O hash SHA-256 do anexo em quarentena é igual ao do ficheiro original"
+  evidence: []
+  validated_on: null
+  notes: Toca em conteúdo não confiável; executar hcw-security-review e teste de fuga de conteúdo.
+- id: HCW-05-006
+  title: Ingerir ZIP com limites e defesa contra Zip Slip
+  phase: 5
+  status: PLANNED
+  priority: critical
+  depends_on: [HCW-05-005]
+  requirements: [SEC-006, FR-014, OPS-007]
+  modules: [app/workspace]
+  files_new: [app/workspace/archive.py, tests/security/test_phase05_zip.py]
+  files_change: []
+  tests: [tests/security/test_phase05_zip.py]
+  acceptance:
+  - "Um ZIP com '../' ou caminho absoluto é rejeitado sem extrair ficheiros"
+  - "ZIP bomb por rácio ou tamanho é rejeitado antes da escrita completa"
+  - "Symlinks em ZIP e ZIP dentro de ZIP além do limite são rejeitados"
+  evidence: []
+  validated_on: null
+  notes: Toca em arquivos não confiáveis; executar hcw-security-review com quatro testes de ataque.
+- id: HCW-05-007
+  title: Criar snapshots e rollback com hashes verificáveis
+  phase: 5
+  status: PLANNED
+  priority: critical
+  depends_on: [HCW-05-006]
+  requirements: [FR-015, NFR-007, OPS-007]
+  modules: [app/workspace]
+  files_new: [app/workspace/snapshot.py, app/workspace/rollback.py, tests/integration/test_workspace_snapshot.py]
+  files_change: []
+  tests: [tests/integration/test_workspace_snapshot.py]
+  acceptance:
+  - "Snapshot, alteração e rollback devolvem hashes SHA-256 idênticos aos originais"
+  - "Undo desfaz o rollback e repõe o estado pós-alteração"
+  - "Uma interrupção antes do commit não deixa ficheiros parciais nem perde o snapshot"
+  evidence: []
+  validated_on: null
+  notes: Toca em recuperação; executar hcw-security-review e teste de interrupção.
+- id: HCW-05-008
+  title: Registar auditoria e operações atómicas de ficheiro
+  phase: 5
+  status: PLANNED
+  priority: high
+  depends_on: [HCW-05-007]
+  requirements: [OPS-007, NFR-007, SEC-005, DOC-003]
+  modules: [app/workspace]
+  files_new: [app/workspace/file_ops.py, app/workspace/audit.py, tests/recovery/test_workspace_interrupt.py]
+  files_change: []
+  tests: [tests/recovery/test_workspace_interrupt.py]
+  acceptance:
+  - "Uma operação interrompida a meio deixa a pasta consistente com o último commit válido"
+  - "Cada escrita gera evento de auditoria com task_id e correlation_id, sem conteúdo sensível"
+  - "Nenhuma operação escreve fora da raiz do workspace"
+  evidence: []
+  validated_on: null
+  notes: Toca em auditoria e recuperação; executar hcw-security-review.
+- id: HCW-05-009
+  title: Ligar diff e aprovação do workspace ao token local
+  phase: 5
+  status: PLANNED
+  priority: critical
+  depends_on: [HCW-05-008]
+  requirements: [FR-016, FR-010, SEC-003, SEC-005]
+  modules: [app/ui/server, approvals]
+  files_new: [app/ui/server/routes_diff.py, tests/integration/test_workspace_approval.py]
+  files_change: [app/ui/server/app.py, app/ui/server/routes_approvals.py, app/ui/server/README.txt]
+  tests: [tests/integration/test_workspace_approval.py, tests/security/test_ui_approvals.py]
+  acceptance:
+  - "O diff_hash é calculado a partir dos hashes reais do snapshot e da alteração"
+  - "A aprovação só é aceite com token opaco emitido pela UI e ligado à tarefa"
+  - "approved=true vindo do modelo não tem efeito e nenhum token aparece no DOM, URL ou storage"
+  evidence: []
+  validated_on: null
+  notes: Toca em aprovação; executar hcw-security-review.
+- id: HCW-05-010
+  title: Adicionar anexos ao chat com relatório de cobertura
+  phase: 5
+  status: PLANNED
+  priority: high
+  depends_on: [HCW-05-009]
+  requirements: [UI-010, FR-014, SEC-007, UI-007]
+  modules: [app/ui/server, app/ui/web]
+  files_new: [app/ui/server/routes_attachments.py, app/ui/web/attachments.js, tests/integration/test_ui_attachments.py, tests/ui/test_browser_phase05.py]
+  files_change: [app/ui/server/app.py, app/ui/server/routes_chat.py, app/ui/web/index.html, app/ui/web/chat.js, app/ui/web/README.txt]
+  tests: [tests/integration/test_ui_attachments.py, tests/ui/test_browser_phase05.py]
+  acceptance:
+  - "Um ZIP com subpastas é mostrado no chat com o relatório de cobertura real"
+  - "Lidos e ignorados batem com o disco e cada ignorado mostra o motivo"
+  - "O anexo continua em quarentena até aprovação e não carrega recursos externos"
+  evidence: []
+  validated_on: null
+  notes: Toca em upload local; executar hcw-security-review e evidência de browser real.
+- id: HCW-05-011
+  title: Criar ecrãs locais de aprovações e diff, snapshots e permissões
+  phase: 5
+  status: PLANNED
+  priority: high
+  depends_on: [HCW-05-010]
+  requirements: [UI-011, UI-008, DOC-003, NFR-001]
+  modules: [app/ui/web]
+  files_new: [app/ui/web/snapshots.js, app/ui/web/permissions.js, tests/ui/test_browser_phase05_screens.py]
+  files_change: [app/ui/web/index.html, app/ui/web/styles.css, app/ui/web/approvals.js, app/ui/web/README.txt, docs/MAP.md]
+  tests: [tests/ui/test_browser_phase05_screens.py]
+  acceptance:
+  - "Os ecrãs de aprovações e diff, snapshots e permissões são servidos localmente e funcionam offline"
+  - "Botões de escrita ficam desactivados sem a respectiva feature flag"
+  - "Diff e snapshots actualizam após operações reais e o token nunca aparece no DOM, URL ou storage"
+  evidence: []
+  validated_on: null
+  notes: Toca na interface local; executar hcw-security-review e capturar evidência real.
 - id: HCW-05-999
   title: Gate da Fase 5
   phase: 5
   status: NOT_STARTED
   priority: critical
-  depends_on:
-  - HCW-05-001
-  requirements: []
-  modules: []
+  depends_on: [HCW-05-001, HCW-05-002, HCW-05-003, HCW-05-004, HCW-05-005, HCW-05-006, HCW-05-007, HCW-05-008, HCW-05-009, HCW-05-010, HCW-05-011]
+  requirements: [FR-013, FR-014, FR-015, FR-016, SEC-005, SEC-006, SEC-007, UI-010, UI-011, OPS-007, NFR-007, DOC-003]
+  modules: [app/workspace, app/ui/server, app/ui/web]
   files_new: []
-  files_change: []
-  tests: []
+  files_change: [reports/phase-05/report.md, reports/phase-05/report.json, docs/reports/phase-05.md, STATE.md, DEVLOG.md]
+  tests: [tests/security/test_phase05_paths.py, tests/security/test_phase05_quarantine.py, tests/security/test_phase05_zip.py, tests/integration/test_workspace_snapshot.py, tests/recovery/test_workspace_interrupt.py, tests/integration/test_workspace_approval.py, tests/integration/test_ui_attachments.py, tests/ui/test_browser_phase05.py, tests/ui/test_browser_phase05_screens.py]
   acceptance:
-  - run_gate.py --phase 5 devolve GO
-  - etiqueta phase-05-go criada
+  - "run_gate.py --phase 5 devolve GO"
+  - "Bateria de segurança da Fase 5 a 100%"
+  - "Rollback comprovado com hashes idênticos e nenhuma escrita fora do workspace"
+  - "etiqueta phase-05-go criada"
   evidence: []
   validated_on: null
   notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.

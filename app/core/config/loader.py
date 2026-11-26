@@ -8,18 +8,29 @@ from pathlib import Path
 
 from app.core.config.defaults import (
     APP_NAME,
+    ATTACHMENTS,
     CLOUD_ENABLED,
     CREATE_FLOW,
     DATA_DIR,
+    DIFF,
     ENV_PREFIX,
     EVENT_LOG,
     LOG_DIR,
     LOG_LEVEL,
     MAX_FILE_LINES,
+    MAX_WORKSPACE_FILE_BYTES,
+    MAX_WORKSPACE_PATH_CHARS,
+    MAX_ZIP_BYTES,
+    MAX_ZIP_ENTRIES,
+    MAX_ZIP_NESTING,
     OLLAMA_MODEL,
+    PERMISSIONS,
+    SNAPSHOTS,
     SQLITE_PATH,
     UI_ENABLED,
     UI_TOKEN,
+    WORKSPACE_WRITE,
+    ZIP_ENABLED,
 )
 from app.core.config.schema import (
     ConfigError,
@@ -97,4 +108,19 @@ def load_settings(
         ui_enabled=_bool_value(environment, "UI_ENABLED", UI_ENABLED),
         ui_token=_secret_value(environment, "UI_TOKEN", UI_TOKEN),
         create_flow=_bool_value(environment, "CREATE_FLOW", CREATE_FLOW),
+        workspace_write=_bool_value(environment, "WORKSPACE_WRITE", WORKSPACE_WRITE),
+        snapshots=_bool_value(environment, "SNAPSHOTS", SNAPSHOTS),
+        diff=_bool_value(environment, "DIFF", DIFF),
+        zip_enabled=_bool_value(environment, "ZIP_ENABLED", ZIP_ENABLED),
+        attachments=_bool_value(environment, "ATTACHMENTS", ATTACHMENTS),
+        permissions=_bool_value(environment, "PERMISSIONS", PERMISSIONS),
+        max_workspace_file_bytes=_int_value(
+            environment, "MAX_WORKSPACE_FILE_BYTES", MAX_WORKSPACE_FILE_BYTES
+        ),
+        max_workspace_path_chars=_int_value(
+            environment, "MAX_WORKSPACE_PATH_CHARS", MAX_WORKSPACE_PATH_CHARS
+        ),
+        max_zip_bytes=_int_value(environment, "MAX_ZIP_BYTES", MAX_ZIP_BYTES),
+        max_zip_entries=_int_value(environment, "MAX_ZIP_ENTRIES", MAX_ZIP_ENTRIES),
+        max_zip_nesting=_int_value(environment, "MAX_ZIP_NESTING", MAX_ZIP_NESTING),
     )

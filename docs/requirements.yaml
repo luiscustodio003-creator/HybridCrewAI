@@ -117,3 +117,39 @@ requirements:
 - id: DOC-002
   text: Persona do assistente e documentação dos agentes em português de Portugal
   status: ACTIVE
+- id: FR-013
+  text: Workspace confinado com feature flags e limites validados
+  status: ACTIVE
+- id: FR-014
+  text: Ingestão de anexos e ZIP com quarentena, cobertura e aprovação explícita
+  status: ACTIVE
+- id: FR-015
+  text: Snapshots, rollback e undo com hashes verificáveis
+  status: ACTIVE
+- id: FR-016
+  text: Diff e aprovação ligados a alterações reais do workspace
+  status: ACTIVE
+- id: SEC-005
+  text: Nenhuma escrita ou leitura fora do workspace; travessias e symlinks bloqueados
+  status: ACTIVE
+- id: SEC-006
+  text: ZIP sem Zip Slip, bombas, symlinks e aninhamento além do limite
+  status: ACTIVE
+- id: SEC-007
+  text: Ficheiros sensíveis e anexos em quarentena até aprovação
+  status: ACTIVE
+- id: UI-010
+  text: Chat com anexos locais e relatório de cobertura sem recursos externos
+  status: ACTIVE
+- id: UI-011
+  text: Ecrãs locais de aprovações e diff, snapshots e permissões
+  status: ACTIVE
+- id: OPS-007
+  text: Auditoria de operações de workspace e recuperação após interrupção
+  status: ACTIVE
+- id: NFR-007
+  text: Alterações atómicas por etapa com consistência após interrupção
+  status: ACTIVE
+- id: DOC-003
+  text: Documentação do workspace, limites e procedimentos de recuperação
+  status: ACTIVE

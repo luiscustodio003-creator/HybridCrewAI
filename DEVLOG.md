@@ -1,6 +1,20 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-26 — HCW-05-002 validada
+Feito: Utilizador aprovou o plano da Fase 5; `HCW-05-001` passou a VALIDATED e `HCW-05-002` a APPROVED/IN_PROGRESS/IMPLEMENTED/VALIDATED. `Settings` expõe agora as flags `workspace_write`, `snapshots`, `diff`, `zip_enabled`, `attachments` e `permissions`, todas desligadas por omissão, cinco limites positivos e `workspace_dir` derivado de `data_dir`. `tasks.yaml` e `docs/requirements.yaml` ficaram com o plano aprovado.
+Falhou / por resolver: `ruff format --check` assinala linhas pré-existentes em `loader.py`, `schema.py`, `secrets.py` e `test_config.py`; não houve reformatação fora do necessário. Commit e push autorizados pelo Utilizador; sem tag da Fase 5.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `app/core/config/defaults.py`, `app/core/config/schema.py`, `app/core/config/loader.py`, `app/core/config/README.txt`, `app/core/config/module.yaml`, `tests/unit/test_config.py`, `reports/tasks/HCW-05-002.md`.
+Testes executados: `pytest -o addopts="" --tb=short -q` em `test_config.py`, `test_ui_config.py`, `test_create_flow_config.py` e `test_secrets.py` → 63 passed; `ruff check` → OK; `mypy` → OK; `check_modules` → 0 erros; `check_file_size` → 0 erros/23 avisos; `validate_plan` e `check_traceability` → 0 erros/0 avisos.
+Próxima acção: passar `HCW-05-003` a APPROVED e implementar paths/symlinks do workspace.
+
+## 2026-11-26 — Fase 5 planeada, aguarda aprovação
+Feito: executada `hcw-router` e confirmado o gate da Fase 4 com `plan_status.py`. A Fase 5 só tinha `-001` e `-999`, por isso `hcw-plan` detalhou 10 tarefas (`HCW-05-002` a `HCW-05-011`) em `tasks.yaml`, ligou todas ao gate `HCW-05-999` e acrescentou 12 requisitos em `docs/requirements.yaml`. `HCW-05-001` ficou IN_PROGRESS e as novas tarefas PLANNED, sem implementação nem escrita Git.
+Falhou / por resolver: nada nos validadores. O plano depende de aprovação explícita do Utilizador antes de passar tarefas a APPROVED; os três screenshots sem explicação continuam intactos e fora de qualquer commit da Fase 5.
+Ficheiros tocados: `tasks.yaml`, `docs/requirements.yaml`, `STATE.md`, `DEVLOG.md`.
+Testes executados: `validate_plan.py` → 0 erros, 0 avisos; `check_traceability.py` → 0 erros, 0 avisos; `plan_status.py` → Fase 05 `0/12`; `check_file_size.py` → 0 erros, 22 avisos.
+Próxima acção: apresentar o plano ao Utilizador e, só com aprovação explícita, passar `HCW-05-002` a APPROVED e executar `hcw-implement`/`hcw-security-review`/`hcw-test-gate`/`hcw-docs`.
+
 ## 2026-11-26 — Fase 4 comitada e enviada
 Feito: com autorização explícita do utilizador, preparado e enviado um commit com o código, testes, evidências e documentação da Fase 4, sem `--force`, sem mudar histórico e sem apagar ramos. A etiqueta `phase-04-go` permanece em `cb230cb`, anterior a este commit.
 Falhou / por resolver: nada no commit nem no push. Os três screenshots com alterações sem explicação nesta sessão foram deliberadamente deixados fora do commit e permanecem no working tree.

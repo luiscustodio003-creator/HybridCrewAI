@@ -1,5 +1,5 @@
 name: core-config
-purpose: Carregar uma configuração imutável e validada sem gravar ficheiros nem ler segredos
+purpose: Carregar uma configuração imutável e validada com flags e limites do workspace, sem gravar ficheiros nem ler segredos
 public_api: [Settings, ConfigError, load_settings, validate_ollama_model, validate_ui_token, Secrets, SecretStr, EnvironmentSecrets, SecretError, redact]
 depends_on: []
 events_emitted: []

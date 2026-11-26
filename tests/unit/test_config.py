@@ -34,6 +34,99 @@ def test_valores_por_omissao_sao_seguros(tmp_path: Path) -> None:
     assert settings.ollama_model is None
 
 
+def test_flags_do_workspace_sao_desligados_por_omissao(tmp_path: Path) -> None:
+    settings = load_settings({}, base_dir=_base_dir(tmp_path))
+    assert settings.workspace_write is False
+    assert settings.snapshots is False
+    assert settings.diff is False
+    assert settings.zip_enabled is False
+    assert settings.attachments is False
+    assert settings.permissions is False
+
+
+def test_flags_do_workspace_sao_lidas_do_ambiente(tmp_path: Path) -> None:
+    env: Mapping[str, str] = {
+        "HCW_WORKSPACE_WRITE": "true",
+        "HCW_SNAPSHOTS": "true",
+        "HCW_DIFF": "true",
+        "HCW_ZIP_ENABLED": "true",
+        "HCW_ATTACHMENTS": "true",
+        "HCW_PERMISSIONS": "true",
+    }
+    settings = load_settings(env, base_dir=_base_dir(tmp_path))
+    assert settings.workspace_write is True
+    assert settings.snapshots is True
+    assert settings.diff is True
+    assert settings.zip_enabled is True
+    assert settings.attachments is True
+    assert settings.permissions is True
+
+
+def test_limites_do_workspace_sao_positivos_por_omissao(tmp_path: Path) -> None:
+    settings = load_settings({}, base_dir=_base_dir(tmp_path))
+    limites = (
+        settings.max_workspace_file_bytes,
+        settings.max_workspace_path_chars,
+        settings.max_zip_bytes,
+        settings.max_zip_entries,
+        settings.max_zip_nesting,
+    )
+    assert all(limite > 0 for limite in limites)
+
+
+@pytest.mark.parametrize(
+    "chave",
+    [
+        "HCW_MAX_WORKSPACE_FILE_BYTES",
+        "HCW_MAX_WORKSPACE_PATH_CHARS",
+        "HCW_MAX_ZIP_BYTES",
+        "HCW_MAX_ZIP_ENTRIES",
+        "HCW_MAX_ZIP_NESTING",
+    ],
+)
+def test_limite_do_workspace_zero_e_rejeitado(tmp_path: Path, chave: str) -> None:
+    with pytest.raises(ConfigError, match=chave):
+        load_settings({chave: "0"}, base_dir=_base_dir(tmp_path))
+
+
+@pytest.mark.parametrize("valor", ["-1", "300;rm -rf /"])
+def test_limite_do_workspace_invalido_aborta_sem_executar_texto(
+    tmp_path: Path, valor: str
+) -> None:
+    with pytest.raises(ConfigError, match="HCW_MAX_ZIP_BYTES"):
+        load_settings({"HCW_MAX_ZIP_BYTES": valor}, base_dir=_base_dir(tmp_path))
+
+
+@pytest.mark.parametrize(
+    "chave",
+    [
+        "HCW_WORKSPACE_WRITE",
+        "HCW_SNAPSHOTS",
+        "HCW_DIFF",
+        "HCW_ZIP_ENABLED",
+        "HCW_ATTACHMENTS",
+        "HCW_PERMISSIONS",
+    ],
+)
+def test_flag_do_workspace_invalida_e_rejeitada(tmp_path: Path, chave: str) -> None:
+    with pytest.raises(ConfigError, match=chave):
+        load_settings({chave: "sim"}, base_dir=_base_dir(tmp_path))
+
+
+def test_workspace_fica_dentro_do_directorio_de_dados(tmp_path: Path) -> None:
+    settings = load_settings({}, base_dir=_base_dir(tmp_path))
+    assert settings.workspace_dir.parent == settings.data_dir
+    assert settings.workspace_dir.is_relative_to(settings.base_dir)
+
+
+def test_variavel_desconhecida_nao_altera_o_workspace(tmp_path: Path) -> None:
+    base = _base_dir(tmp_path)
+    externo = base.parent / "fora"
+    settings = load_settings({"HCW_WORKSPACE_DIR": str(externo)}, base_dir=base)
+    assert settings.workspace_dir == base / "data" / "workspace"
+    assert settings.workspace_dir.is_relative_to(base)
+
+
 def test_variaveis_de_ambiente_sobrescrevem_omissoes(tmp_path: Path) -> None:
     base = _base_dir(tmp_path)
     env: Mapping[str, str] = {
