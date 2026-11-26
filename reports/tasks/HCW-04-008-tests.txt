@@ -1,0 +1,85 @@
+HCW-04-008 — Evidência de testes executados
+Data: 2026-11-25
+Ambiente: .venv local; sem instalação de dependências; sem Git writes.
+
+[VERMELHO — antes da implementação]
+Comando: & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/integration/test_create_golden.py
+Resultado (extracto): `AssertionError: assert Step.APROVACAO == Step.ARQUITECTURA`
+Correção: o fluxo para em `Step.ARQUITECTURA` enquanto aguarda aprovação; a expectativa do teste foi corrigida.
+
+[VERMELHO — falha no subprocesso]
+Comando: & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/integration/test_create_golden.py
+Resultado (extracto): `ToolResult.FAILED` com `returncode=2` e `no tests ran in 0.01s`.
+Correção: o comando da fixture passou a definir `TEMP`, `TMP` e `TMPDIR` dentro da pasta autorizada antes de importar `pytest`.
+
+[VERMELHO — guarda do subprocesso]
+Comando: & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/integration/test_create_golden.py
+Resultado (extracto): `PermissionError: Acesso a ficheiros fora da pasta autorizada.` em `_pytest/logging.py`, ao abrir `\\.\NUL` a partir de `os.devnull`.
+Diagnóstico: `os.path.abspath(os.devnull)` devolve `\\.\NUL` no Windows; `os.path.basename` desse valor é vazio.
+Correção: `execution/guard.py` passou a aceitar `os.devnull` e a sua forma absoluta, além de permitir leitura da biblioteca do environment virtual (`sys.prefix`). Foram acrescentados testes de leitura/escrita fora da pasta autorizada.
+
+[CORREÇÕES DE QUALIDADE APLICADAS]
+- `tests/eval/fixtures/calculadora_cli/test_main.py`: imports organizados e constantes para valores esperados.
+- `tests/integration/test_create_golden.py`: diagnóstico temporário removido, `ruff format` aplicado e `diff_hash` recalculado após a alteração da fixture.
+- `tests/security/test_simple_runner.py`: acrescentados `test_pytest_da_venv_pode_ser_lido`, `test_subprocesso_nao_le_ficheiro_fora_da_pasta` e `test_subprocesso_nao_escreve_fora_da_pasta`.
+- `execution/guard.py`: leitura permitida em `sys.base_prefix`/`sys.prefix`; dispositivo `os.devnull` permitido nas formas relativa e absoluta.
+- `THREAT_MODEL.md`, `docs/MAP.md`, `docs/reports/phase-04-golden.md`, `tasks.yaml`, `STATE.md`, `DEVLOG.md`: actualizados.
+
+[VERDE — testes focados finais]
+Comando: & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/integration/test_create_golden.py tests/security/test_simple_runner.py
+Resultado:
+.......                                                                  [100%]
+7 passed in 2.37s
+
+[QUALIDADE — Ruff]
+Comando: & ".venv\Scripts\python.exe" -m ruff check execution/guard.py tests/integration/test_create_golden.py tests/security/test_simple_runner.py tests/eval/fixtures/calculadora_cli/main.py tests/eval/fixtures/calculadora_cli/test_main.py
+Resultado:
+All checks passed!
+
+Comando: & ".venv\Scripts\python.exe" -m ruff format --check execution/guard.py tests/integration/test_create_golden.py tests/security/test_simple_runner.py tests/eval/fixtures/calculadora_cli/main.py tests/eval/fixtures/calculadora_cli/test_main.py
+Resultado:
+5 files already formatted
+
+[QUALIDADE — mypy]
+Comando: & ".venv\Scripts\python.exe" -m mypy execution/guard.py tests/integration/test_create_golden.py tests/security/test_simple_runner.py tests/eval/fixtures/calculadora_cli/main.py tests/eval/fixtures/calculadora_cli/test_main.py
+Resultado:
+Success: no issues found in 5 source files
+
+[QUALIDADE — tamanho de ficheiro]
+Comando: & ".venv\Scripts\python.exe" scripts/check_file_size.py
+Resultado (extracto relevante):
+  AVISO  tests\integration\test_create_golden.py: 283 linhas (aviso aos 200)
+[OK] check_file_size: 0 erro(s), 16 aviso(s)
+Nota: nenhum ficheiro ultrapassa 300 linhas; os avisos são o limiar informativo de 200 linhas.
+
+[REGRESSÃO]
+Comando: & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q --deselect tests/ui/test_browser.py::test_evidencia_real_no_browser
+Resultado:
+..........................ss............................................ [ 25%]
+........................................................................ [ 51%]
+........................................................................ [ 77%]
+..............................................................           [100%]
+276 passed, 2 skipped, 1 deselected in 36.83s
+
+Motivo da exclusão explícita: `tests/ui/test_browser.py::test_evidencia_real_no_browser` falhava antes desta tarefa com `AssertionError: assert 2 == 1` em `_verificar_llm` (`tests/ui/test_browser.py:186`). Nenhum ficheiro de `tests/ui` ou `app/ui` foi alterado.
+
+[PLANO E DOCUMENTAÇÃO]
+Comando: & ".venv\Scripts\python.exe" scripts/validate_plan.py
+Resultado:
+[OK] validate_plan: 0 erro(s), 0 aviso(s)
+
+Comando: & ".venv\Scripts\python.exe" scripts/check_modules.py
+Resultado:
+[OK] check_modules: 0 erro(s), 0 aviso(s)
+
+Comando: & ".venv\Scripts\python.exe" scripts/check_traceability.py
+Resultado:
+[OK] check_traceability: 0 erro(s), 0 aviso(s)
+
+Comando: & ".venv\Scripts\python.exe" scripts/plan_status.py
+Resultado (extracto):
+  Fase 04 MVP vertical: CREATE ponta a ponta             8/13
+Estados: APPROVED=4, DEPRECATED=1, IMPLEMENTED=2, NOT_STARTED=21, VALIDATED=54
+Próxima tarefa: HCW-04-009 — Cancelar, matar e retomar o fluxo CREATE [APPROVED].
+
+Nota: contagem observada depois da actualização de `tasks.yaml` para `VALIDATED`; não foi criada nenhuma entrada `IN_PROGRESS`.

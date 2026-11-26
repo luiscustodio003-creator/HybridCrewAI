@@ -1,0 +1,7 @@
+name: create-workflow
+purpose: Executar, cancelar e retomar o fluxo CREATE com passos verificáveis, checkpoints e idempotência sem permitir aprovação pelo modelo
+public_api: [PASSOS, AprovacaoInvalida, Checkpoint, CheckpointStore, CheckpointStoreError, CreateRequest, CreateWorkflow, EtapaFalhou, FluxoInativo, Step, WorkflowDependencies, WorkflowError, WorkflowResult, hash_token]
+depends_on: [core-config, core-events, core-tasks, agents-runner, approvals-tokens]
+events_emitted: [create.pedido, create.requisitos, create.plano, create.arquitectura, create.aprovacao, create.execucao, create.revisao, create.relatorio]
+events_consumed: []
+tests: [tests/unit/test_create_workflow.py, tests/integration/test_create_workflow_checkpoint.py, tests/recovery/test_create_kill_resume.py]

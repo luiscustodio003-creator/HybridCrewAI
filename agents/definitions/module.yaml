@@ -1,0 +1,7 @@
+name: agents-definitions
+purpose: Definições de agentes em Markdown validadas como dados e renderizadas com delimitação segura
+public_api: [AgentDefinition, DefinitionError, load_agent_definitions, parse_agent_definition, render_prompt]
+depends_on: [llm-egress]
+events_emitted: []
+events_consumed: []
+tests: [tests/unit/test_agent_definitions.py]

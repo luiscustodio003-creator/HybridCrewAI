@@ -1,0 +1,27 @@
+Comando: & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/unit/test_approval_tokens.py tests/security/test_approval_tokens.py
+Saída: 13 passed in 0.37s
+
+Comando: & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/unit tests/security/test_ui_local.py tests/security/test_approval_tokens.py
+Saída: 168 passed in 13.54s
+
+Comando: & ".venv\Scripts\ruff.exe" check approvals tests/unit/test_approval_tokens.py tests/security/test_approval_tokens.py
+Saída: All checks passed!
+
+Comando: & ".venv\Scripts\ruff.exe" format --check approvals tests/unit/test_approval_tokens.py tests/security/test_approval_tokens.py
+Saída: 5 files already formatted
+
+Comando: & ".venv\Scripts\mypy.exe" approvals tests/unit/test_approval_tokens.py tests/security/test_approval_tokens.py
+Saída: Success: no issues found in 6 source files
+
+Comando: & ".venv\Scripts\python.exe" scripts\validate_plan.py
+Saída: [OK] validate_plan: 0 erro(s), 0 aviso(s)
+
+Comando: & ".venv\Scripts\python.exe" scripts\check_traceability.py
+Saída: [OK] check_traceability: 0 erro(s), 0 aviso(s)
+
+Comando: & ".venv\Scripts\python.exe" scripts\check_file_size.py
+Saída: [OK] check_file_size: 0 erro(s), 11 aviso(s)
+Avisos (todos abaixo de 300 linhas): agents\runner\engine.py 219, app\llm\providers\common.py 224, app\ui\server\app.py 282, app\ui\server\chat.py 244, tests\integration\test_ui_chat.py 275, tests\integration\test_ui_server.py 214, tests\security\test_ui_local.py 226, tests\ui\test_browser.py 298, tests\unit\test_agent_runner.py 232, tests\unit\test_llm_observability.py 247, tests\unit\test_providers.py 296
+
+Comando: & ".venv\Scripts\python.exe" scripts\check_modules.py
+Saída: [OK] check_modules: 0 erro(s), 0 aviso(s)

@@ -1,11 +1,11 @@
 MÓDULO: ui/web
-FINALIDADE: Servir o cliente web local, estático e sem recursos externos para tarefas, eventos, chamadas LLM e chat.
-FUNCIONALIDADES: página única em index.html; folha de estilo local; consulta de tarefas e chamadas LLM; fluxo de eventos com filtros por correlation_id e nível; histórico e envio de mensagens no chat; token mantido apenas em memória; conteúdo do servidor inserido como texto; ausência de ligações externas.
-ESTRUTURA: index.html (marcação da página); styles.css (apresentação local); tasks.js (ligação, cliente JSON e tarefas); logs.js (fluxo SSE por fetch com cancelamento); llm_calls.js (consulta filtrada de chamadas LLM); chat.js (histórico e envio de mensagens); DESIGN.md (ecrãs, estados e interações).
-INTERFACE PÚBLICA: nenhuma API Python; os recursos são servidos pelo módulo ui/server nas rotas /, /index.html, /styles.css, /tasks.js, /logs.js, /llm_calls.js e /chat.js.
+FINALIDADE: Servir o cliente web local, estático e sem recursos externos para equipa, aprovação, tarefas, eventos, chamadas LLM e chat.
+FUNCIONALIDADES: página única em index.html; folha de estilo local; listagem da equipa a partir de GET /api/agents; emissão de aprovação por POST /api/approvals com botão oculto até existir create.plano; consulta de tarefas e chamadas LLM; fluxo de eventos com filtros por correlation_id e nível; histórico e envio de mensagens no chat; token mantido apenas em memória; conteúdo do servidor inserido como texto; ausência de ligações externas.
+ESTRUTURA: index.html (marcação da página); styles.css (apresentação local); agents.js (equipa de agentes); approvals.js (fluxo SSE e emissão de aprovação); tasks.js (ligação, cliente JSON e tarefas); logs.js (fluxo SSE por fetch com cancelamento); llm_calls.js (consulta filtrada de chamadas LLM); chat.js (histórico e envio de mensagens); DESIGN.md (ecrãs, estados e interações).
+INTERFACE PÚBLICA: nenhuma API Python; os recursos são servidos pelo módulo ui/server nas rotas /, /index.html, /styles.css, /agents.js, /approvals.js, /tasks.js, /logs.js, /llm_calls.js e /chat.js.
 DEPENDÊNCIAS: ui/server; API do browser para fetch, AbortController, TextDecoder e URLSearchParams; biblioteca padrão do browser.
 CONFIGURAÇÃO: o utilizador introduz o token no cabeçalho da página; o cliente usa apenas caminhos relativos e não grava credenciais.
-UTILIZAÇÃO: abrir a raiz do servidor local, introduzir o token e premir «Ligar»; usar os botões de atualização e filtros conforme o desenho em DESIGN.md.
-TESTES: python -m pytest -q tests/unit/test_ui_web_assets.py
-LIMITAÇÕES: o cliente não possui autenticação própria e depende do token introduzido pelo utilizador; o fluxo de eventos usa fetch em fluxo e requer browser com ReadableStream; as credenciais não sobrevivem a recarregar a página.
-RELAÇÕES: complementa ui/server e consome as rotas já protegidas por Bearer token e validação de origem da Fase 3.
+UTILIZAÇÃO: abrir a raiz do servidor local, introduzir o token e premir «Ligar»; atualizar a equipa com «Atualizar»; preencher task_id, correlation_id e diff_hash e premir «Aprovar plano» quando o evento create.plano aparecer.
+TESTES: python -m pytest -q tests/unit/test_ui_web_assets.py tests/integration/test_ui_approvals.py tests/security/test_ui_approvals.py tests/ui/test_browser_phase04.py
+LIMITAÇÕES: o cliente não possui autenticação própria e depende do token introduzido pelo utilizador; o token de aprovação fica apenas na variável ultimoToken e não é apresentado; o fluxo de eventos usa fetch em fluxo e requer browser com ReadableStream; as credenciais não sobrevivem a recarregar a página.
+RELAÇÕES: complementa ui/server e consome as rotas protegidas por Bearer token e validação de origem da Fase 3, incluindo as rotas de equipa e aprovação da Fase 4.

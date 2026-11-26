@@ -16,6 +16,8 @@ RECURSOS = (
     "logs.js",
     "llm_calls.js",
     "chat.js",
+    "agents.js",
+    "approvals.js",
 )
 
 

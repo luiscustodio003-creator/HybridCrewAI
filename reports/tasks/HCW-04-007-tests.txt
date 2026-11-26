@@ -1,0 +1,94 @@
+HCW-04-007 — Evidência de testes executados
+Data: 2026-11-25
+Ambiente: .venv local; sem instalação de dependências; sem Git writes.
+
+[VERMELHO — antes da implementação]
+Comando: & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/unit/test_simple_runner.py tests/security/test_simple_runner.py
+Resultado: falha curta, `ModuleNotFoundError: No module named 'execution'`.
+Conclusão: os testes falharam primeiro; a implementação veio depois.
+
+[DESVIO INTERMEDIO — dados de teste]
+Comando: & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/unit/test_simple_runner.py tests/security/test_simple_runner.py
+Resultado: `TypeError: comparing strings with non-ASCII characters is not supported` em `hmac.compare_digest`, ao usar `task_id`/`correlation_id` com acentos em `TokenStore.validar`.
+Tratamento: identificadores dos testes passaram a ASCII (`tarefa-execucao`, `correlacao-execucao`). Código de `approvals/tokens/store.py` não foi alterado; comportamento pré-existente fora do escopo.
+
+[CORREÇÕES DE QUALIDADE APLICADAS]
+- `ExecutionResult.isolated` passou a validação explícita em `False`.
+- `float(str(dados["duration_ms"]))` para satisfazer mypy.
+- `_concluir` passou a receber `captura: tuple[str, str, str]`, removendo parâmetro redundante e respeitando regras decomplexidade do Ruff.
+- `EventContext` passou a import runtime; `TYPE_CHECKING` ficou só com `ApprovalToken` e `Settings`.
+- Constantes `HASH_SHA256_CHARS`, `LIMITE_SEGUNDOS`, `CONCLUIDO`, `TEMPO`, `CANCELADO` centralizadas.
+- `simple_runner.py` dividido de 446 para 297 linhas, com `guard.py` e `models.py`.
+- `ruff format` aplicado aos ficheiros de código e testes.
+
+[VERDE — testes focados finais]
+Comando: & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/unit/test_simple_runner.py tests/security/test_simple_runner.py
+Resultado:
+.......                                                                  [100%]
+7 passed in 1.58s
+
+[QUALIDADE — Ruff]
+Comando: & ".venv\Scripts\python.exe" -m ruff check execution tests/unit/test_simple_runner.py tests/security/test_simple_runner.py
+Resultado:
+All checks passed!
+
+Comando: & ".venv\Scripts\python.exe" -m ruff format --check execution tests/unit/test_simple_runner.py tests/security/test_simple_runner.py
+Resultado:
+6 files already formatted
+
+[QUALIDADE — mypy]
+Comando: $env:MYPYPATH="."; & ".venv\Scripts\python.exe" -m mypy --explicit-package-bases execution tests/unit/test_simple_runner.py tests/security/test_simple_runner.py
+Resultado:
+Success: no issues found in 6 source files
+
+[QUALIDADE — tamanho de ficheiro]
+Comando: & ".venv\Scripts\python.exe" scripts\check_file_size.py
+Resultado (extracto relevante):
+  AVISO  execution\simple_runner.py: 297 linhas (aviso aos 200)
+[OK] check_file_size: 0 erro(s), 15 aviso(s)
+Nota: nenhum ficheiro ultrapassa 300 linhas; os avisos são o limiar informativo de 200 linhas.
+
+[REGRESSÃO]
+Comando: & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q --deselect "tests\ui\test_browser.py::test_evidencia_real_no_browser"
+Resultado:
+.....................ss................................................. [ 26%]
+........................................................................ [ 53%]
+........................................................................ [ 80%]
+......................................................                   [100%]
+268 passed, 2 skipped, 1 deselected in 35.77s
+
+Motivo da exclusão explícita: `tests/ui/test_browser.py::test_evidencia_real_no_browser` falhava antes desta tarefa com `AssertionError: assert 2 == 1` em `_verificar_llm` (`tests/ui/test_browser.py:186`). Nenhum ficheiro de `tests/ui` ou `app/ui` foi alterado.
+
+[PLANO E DOCUMENTAÇÃO]
+Comando: & ".venv\Scripts\python.exe" scripts\validate_plan.py
+Resultado:
+[OK] validate_plan: 0 erro(s), 0 aviso(s)
+
+Comando: & ".venv\Scripts\python.exe" scripts\check_traceability.py
+Primeira execução, antes da escrita dos relatórios:
+  ERRO   HCW-04-007: evidência 'reports/tasks/HCW-04-007.md' não existe no disco
+  ERRO   HCW-04-007: evidência 'reports/tasks/HCW-04-007-tests.txt' não existe no disco
+[FALHOU] check_traceability: 2 erro(s), 0 aviso(s)
+Segunda execução, depois da escrita dos relatórios:
+[OK] check_traceability: 0 erro(s), 0 aviso(s)
+
+Comando: & ".venv\Scripts\python.exe" scripts\check_modules.py
+Resultado:
+[OK] check_modules: 0 erro(s), 0 aviso(s)
+
+Comando: & ".venv\Scripts\python.exe" scripts\plan_status.py
+Resultado:
+Fase 04 MVP vertical: CREATE ponta a ponta             7/13
+Estados: APPROVED=5, DEPRECATED=1, IMPLEMENTED=2, NOT_STARTED=21, VALIDATED=53
+Próxima tarefa: HCW-04-008 — Executar caso dourado da calculadora ponta a ponta [APPROVED]
+
+[ACEITAÇÃO]
+1. Recusa sem token e isolated=false — PASSA: `test_execucao_sem_token_valido_e_recusada`, `test_execucao_bem_sucedida_regista_isolated_false`, `test_token_de_outra_tarefa_nao_executa`, `test_correlacao_divergente_nao_executa`.
+2. Pasta temporária, ambiente limpo e timeout — PASSA: `test_execucao_bem_sucedida_regista_isolated_false`, `test_timeout_termina_processo`, `test_subprocesso_sem_rede_e_sem_segredes`.
+3. Cancelamento e sem rede — PASSA: `test_cancelamento_termina_processo`, `test_subprocesso_sem_rede_e_sem_segredes`.
+
+[ESTADO FINAL]
+7 testes focados PASSA.
+268 testes de regressão PASSA, com 2 skipped e 1 deselected explícito.
+validate_plan, check_traceability, check_modules, check_file_size, ruff e mypy sem erros.
+Nenhuma aprovação automática, segredo, commit, push ou tag.

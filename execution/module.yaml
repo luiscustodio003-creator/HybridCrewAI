@@ -1,0 +1,7 @@
+name: execution-simple-runner
+purpose: Executar um comando aprovado num subprocesso vigiado sem isolamento, com pasta temporária, ambiente limpo, prazo e cancelamento
+public_api: [GUARDA_SUBPROCESSO, TIMEOUT_MAXIMO_S, TIMEOUT_PADRAO_S, ExecutionConfigError, ExecutionRequest, ExecutionResult, SimpleRunner, ambiente_limpo]
+depends_on: [approvals-tokens, core-config, core-events, core-results]
+events_emitted: [execution.iniciado, execution.concluido, execution.falhado, execution.recusado]
+events_consumed: []
+tests: [tests/unit/test_simple_runner.py, tests/security/test_simple_runner.py]

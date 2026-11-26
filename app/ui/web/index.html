@@ -23,6 +23,24 @@
       <ul id="tarefas"></ul>
     </section>
 
+    <section aria-labelledby="titulo-agentes">
+      <h2 id="titulo-agentes">Equipa de agentes</h2>
+      <button id="atualizar-agentes" type="button">Atualizar</button>
+      <ul id="agentes"></ul>
+    </section>
+
+    <section aria-labelledby="titulo-aprovacoes">
+      <h2 id="titulo-aprovacoes">Aprovação de plano</h2>
+      <label for="aprovacao-tarefa">Task ID</label>
+      <input id="aprovacao-tarefa" type="text" placeholder="task_id">
+      <label for="aprovacao-correlacao">Correlation ID</label>
+      <input id="aprovacao-correlacao" type="text" placeholder="correlation_id">
+      <label for="aprovacao-diff">Diff SHA-256</label>
+      <input id="aprovacao-diff" type="text" maxlength="64" placeholder="diff_hash">
+      <button id="aprovar" type="button" hidden disabled>Aprovar plano</button>
+      <span id="estado-aprovacao" role="status">Sem plano pronto</span>
+    </section>
+
     <section aria-labelledby="titulo-eventos">
       <h2 id="titulo-eventos">Eventos</h2>
       <div class="filtros">
@@ -73,5 +91,7 @@
   <script src="logs.js"></script>
   <script src="llm_calls.js"></script>
   <script src="chat.js"></script>
+  <script src="agents.js"></script>
+  <script src="approvals.js"></script>
 </body>
 </html>

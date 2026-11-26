@@ -3,12 +3,18 @@
 from __future__ import annotations
 
 import json
+import select
+import socket
 import time
 from collections.abc import Iterator
+from http import HTTPStatus
+from http.server import BaseHTTPRequestHandler
 from pathlib import Path
+from typing import Protocol, cast
+from urllib.parse import urlsplit
 
 from app.core.events import Event
-from app.ui.server.event_filters import EventFilter, filtrar_evento
+from app.ui.server.event_filters import EventFilter, analisar_filtros, filtrar_evento
 
 EVENTS_PATH = "/api/events"
 INTERVALO_SSE = 0.1
@@ -47,3 +53,50 @@ def gerar_eventos_sse(
             yield ": keepalive\n\n"
             ultimo_sinal = agora
         time.sleep(intervalo)
+
+
+class _ServidorEventos(Protocol):
+    """Servidor com contagem de streams usada pelo handler SSE."""
+
+    event_path: Path
+
+    def iniciar_stream(self) -> None: ...
+
+    def terminar_stream(self) -> None: ...
+
+
+def ligacao_fechada(handler: BaseHTTPRequestHandler) -> bool:
+    """Detecta o fecho da ligação sem consumir dados do pedido."""
+    try:
+        prontos, _, _ = select.select([handler.connection], [], [], 0)
+        if not prontos:
+            return False
+        return handler.connection.recv(1, socket.MSG_PEEK) == b""
+    except OSError:
+        return True
+
+
+def transmitir_eventos(handler: BaseHTTPRequestHandler) -> None:
+    """Transmite eventos filtrados em formato Server-Sent Events."""
+    try:
+        filtro = analisar_filtros(urlsplit(handler.path).query)
+    except ValueError as exc:
+        handler.send_error(HTTPStatus.BAD_REQUEST, str(exc))
+        return
+    handler.send_response(HTTPStatus.OK)
+    handler.send_header("Content-Type", "text/event-stream; charset=utf-8")
+    handler.send_header("Cache-Control", "no-cache")
+    handler.send_header("Connection", "close")
+    handler.end_headers()
+    servidor = cast(_ServidorEventos, handler.server)
+    servidor.iniciar_stream()
+    try:
+        for quadro in gerar_eventos_sse(servidor.event_path, filtro):
+            if ligacao_fechada(handler):
+                return
+            handler.wfile.write(quadro.encode("utf-8"))
+            handler.wfile.flush()
+    except OSError:
+        return
+    finally:
+        servidor.terminar_stream()

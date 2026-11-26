@@ -1,0 +1,50 @@
+# Evidência — HCW-04-009 — 2026-11-25
+
+## Testes vermelhos antes da implementação
+
+Comando: `& ".venv\Scripts\python.exe" -m pytest -q tests/recovery/test_create_kill_resume.py`
+
+Resultado: `2 failed`
+
+- `AttributeError: 'CheckpointStore' object has no attribute 'recover_interrupted'`
+- `AttributeError: 'CheckpointStore' object has no attribute 'cancelar'`
+
+Correções intermédias do próprio teste antes da implementação:
+
+- O subprocesso passava `base_dir` como `str` a `load_settings`; passou a ser `Path`.
+- As respostas falsas tinham `evidence: []`, rejeitadas pelo `AgentRunner`; passaram a `evidence: ["passo.md"]`.
+- O evento `create.aprovacao` também é publicado na retoma; a lista esperada passou a incluir todos os passos excepto `create.pedido`.
+- O ficheiro de teste foi reduzido de 408 para 210 linhas por reutilização dos auxiliares de `tests/integration/test_create_workflow_checkpoint.py`.
+
+## Teste da tarefa
+
+Comando: `& ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/recovery/test_create_kill_resume.py`
+
+Resultado: `2 passed`; provedor `ProviderKind.FAKE`, sem pedidos externos.
+
+## Regressão relevante
+
+Comando: `& ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/recovery/test_create_kill_resume.py tests/recovery/test_kill_resume.py tests/unit/test_create_workflow.py tests/integration/test_create_workflow_checkpoint.py tests/integration/test_create_golden.py`
+
+Resultado: `13 passed in 3.02s`
+
+## Regressão integral
+
+Comando: `& ".venv\Scripts\python.exe" -m pytest -o addopts="" -q --deselect tests/ui/test_browser.py::test_evidencia_real_no_browser`
+
+Resultado: `278 passed, 2 skipped, 1 deselected in 36.91s`
+
+A falha pré-existente deseleccionada é `tests/ui/test_browser.py::test_evidencia_real_no_browser` (`AssertionError: assert 2 == 1` em `_verificar_llm`), fora do escopo desta tarefa.
+
+## Qualidade
+
+- `& ".venv\Scripts\python.exe" -m ruff check workflows/create/state.py tests/recovery/test_create_kill_resume.py` → `All checks passed!`
+- `& ".venv\Scripts\python.exe" -m ruff format --check workflows/create/state.py tests/recovery/test_create_kill_resume.py` → `2 files already formatted`
+- `& ".venv\Scripts\python.exe" -m mypy --explicit-package-bases workflows/create/state.py tests/recovery/test_create_kill_resume.py` → `Success: no issues found in 2 source files`
+- `& ".venv\Scripts\python.exe" scripts/check_file_size.py` → `[OK] check_file_size: 0 erro(s), 18 aviso(s)`; nenhum ficheiro acima de 300 linhas.
+- `& ".venv\Scripts\python.exe" scripts/validate_plan.py` → `[OK] validate_plan: 0 erro(s), 0 aviso(s)`
+- `& ".venv\Scripts\python.exe" scripts/check_traceability.py` → `[OK] check_traceability: 0 erro(s), 0 aviso(s)`
+- `& ".venv\Scripts\python.exe" scripts/check_modules.py` → `[OK] check_modules: 0 erro(s), 0 aviso(s)`
+- `& ".venv\Scripts\python.exe" scripts/plan_status.py` → Fase 04 `8/13`; `APPROVED=3`, `IMPLEMENTED=2`, `IN_PROGRESS=1`, `VALIDATED=54`; próxima tarefa `HCW-04-009`.
+
+Nenhum commit, push ou tag foi criado.

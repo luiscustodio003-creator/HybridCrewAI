@@ -84,3 +84,36 @@ requirements:
 - id: UI-008
   text: Evidência de browser com testes reais e capturas de ecrã
   status: ACTIVE
+- id: FR-008
+  text: Fluxo CREATE ponta a ponta com checkpoints, estágios verificáveis e idempotência por passo
+  status: ACTIVE
+- id: FR-009
+  text: Definições de agentes em Markdown com cabeçalho validável e runner determinístico
+  status: ACTIVE
+- id: FR-010
+  text: Tokens de aprovação emitidos apenas pela UI e ligados a tarefa, hash do diff e expiração
+  status: ACTIVE
+- id: FR-011
+  text: Executor simples explicitamente não isolado, com aprovação, ambiente limpo, timeout e cancelamento
+  status: ACTIVE
+- id: FR-012
+  text: Relatório final com evidências, ToolResult e rastreabilidade por tarefa e correlação
+  status: ACTIVE
+- id: UI-009
+  text: Painel local da equipa de agentes e aprovação do plano na interface web
+  status: ACTIVE
+- id: NFR-006
+  text: Harness de avaliação com cinco casos de referência e pontuação mínima verificável
+  status: ACTIVE
+- id: SEC-003
+  text: Nenhuma aprovação ou execução a partir de texto livre do modelo; approved=true do agente não tem efeito
+  status: ACTIVE
+- id: SEC-004
+  text: Execução sem rede e sem leitura ou escrita fora da pasta temporária autorizada
+  status: ACTIVE
+- id: OPS-006
+  text: Recuperação após kill ou cancelamento sem repetir passos já confirmados
+  status: ACTIVE
+- id: DOC-002
+  text: Persona do assistente e documentação dos agentes em português de Portugal
+  status: ACTIVE

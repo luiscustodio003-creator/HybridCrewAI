@@ -1233,20 +1233,213 @@ tasks:
 - id: HCW-04-001
   title: Planear em detalhe a Fase 4 com a Skill hcw-plan
   phase: 4
-  status: NOT_STARTED
+  status: VALIDATED
   priority: high
   depends_on:
   - HCW-03-999
-  requirements: []
+  requirements: [FR-008, FR-009, FR-010, FR-011, FR-012, UI-009, NFR-006, SEC-003, SEC-004, OPS-006, DOC-002]
   modules: []
   files_new: []
-  files_change: []
+  files_change: [tasks.yaml, docs/requirements.yaml]
   tests: []
   acceptance:
   - Tarefas detalhadas criadas em tasks.yaml e aprovadas pelo utilizador
+  evidence: [tasks.yaml, docs/requirements.yaml]
+  validated_on: 2026-11-25
+  notes: 'Plano aprovado pelo Utilizador em 2026-11-25; 11 tarefas passaram a APPROVED; validate_plan e check_traceability passaram sem erros nem avisos.'
+- id: HCW-04-002
+  title: Criar feature flag create_flow e persona do assistente
+  phase: 4
+  status: VALIDATED
+  priority: high
+  depends_on: [HCW-04-001]
+  requirements: [FR-008, DOC-002, NFR-001, DOC-001]
+  modules: [app/core/config]
+  files_new: [persona.md]
+  files_change: [app/core/config/defaults.py, app/core/config/schema.py, app/core/config/loader.py, app/core/config/README.txt, docs/MAP.md]
+  tests: [tests/unit/test_create_flow_config.py]
+  acceptance:
+  - "Settings.create_flow é False por omissão e HCW_CREATE_FLOW=1 activa o fluxo sem gravar segredos"
+  - "persona.md contém id, versao, tom e limites e não contém credenciais nem texto executável"
+  evidence: [reports/tasks/HCW-04-002.md, reports/tasks/HCW-04-002-tests.txt, tests/unit/test_create_flow_config.py, persona.md]
+  validated_on: 2026-11-25
+  notes: 'GO em 2026-11-25: 36 testes focados e 128 testes unitários passaram; os dois critérios de aceitação têm teste real; validate_plan e check_traceability sem erros; ruff global mantém 5 erros pré-existentes em scripts/.'
+- id: HCW-04-003
+  title: Validar definições de agentes em Markdown
+  phase: 4
+  status: VALIDATED
+  priority: high
+  depends_on: [HCW-04-002]
+  requirements: [FR-009, FR-008, SEC-002, NFR-005, DOC-001]
+  modules: [agents/definitions]
+  files_new: [agents/definitions/planeador.md, agents/definitions/arquitecto.md, agents/definitions/implementador.md, agents/definitions/revisor.md, agents/definitions/relator.md, agents/definitions/README.txt, agents/definitions/module.yaml]
+  files_change: []
+  tests: [tests/unit/test_agent_definitions.py]
+  acceptance:
+  - "Cada agente tem cabeçalho com id, nome, versao, entrada, saida e ferramentas"
+  - "Cabeçalho inválido é recusado com mensagem clara e sem executar conteúdo"
+  - "Conteúdo não confiável é delimitado com wrap_untrusted antes de qualquer prompt"
+  evidence: [reports/tasks/HCW-04-003.md, reports/tasks/HCW-04-003-tests.txt, tests/unit/test_agent_definitions.py]
+  validated_on: 2026-11-25
+  notes: 'GO em 2026-11-25: os três critérios de aceitação têm teste real; 20 testes focados, 145 testes de regressão, validate_plan e check_traceability passaram; ruff/mypy scoped limpos; desvio documentado no relatório.'
+- id: HCW-04-004
+  title: Criar runner determinístico de agentes
+  phase: 4
+  status: VALIDATED
+  priority: critical
+  depends_on: [HCW-04-003]
+  requirements: [FR-009, SEC-003, NFR-003, OPS-004, FR-005]
+  modules: [agents/runner]
+  files_new: [agents/runner/__init__.py, agents/runner/models.py, agents/runner/loader.py, agents/runner/engine.py, agents/runner/README.txt, agents/runner/module.yaml]
+  files_change: []
+  tests: [tests/unit/test_agent_runner.py]
+  acceptance:
+  - "AgentRunner.executar devolve ToolResult com status e evidência ou falha tipada"
+  - "Saída inválida é repetida no máximo duas vezes antes de ToolStatus.FAILED"
+  - "approved=true na saída do agente não altera o estado de aprovação"
+  evidence: [reports/tasks/HCW-04-004.md, reports/tasks/HCW-04-004-tests.txt, tests/unit/test_agent_runner.py]
+  validated_on: 2026-11-25
+  notes: 'GO em 2026-11-25: os três critérios de aceitação têm teste real; 10 testes focados, 155 testes de regressão, validate_plan e check_traceability passaram; ruff/mypy scoped limpos; marcadores forjados terminam sem repetição e approved do modelo é ignorado.'
+- id: HCW-04-005
+  title: Criar tokens de aprovação emitidos pela UI
+  phase: 4
+  status: VALIDATED
+  priority: critical
+  depends_on: [HCW-04-002]
+  requirements: [FR-010, SEC-003, SEC-001, UI-009]
+  modules: [approvals/tokens]
+  files_new: [approvals/tokens/__init__.py, approvals/tokens/models.py, approvals/tokens/store.py, approvals/tokens/README.txt, approvals/tokens/module.yaml]
+  files_change: []
+  tests: [tests/unit/test_approval_tokens.py, tests/security/test_approval_tokens.py]
+  acceptance:
+  - "Só o servidor da UI emite token; uma saída de modelo com approved=true nunca emite token"
+  - "Token fica ligado a task_id, hash do diff e expiração de 15 minutos"
+  - "Reutilização após alteração do diff é rejeitada e nada é escrito em logs"
+  evidence: [reports/tasks/HCW-04-005.md, reports/tasks/HCW-04-005-tests.txt, tests/unit/test_approval_tokens.py, tests/security/test_approval_tokens.py]
+  validated_on: 2026-11-25
+  notes: 'GO em 2026-11-25: os três critérios de aceitação têm teste real; 13 testes focados, 168 testes de regressão, validate_plan, check_traceability e check_modules sem erros; ruff/mypy scoped limpos; emissão exige Bearer e Origin da UI, approved do modelo não emite token e diff alterado é recusado sem logs.'
+- id: HCW-04-006
+  title: Criar fluxo CREATE com checkpoints e idempotência
+  phase: 4
+  status: VALIDATED
+  priority: critical
+  depends_on: [HCW-04-004, HCW-04-005]
+  requirements: [FR-008, FR-003, NFR-004, OPS-006, FR-002]
+  modules: [workflows/create]
+  files_new: [workflows/create/__init__.py, workflows/create/models.py, workflows/create/state.py, workflows/create/orchestrator.py, workflows/create/README.txt, workflows/create/module.yaml]
+  files_change: []
+  tests: [tests/unit/test_create_workflow.py, tests/integration/test_create_workflow_checkpoint.py]
+  acceptance:
+  - "Fluxo percorre pedido, requisitos, plano, arquitectura, aprovação, execução, revisão e relatório"
+  - "Checkpoint guarda task_id, correlation_id, last_completed_step e hash do token pendente"
+  - "Chave de idempotência repetida não duplica eventos nem avança o estado"
+  evidence: [reports/tasks/HCW-04-006.md, reports/tasks/HCW-04-006-tests.txt, tests/unit/test_create_workflow.py, tests/integration/test_create_workflow_checkpoint.py]
+  validated_on: 2026-11-25
+  notes: 'GO em 2026-11-25: os três critérios de aceitação têm teste real; 9 testes focados, 262 testes de regressão com exclusão explícita da falha UI pré-existente, validate_plan/check_traceability/check_modules/check_file_size sem erros; ruff/mypy scoped limpos. A regressão integral falha apenas em tests/ui/test_browser.py::test_evidencia_real_no_browser, fora do escopo desta tarefa.'
+- id: HCW-04-007
+  title: Criar executor simples não isolado com aprovação
+  phase: 4
+  status: VALIDATED
+  priority: critical
+  depends_on: [HCW-04-005]
+  requirements: [FR-011, SEC-004, NFR-002, OPS-006, SEC-001]
+  modules: [execution]
+  files_new: [execution/__init__.py, execution/guard.py, execution/models.py, execution/simple_runner.py, execution/README.txt, execution/module.yaml]
+  files_change: []
+  tests: [tests/unit/test_simple_runner.py, tests/security/test_simple_runner.py]
+  acceptance:
+  - "Executor recusa execução sem token válido e regista isolated=false no resultado"
+  - "Subprocesso corre em pasta temporária dentro do workspace com ambiente limpo e timeout"
+  - "Cancelamento termina o processo e nenhuma chamada de rede é permitida"
+  evidence: [reports/tasks/HCW-04-007.md, reports/tasks/HCW-04-007-tests.txt, tests/unit/test_simple_runner.py, tests/security/test_simple_runner.py]
+  validated_on: 2026-11-25
+  notes: 'GO em 2026-11-25: os três critérios de aceitação têm teste real; 7 testes focados, 268 testes de regressão com exclusão explícita da falha UI pré-existente, validate_plan/check_traceability/check_modules/check_file_size sem erros; ruff e mypy scoped limpos. Recusa sem token devolve FAILED sem subprocesso, subprocesso Python não abre rede nem herda credenciais, e timeout/cancelamento terminam o processo; isolated=false é explícito no resultado.'
+- id: HCW-04-008
+  title: Executar caso dourado da calculadora ponta a ponta
+  phase: 4
+  status: VALIDATED
+  priority: high
+  depends_on: [HCW-04-006, HCW-04-007]
+  requirements: [FR-008, FR-012, FR-004, NFR-002]
+  modules: [tests/eval, workflows/create, execution]
+  files_new: [tests/eval/fixtures/calculadora_cli/main.py, tests/eval/fixtures/calculadora_cli/test_main.py, tests/eval/fixtures/calculadora_cli/README.txt]
+  files_change: [tests/integration/test_create_golden.py, docs/reports/phase-04-golden.md, execution/guard.py, tests/security/test_simple_runner.py]
+  tests: [tests/integration/test_create_golden.py, tests/security/test_simple_runner.py]
+  acceptance:
+  - "Caso dourado gera calculadora de linha de comandos com testes e pytest real termina com código 0"
+  - "Relatório de evidência liga ToolResult.DONE ao diff, ao token e ao correlation_id"
+  - "Nenhum pedido externo é observado durante o caso dourado"
+  evidence: [reports/tasks/HCW-04-008.md, reports/tasks/HCW-04-008-tests.txt, docs/reports/phase-04-golden.md]
+  validated_on: 2026-11-25
+- id: HCW-04-009
+  title: Cancelar, matar e retomar o fluxo CREATE
+  phase: 4
+  status: VALIDATED
+  priority: high
+  depends_on: [HCW-04-008]
+  requirements: [OPS-006, FR-003, NFR-004, FR-008]
+  modules: [workflows/create, tests/recovery]
+  files_new: [tests/recovery/test_create_kill_resume.py]
+  files_change: [workflows/create/state.py]
+  tests: [tests/recovery/test_create_kill_resume.py]
+  acceptance:
+  - "Kill a meio deixa tarefa INTERRUPTED e a retoma chega a COMPLETED sem repetir passo confirmado"
+  - "Cancelamento impede nova execução e mantém CANCELLED no SQLite real"
+  - "Testes usam subprocesso e base SQLite reais, sem simulação do checkpoint"
+  evidence: [reports/tasks/HCW-04-009.md, reports/tasks/HCW-04-009-tests.txt]
+  validated_on: 2026-11-25
+- id: HCW-04-010
+  title: Expor aprovação e equipa de agentes na UI local
+  phase: 4
+  status: VALIDATED
+  priority: high
+  depends_on: [HCW-04-005, HCW-04-006]
+  requirements: [UI-009, UI-002, SEC-003, DOC-001, FR-010]
+  modules: [app/core, app/ui/server, app/ui/web]
+  files_new: [app/core/local_auth.py, app/core/README.txt, app/core/module.yaml, app/ui/server/http_responses.py, app/ui/server/routes_approvals.py, app/ui/web/agents.js, app/ui/web/approvals.js, screenshots/phase-04/01-equipa.png, screenshots/phase-04/02-aprovacao.png]
+  files_change: [app/ui/server/app.py, app/ui/server/__init__.py, app/ui/server/auth.py, app/ui/server/routes_events.py, app/ui/server/web_assets.py, app/ui/server/README.txt, app/ui/server/module.yaml, app/ui/web/index.html, app/ui/web/README.txt, app/ui/web/module.yaml, approvals/tokens/store.py, approvals/tokens/module.yaml, DESIGN.md, THREAT_MODEL.md, docs/MAP.md, reports/tasks/HCW-04-010.md, reports/tasks/HCW-04-010-tests.txt]
+  tests: [tests/integration/test_ui_approvals.py, tests/security/test_ui_approvals.py, tests/ui/test_browser_phase04.py]
+  acceptance:
+  - "GET /api/agents lista agentes e POST /api/approvals emite token só com Bearer e Origin válidos"
+  - "Botão de aprovação só aparece com plano pronto e nunca mostra token ou segredo no DOM"
+  - "Teste real de browser regista captura da equipa e da aprovação em screenshots/phase-04"
+  evidence: [reports/tasks/HCW-04-010.md, reports/tasks/HCW-04-010-tests.txt, screenshots/phase-04/01-equipa.png, screenshots/phase-04/02-aprovacao.png]
+  validated_on: 2026-11-26
+  notes: 'Sem Git; capturas com Chromium real; falha pré-existente em test_browser.py deseleccionada na regressão.'
+- id: HCW-04-011
+  title: Criar harness de avaliação com cinco casos e relatório final
+  phase: 4
+  status: APPROVED
+  priority: high
+  depends_on: [HCW-04-008, HCW-04-009, HCW-04-010]
+  requirements: [FR-012, NFR-006, DOC-001, SEC-001]
+  modules: [tests/eval, reports]
+  files_new: [tests/eval/__init__.py, tests/eval/cases.py, tests/eval/scorer.py, tests/eval/test_reference_cases.py, reports/final_report.py, docs/reports/phase-04.md]
+  files_change: []
+  tests: [tests/eval/test_reference_cases.py]
+  acceptance:
+  - "Cinco casos de referência são pontuados e o caso dourado é obrigatório"
+  - "Pontuação mínima é 4 em 5 e o relatório final inclui comandos, resultados e digests"
+  - "Relatório não contém segredos, token real ou prompt completo"
   evidence: []
   validated_on: null
-  notes: Usar docs/phases/phase-04.md como base.
+- id: HCW-04-012
+  title: Consolidar segurança e documentação da Fase 4
+  phase: 4
+  status: APPROVED
+  priority: high
+  depends_on: [HCW-04-011]
+  requirements: [SEC-003, SEC-004, SEC-001, DOC-001, OPS-006]
+  modules: [docs, tests/security]
+  files_new: [docs/reports/phase-04-security.md, reports/tasks/HCW-04-012.md]
+  files_change: [THREAT_MODEL.md, docs/MAP.md, docs/reports/phase-04.md]
+  tests: [tests/security/test_phase04_threats.py]
+  acceptance:
+  - "Cada ameaça da Fase 4 em THREAT_MODEL.md aponta para teste real com resultado PASSA"
+  - "Executor não isolado fica explicitamente documentado como tal e só aceita token válido"
+  - "Nenhum segredo real, token real ou prompt completo aparece em ficheiros, logs ou relatórios"
+  evidence: []
+  validated_on: null
 - id: HCW-04-999
   title: Gate da Fase 4
   phase: 4
@@ -1254,7 +1447,18 @@ tasks:
   priority: critical
   depends_on:
   - HCW-04-001
-  requirements: []
+  - HCW-04-002
+  - HCW-04-003
+  - HCW-04-004
+  - HCW-04-005
+  - HCW-04-006
+  - HCW-04-007
+  - HCW-04-008
+  - HCW-04-009
+  - HCW-04-010
+  - HCW-04-011
+  - HCW-04-012
+  requirements: [FR-008, FR-009, FR-010, FR-011, FR-012, UI-009, NFR-006, SEC-003, SEC-004, OPS-006, DOC-002]
   modules: []
   files_new: []
   files_change: []
@@ -1264,7 +1468,7 @@ tasks:
   - etiqueta phase-04-go criada
   evidence: []
   validated_on: null
-  notes: Ao detalhar a fase, acrescentar todas as tarefas novas a depends_on deste gate.
+  notes: Etiqueta phase-04-go só após GO e aprovação explícita do Utilizador.
 - id: HCW-05-001
   title: Planear em detalhe a Fase 5 com a Skill hcw-plan
   phase: 5

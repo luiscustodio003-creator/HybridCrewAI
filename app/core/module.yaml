@@ -1,0 +1,7 @@
+name: core-local-auth
+purpose: Verificar origem local e cabeçalhos Bearer sem depender do servidor da interface web
+public_api: [BEARER, LOCAL_HOST, LOCAL_SCHEME, origin_local, origem_valida, pedido_autorizado]
+depends_on: []
+events_emitted: []
+events_consumed: []
+tests: [tests/security/test_ui_local.py, tests/security/test_approval_tokens.py, tests/integration/test_ui_approvals.py, tests/unit/test_ui_web_assets.py]

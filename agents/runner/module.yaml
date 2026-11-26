@@ -1,0 +1,7 @@
+name: agents-runner
+purpose: Execução determinística de definições locais de agentes com ToolResult verificado
+public_api: [AgentOutput, AgentRun, AgentRunError, AgentRunner, ApprovalState, DefinitionNotFoundError, ForgedMarkerError, OutputValidationError, RunnerConfig, load_runner_definitions, parse_agent_output]
+depends_on: [agents-definitions, core-events, core-results, llm-contracts, llm-egress]
+events_emitted: [agente.iniciado, agente.repeticao, agente.concluido, agente.falhou]
+events_consumed: []
+tests: [tests/unit/test_agent_runner.py]

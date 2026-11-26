@@ -60,6 +60,7 @@ class Settings:
     ollama_model: str | None = None
     ui_enabled: bool = False
     ui_token: SecretStr | None = None
+    create_flow: bool = False
 
     def __post_init__(self) -> None:
         """Normaliza e valida os valores após a construção."""

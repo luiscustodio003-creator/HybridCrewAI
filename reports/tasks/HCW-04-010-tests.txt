@@ -1,0 +1,44 @@
+# Evidência — HCW-04-010 — 2026-11-26
+
+## Testes da tarefa
+
+Comando: `& ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/integration/test_ui_approvals.py tests/security/test_ui_approvals.py tests/ui/test_browser_phase04.py`
+
+Resultado: `19 passed in 11.15s`
+
+Comando: `& ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/ui/test_browser_phase04.py`
+
+Resultado: `1 passed in 2.06s`; Chromium real, servidor real em porto efémero, token falso apenas no teste.
+
+## Falhas intermédias e correções
+
+- A captura do token por `pagina.on("response", ...)` era uma corrida; `assert tokens` falhava embora a página mostrasse `Aprovação emitida.`. Passou a `pagina.expect_response(...)` com auxiliar `_aprovar_plano`.
+- `mypy` apontou `Iterator[UiServer]` sem export público; `app/ui/server/__init__.py` passou a exportar `UiServer`.
+- O botão era esperado visível sem provar que começava oculto. O teste passou a gravar `create.plano` após a ligação e a afirmar `is_hidden()` e `is_disabled()` antes do evento.
+- `check_modules` apontou `app/core` sem `README.txt`/`module.yaml` depois da criação de `local_auth.py`. Foram criados ambos e `approvals/tokens/module.yaml` passou a depender de `core-local-auth`.
+
+## Regressão integral
+
+Comando: `& ".venv\Scripts\python.exe" -m pytest -o addopts="" -q --deselect tests/ui/test_browser.py::test_evidencia_real_no_browser`
+
+Resultado: `297 passed, 2 skipped, 1 deselected in 47.25s`
+
+A falha pré-existente deseleccionada é `tests/ui/test_browser.py::test_evidencia_real_no_browser` (`AssertionError: assert 2 == 1` em `_verificar_llm`), fora do escopo desta tarefa.
+
+## Qualidade
+
+- `& ".venv\Scripts\python.exe" -m ruff check tests/ui/test_browser_phase04.py app/ui/server/__init__.py` → `All checks passed!`
+- `& ".venv\Scripts\python.exe" -m ruff format --check tests/ui/test_browser_phase04.py app/ui/server/__init__.py` → `2 files already formatted`
+- `& ".venv\Scripts\python.exe" -m mypy --explicit-package-bases tests/ui/test_browser_phase04.py app/ui/server/__init__.py` → `Success: no issues found in 2 source files`
+- `& ".venv\Scripts\python.exe" scripts/check_file_size.py` → `[OK] check_file_size: 0 erro(s), 20 aviso(s)`; `tests/ui/test_browser_phase04.py` tem 223 linhas e `app/ui/server/app.py` 274.
+- `& ".venv\Scripts\python.exe" scripts/validate_plan.py` → `[OK] validate_plan: 0 erro(s), 0 aviso(s)`
+- `& ".venv\Scripts\python.exe" scripts/check_traceability.py` → `[OK] check_traceability: 0 erro(s), 0 aviso(s)`
+- `& ".venv\Scripts\python.exe" scripts/check_modules.py` → `[OK] check_modules: 0 erro(s), 0 aviso(s)`
+- `& ".venv\Scripts\python.exe" scripts/plan_status.py` → Fase 04 `9/13` antes de marcar a tarefa como `VALIDATED`; `APPROVED=2`, `IMPLEMENTED=2`, `IN_PROGRESS=1`, `VALIDATED=55`.
+
+## Capturas reais
+
+- `screenshots/phase-04/01-equipa.png` — 81070 bytes; SHA-256 `2FCB7D9EE3AE950A72C1520BB6ECE55CB4B7A62FA05FB84F1A7B7760F7898658`
+- `screenshots/phase-04/02-aprovacao.png` — 84080 bytes; SHA-256 `F0BBD143042228FC33E5ABC485D817FE16A1C32FB66D06358A44E2F996B9EFF3`
+
+Nenhum commit, push ou tag foi criado.

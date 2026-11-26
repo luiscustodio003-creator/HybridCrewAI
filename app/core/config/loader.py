@@ -9,6 +9,7 @@ from pathlib import Path
 from app.core.config.defaults import (
     APP_NAME,
     CLOUD_ENABLED,
+    CREATE_FLOW,
     DATA_DIR,
     ENV_PREFIX,
     EVENT_LOG,
@@ -95,4 +96,5 @@ def load_settings(
         ollama_model=_model_value(environment),
         ui_enabled=_bool_value(environment, "UI_ENABLED", UI_ENABLED),
         ui_token=_secret_value(environment, "UI_TOKEN", UI_TOKEN),
+        create_flow=_bool_value(environment, "CREATE_FLOW", CREATE_FLOW),
     )

@@ -1,6 +1,6 @@
 # Mapa do projecto
 
-Data: 2026-11-23 · Responsabilidade: DOC-001 · Estado: mapa vivo; Fases 0, 1 e 2 encerradas, Fase 3 em execução
+Data: 2026-11-25 · Responsabilidade: DOC-001 · Estado: mapa vivo; Fases 0 a 3 encerradas, Fase 4 em execução
 
 Este ficheiro responde a «onde está o quê». Distingue o que existe em disco do que apenas está previsto no plano. O conteúdo dos ficheiros listados é a fonte de verdade; este mapa é um índice, não substitui os relatórios de evidência.
 
@@ -46,8 +46,8 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Adaptadores sem SDK externo | `app/llm/providers/` | `common.py`, `gemini_text.py`, `ollama.py`, `gemini_live.py` | validados em `HCW-02-010`; instrumentação central em `HCW-03-007` |
 | Observabilidade redigida das chamadas LLM | `app/llm/` | `observability.py` | implementada em `HCW-03-007` |
 | Demonstração do gateway na CLI | `app/cli/` | `llm_ping.py`, `main.py` | implementada em `HCW-02-011` |
-| Servidor local e API de tarefas/eventos/chamadas/chat | `app/ui/server/` | `app.py`, `routes_tasks.py`, `routes_events.py`, `routes_llm_calls.py`, `chat.py`, `routes_chat.py`, `event_filters.py`, `auth.py`, `web_assets.py` | validado em `HCW-03-003` a `HCW-03-007`; chat persistido em `HCW-03-008`; recursos locais implementados em `HCW-03-009` |
-| Cliente web local e desenho de ecrãs | `app/ui/web/` | `index.html`, `styles.css`, `tasks.js`, `logs.js`, `llm_calls.js`, `chat.js`, `DESIGN.md` | implementado em `HCW-03-009`; filtros, chat e capturas reais validados em `HCW-03-010` |
+| Servidor local e API de tarefas/eventos/chamadas/chat/equipa/aprovação | `app/ui/server/` | `app.py`, `http_responses.py`, `routes_tasks.py`, `routes_events.py`, `routes_llm_calls.py`, `chat.py`, `routes_chat.py`, `routes_approvals.py`, `event_filters.py`, `auth.py`, `web_assets.py` | validado em `HCW-03-003` a `HCW-03-007`; chat persistido em `HCW-03-008`; recursos locais implementados em `HCW-03-009`; equipa e aprovação validadas em `HCW-04-010` |
+| Cliente web local e desenho de ecrãs | `app/ui/web/` | `index.html`, `styles.css`, `agents.js`, `approvals.js`, `tasks.js`, `logs.js`, `llm_calls.js`, `chat.js` | implementado em `HCW-03-009`; filtros, chat e capturas reais validados em `HCW-03-010`; equipa e aprovação validadas em `HCW-04-010`; desenho em `DESIGN.md` na raiz |
 | Auditoria inicial | `docs/reports/` | `audit.md` | VALIDADA em HCW-00-001 |
 | Baseline de ambiente | `docs/reports/` | `baseline-freeze.txt` | VALIDADA em HCW-00-001 |
 | Baseline de testes | `docs/reports/` | `baseline-tests.txt` | histórico: sem testes iniciais |
@@ -60,11 +60,18 @@ Este ficheiro responde a «onde está o quê». Distingue o que existe em disco 
 | Matriz de segurança da Fase 2 | `docs/reports/` | `phase-02-security.md` | validada em HCW-02-012; lacuna de endpoints em configuração; HCW-02-013 implementada e HCW-02-014 validada com teste real Ollama |
 | Evidência real de interface da Fase 3 | `docs/reports/` | `phase-03-ui-evidence.md` | validada em HCW-03-010; capturas em `screenshots/phase-03/` |
 | Matriz de segurança da Fase 3 | `docs/reports/` | `phase-03-security.md` | consolidada em HCW-03-011; token, `Origin`, `127.0.0.1` e prompt injection ligados a testes reais |
+| Evidência real da equipa e aprovação da Fase 4 | `screenshots/phase-04/` | `01-equipa.png`, `02-aprovacao.png` | validada em HCW-04-010 com Chromium real sobre servidor local em porto efémero |
 | Mapa do código | `docs/` | `MAP.md` | este ficheiro |
 | Plano de origem | `docs/` | `HybridCrewAI — Relatório Completo do Projecto e Plano Mestre v3.md` | referência histórica, não instrução |
 | Skills do projecto | `.opencode/skills/` | `hcw-*/SKILL.md` | 10 Skills validadas pelo lint |
 | CI | `.github/workflows/` | `ci.yml` | VALIDADA em HCW-00-008 |
 | Hooks locais | raiz | `.pre-commit-config.yaml` | VALIDADOS em HCW-00-007 |
+| Persona do assistente | raiz | `persona.md` | criada em HCW-04-002; sem segredos e sem execução automática |
+| Definições dos agentes | `agents/definitions/` | `parser.py` | cinco definições validadas em HCW-04-003; conteúdo não confiável delimitado |
+| Runner dos agentes | `agents/runner/` | `engine.py` | validado em HCW-04-004; `ToolResult` verificado, três tentativas no máximo e `approved` do modelo sem efeito |
+| Tokens de aprovação | `approvals/tokens/` | `models.py`, `store.py` | validados em HCW-04-005 e expostos na UI em HCW-04-010; emissão só pela UI autenticada, ligação a tarefa/correlação/diff e expiração de 15 minutos |
+| Fluxo CREATE com checkpoints | `workflows/create/` | `orchestrator.py`, `state.py` | validado em HCW-04-006 e HCW-04-009; oito passos, token da UI obrigatório, idempotência confirmada após sucesso e recuperação após cancelamento ou morte do processo |
+| Executor simples com aprovação | `execution/` | `simple_runner.py`, `guard.py`, `models.py` | implementado em HCW-04-007; `isolated=false`, subprocesso com token, pasta temporária, ambiente limpo, guarda Python e prazo/cancelamento |
 | Configuração de ferramentas | raiz | `pyproject.toml` | validada em HCW-00-004 |
 | Dependências fixadas | raiz | `requirements.lock.txt` | 27 pacotes, incluindo Playwright fixado em HCW-03-010 |
 | Ambiente virtual | `.venv/` | `pyvenv.cfg` | ignorado pelo Git |
@@ -83,7 +90,7 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 | Configuração, eventos, tarefas, logs e resultados | `app/core/` | 1 (concluída) |
 | Fornecedores LLM, encaminhamento, egress e orçamento | `app/llm/` | 2 (gateway com adaptadores e demonstração na CLI) |
 | Servidor e interface web | `app/ui/`, `app/ui/web/` | 3 (servidor e cliente local validados; evidência real em `HCW-03-010`) |
-| Fluxo CREATE ponta a ponta | `app/workflows/create/` | 4 |
+| Fluxo CREATE ponta a ponta | `workflows/create/` | 4 (núcleo validado em HCW-04-006; caso dourado validado em HCW-04-008; cancelamento e retoma validados em HCW-04-009) |
 | Workspace, ZIP, snapshots e auditoria | `app/workspace/` | 5 |
 | Execução isolada | `app/execution/` | 6 |
 | Análise de código e grafo | `app/analysis/` | 7 |
@@ -91,7 +98,7 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 | Voz e Gemini Live | `app/voice/` | 11 |
 | Ferramentas de computador, rede e engenharia reversa | `app/tools/` | 12 e 13 |
 | Autonomia, rotinas e checkpoints | `app/autonomy/` | 9 |
-| Aprovações por token e diff | `app/approvals/` | 4 e 12 |
+| Aprovações por token e diff | `approvals/tokens/` | 4 e 12 (tokens validados em HCW-04-005) |
 | CLI de utilizador | `app/cli/` | 1 (logs/doctor, concluída), 2 (`llm ping`) e 14 |
 | Dados locais e relatórios gerados | `config/`, `data/`, `projects/`, `reports/`, `logs/` | conforme necessário |
 | Testes por natureza | `tests/unit/`, `integration/`, `contracts/`, `security/`, `recovery/`, `ui/`, `eval/`, `fixtures/` | fases seguintes |

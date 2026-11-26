@@ -77,7 +77,11 @@ def _get_com_cabecalhos(
     try:
         ligacao.request("GET", caminho, headers=dict(cabecalhos or {}))
         resposta = ligacao.getresponse()
-        return resposta.status, resposta.read().decode("utf-8"), dict(resposta.getheaders())
+        return (
+            resposta.status,
+            resposta.read().decode("utf-8"),
+            dict(resposta.getheaders()),
+        )
     finally:
         ligacao.close()
 
@@ -181,7 +185,9 @@ def test_servidor_usar_apenas_biblioteca_padrao() -> None:
     package = root / "app" / "ui" / "server"
     permitidos = {
         "__future__",
+        "agents",
         "app",
+        "approvals",
         "collections",
         "contextlib",
         "dataclasses",
@@ -202,7 +208,9 @@ def test_servidor_usar_apenas_biblioteca_padrao() -> None:
         for line in source.read_text(encoding="utf-8").splitlines():
             if line.startswith(("import ", "from ")):
                 modulo = line.split()[1].split(".")[0]
-                assert modulo in permitidos, f"{source.name}: importação externa {modulo}"
+                assert modulo in permitidos, (
+                    f"{source.name}: importação externa {modulo}"
+                )
 
 
 def test_modulo_tem_documentacao_obrigatoria() -> None:

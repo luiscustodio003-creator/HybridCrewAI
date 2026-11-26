@@ -1,0 +1,45 @@
+Comandos executados em 2026-11-25 para HCW-04-004.
+
+$ & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/unit/test_agent_runner.py
+..........                                                               [100%]
+10 passed in 0.18s
+
+$ & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/unit/test_agent_runner.py
+..........                                                               [100%]
+10 passed in 0.36s
+
+$ & ".venv\Scripts\ruff.exe" check agents/runner tests/unit/test_agent_runner.py; & ".venv\Scripts\ruff.exe" format --check agents/runner tests/unit/test_agent_runner.py
+All checks passed!
+5 files already formatted
+
+$ & ".venv\Scripts\mypy.exe" agents/runner tests/unit/test_agent_runner.py
+Success: no issues found in 5 source files
+
+$ & ".venv\Scripts\python.exe" -m pytest -o addopts="" -q tests/unit tests/security/test_ui_local.py
+........................................................................ [ 46%]
+........................................................................ [ 92%]
+...........                                                              [100%]
+155 passed in 14.46s
+
+$ & ".venv\Scripts\python.exe" scripts/validate_plan.py; & ".venv\Scripts\python.exe" scripts/check_traceability.py
+[OK] validate_plan: 0 erro(s), 0 aviso(s)
+[OK] check_traceability: 0 erro(s), 0 aviso(s)
+
+$ & ".venv\Scripts\python.exe" scripts/check_file_size.py; & ".venv\Scripts\python.exe" scripts/check_modules.py
+  AVISO  agents\runner\engine.py: 219 linhas (aviso aos 200)
+  AVISO  app\llm\providers\common.py: 224 linhas (aviso aos 200)
+  AVISO  app\ui\server\app.py: 282 linhas (aviso aos 200)
+  AVISO  app\ui\server\chat.py: 244 linhas (aviso aos 200)
+  AVISO  tests\integration\test_ui_chat.py: 275 linhas (aviso aos 200)
+  AVISO  tests\integration\test_ui_server.py: 214 linhas (aviso aos 200)
+  AVISO  tests\security\test_ui_local.py: 226 linhas (aviso aos 200)
+  AVISO  tests\ui\test_browser.py: 298 linhas (aviso aos 200)
+  AVISO  tests\unit\test_agent_runner.py: 232 linhas (aviso aos 200)
+  AVISO  tests\unit\test_llm_observability.py: 247 linhas (aviso aos 200)
+  AVISO  tests\unit\test_providers.py: 296 linhas (aviso aos 200)
+[OK] check_file_size: 0 erro(s), 11 aviso(s)
+[OK] check_modules: 0 erro(s), 0 aviso(s)
+
+$ & ".venv\Scripts\python.exe" scripts/plan_status.py
+Progresso por fase apresentado no terminal; Fase 04: 3/13 antes da validação desta tarefa.
+Próxima tarefa: HCW-04-004 — Criar runner determinístico de agentes [APPROVED].

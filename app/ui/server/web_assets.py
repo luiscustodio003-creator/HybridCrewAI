@@ -15,6 +15,8 @@ WEB_FILES: Final[Mapping[str, tuple[str, str]]] = {
     "/logs.js": ("logs.js", "text/javascript; charset=utf-8"),
     "/llm_calls.js": ("llm_calls.js", "text/javascript; charset=utf-8"),
     "/chat.js": ("chat.js", "text/javascript; charset=utf-8"),
+    "/agents.js": ("agents.js", "text/javascript; charset=utf-8"),
+    "/approvals.js": ("approvals.js", "text/javascript; charset=utf-8"),
 }
 
 

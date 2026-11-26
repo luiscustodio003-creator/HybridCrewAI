@@ -6,7 +6,15 @@ Este documento descreve o cliente web servido pelo próprio servidor local. Não
 
 ### Painel único
 
-O painel é uma única página com quatro secções: tarefas, eventos, chamadas LLM e chat. O cabeçalho contém o campo de token, o botão «Ligar» e uma linha de estado. O token não é gravado em ficheiros nem no armazenamento do browser; permanece apenas em memória enquanto a página está aberta.
+O painel é uma única página com seis secções: equipa de agentes, aprovação de plano, tarefas, eventos, chamadas LLM e chat. O cabeçalho contém o campo de token, o botão «Ligar» e uma linha de estado. O token não é gravado em ficheiros nem no armazenamento do browser; permanece apenas em memória enquanto a página está aberta.
+
+### Equipa de agentes
+
+A secção de equipa apresenta a lista devolvida por `GET /api/agents`. Cada linha mostra `agent_id`, nome, versão, tipo de entrada e tipo de saída. O botão «Atualizar» repete a consulta; prompts e instruções completas nunca são apresentados.
+
+### Aprovação de plano
+
+A secção de aprovação tem os campos `task_id`, `correlation_id` e `diff_hash`, além do botão «Aprovar plano». O botão começa oculto e desactivado e só fica disponível quando o fluxo de eventos recebe `create.plano`. A submissão usa `POST /api/approvals`; o token devolvido fica apenas na variável `ultimoToken` e nunca entra no DOM.
 
 ### Tarefas
 
@@ -34,6 +42,14 @@ Ao abrir a página, a linha de estado indica «Por ligar». As listas ficam vazi
 
 Depois de «Ligar», tarefas e chamadas LLM são carregadas e o histórico do chat é apresentado. Uma falha de autenticação ou de origem é mostrada apenas como mensagem curta, sem eco do token.
 
+### Sem plano pronto
+
+Ao ligar, o botão «Aprovar plano» fica oculto e desactivado e a linha da aprovação indica «Sem plano pronto». Nenhum campo é enviado ao servidor neste estado.
+
+### Plano pronto
+
+A receção de `create.plano` torna o botão visível e activo e actualiza o estado para «Plano pronto para aprovação.». Depois de uma emissão válida, o estado passa a «Aprovação emitida.» sem apresentar o token.
+
 ### Fluxo de eventos activo
 
 Enquanto o fluxo está activo, o botão «Iniciar fluxo» fica desactivado e o botão «Parar fluxo» fica disponível. Alterar um filtro reinicia o fluxo com o novo critério. A lista é limitada às 200 entradas mais recentes.
@@ -59,6 +75,14 @@ O utilizador escolhe correlação e nível, prime «Iniciar fluxo» e vê os eve
 ### Enviar mensagem
 
 O utilizador preenche `task_id`, `correlation_id` e mensagem, depois submete o formulário. O cliente envia um objecto JSON com três campos e recarrega o histórico. A mensagem não é enviada se algum campo estiver vazio.
+
+### Listar equipa
+
+Depois de «Ligar», a equipa é carregada automaticamente. O botão «Atualizar» repete a consulta sem alterar o servidor nem expor prompts.
+
+### Aprovar plano
+
+O utilizador preenche `task_id`, `correlation_id` e `diff_hash`, confirma que o botão ficou visível após `create.plano` e prime «Aprovar plano». O cliente envia apenas esses três campos e guarda o token devolvido em `ultimoToken`, sem o copiar para a página nem para o armazenamento local.
 
 ### Segurança da apresentação
 
