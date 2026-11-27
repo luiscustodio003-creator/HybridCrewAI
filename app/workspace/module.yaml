@@ -1,5 +1,5 @@
 name: workspace
-purpose: Manter caminhos confinados à raiz resolvida, classificar anexos sensíveis e retê-los até aprovação explícita.
+purpose: Manter caminhos confinados à raiz resolvida, classificar e reter anexos sensíveis e ingerir ZIPs com validação completa antes de gravar.
 public_api:
   - WorkspacePathError
   - validate_workspace_path
@@ -15,6 +15,11 @@ public_api:
   - QuarantinedAttachment
   - quarantine_attachment
   - release_quarantine
+  - ArchiveError
+  - ArchiveLimits
+  - ArchiveEntry
+  - ArchiveReport
+  - ingest_zip
 depends_on: [llm-egress]
 events_emitted: []
 events_consumed: []
@@ -23,6 +28,7 @@ tests:
   - tests/security/test_phase05_paths.py
   - tests/unit/test_workspace_scanner.py
   - tests/security/test_phase05_quarantine.py
+  - tests/security/test_phase05_zip.py
 limits:
   - caminhos relativos, absolutos rejeitados
   - travessia, nomes reservados e caminhos longos rejeitados
@@ -32,3 +38,7 @@ limits:
   - nenhum conteúdo de ficheiro é lido pelo scanner nem nenhuma ligação é seguida
   - ficheiros sensíveis classificados por nome e conteúdo sem expor texto
   - anexos copiados para quarentena com SHA-256 e libertados só com token opaco
+  - entradas ZIP validadas em memória antes de qualquer escrita
+  - Zip Slip, caminhos absolutos, ligações e entradas especiais rejeitados
+  - limites de bytes por ficheiro, total, ZIP, entradas, rácio e aninhamento
+  - extração atómica em staging dentro do workspace sem expor conteúdo

@@ -1,5 +1,12 @@
 """API pública do módulo de workspace."""
 
+from app.workspace.archive import (
+    ArchiveEntry,
+    ArchiveError,
+    ArchiveLimits,
+    ArchiveReport,
+    ingest_zip,
+)
 from app.workspace.paths import WorkspacePathError, validate_workspace_path
 from app.workspace.quarantine import (
     QuarantinedAttachment,
@@ -21,6 +28,10 @@ from app.workspace.sensitive import (
 )
 
 __all__ = [
+    "ArchiveEntry",
+    "ArchiveError",
+    "ArchiveLimits",
+    "ArchiveReport",
     "IgnoreReason",
     "IgnoredFile",
     "QuarantinedAttachment",
@@ -31,6 +42,7 @@ __all__ = [
     "WorkspacePathError",
     "WorkspaceScan",
     "classify_sensitive",
+    "ingest_zip",
     "quarantine_attachment",
     "release_quarantine",
     "scan_workspace",

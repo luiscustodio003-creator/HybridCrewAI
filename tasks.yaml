@@ -1600,7 +1600,7 @@ tasks:
 - id: HCW-05-006
   title: Ingerir ZIP com limites e defesa contra Zip Slip
   phase: 5
-  status: PLANNED
+  status: VALIDATED
   priority: critical
   depends_on: [HCW-05-005]
   requirements: [SEC-006, FR-014, OPS-007]
@@ -1612,9 +1612,9 @@ tasks:
   - "Um ZIP com '../' ou caminho absoluto é rejeitado sem extrair ficheiros"
   - "ZIP bomb por rácio ou tamanho é rejeitado antes da escrita completa"
   - "Symlinks em ZIP e ZIP dentro de ZIP além do limite são rejeitados"
-  evidence: []
-  validated_on: null
-  notes: Toca em arquivos não confiáveis; executar hcw-security-review com quatro testes de ataque.
+  evidence: [reports/tasks/HCW-05-006.md]
+  validated_on: 2026-11-27
+  notes: "Toca em arquivos não confiáveis; hcw-security-review executado com sete testes de ataque e extração válida sem exposição de conteúdo. Sem commit, push ou tag da Fase 5 autorizados."
 - id: HCW-05-007
   title: Criar snapshots e rollback com hashes verificáveis
   phase: 5
