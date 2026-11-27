@@ -1,5 +1,5 @@
 name: workspace
-purpose: Manter caminhos confinados à raiz resolvida, classificar e reter anexos sensíveis e ingerir ZIPs com validação completa antes de gravar.
+purpose: Manter caminhos confinados à raiz resolvida, classificar e reter anexos sensíveis, ingerir ZIPs com validação completa antes de gravar e criar snapshots com rollback e undo verificáveis.
 public_api:
   - WorkspacePathError
   - validate_workspace_path
@@ -20,6 +20,19 @@ public_api:
   - ArchiveEntry
   - ArchiveReport
   - ingest_zip
+  - SnapshotError
+  - SnapshotLimits
+  - SnapshotEntry
+  - Snapshot
+  - create_snapshot
+  - inventory_workspace
+  - snapshot_digest
+  - RollbackError
+  - RollbackReport
+  - UndoReport
+  - load_snapshot
+  - rollback
+  - undo_rollback
 depends_on: [llm-egress]
 events_emitted: []
 events_consumed: []
@@ -29,6 +42,7 @@ tests:
   - tests/unit/test_workspace_scanner.py
   - tests/security/test_phase05_quarantine.py
   - tests/security/test_phase05_zip.py
+  - tests/integration/test_workspace_snapshot.py
 limits:
   - caminhos relativos, absolutos rejeitados
   - travessia, nomes reservados e caminhos longos rejeitados
@@ -42,3 +56,7 @@ limits:
   - Zip Slip, caminhos absolutos, ligações e entradas especiais rejeitados
   - limites de bytes por ficheiro, total, ZIP, entradas, rácio e aninhamento
   - extração atómica em staging dentro do workspace sem expor conteúdo
+  - snapshots com inventário SHA-256, limites e manifesto verificado
+  - rollback com undo automático e verificação final do digest
+  - ligações, travessia e manifestos forjados rejeitados antes de aplicar
+  - staging limpo quando a gravação ou aplicação falha antes do commit

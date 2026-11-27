@@ -1618,7 +1618,7 @@ tasks:
 - id: HCW-05-007
   title: Criar snapshots e rollback com hashes verificáveis
   phase: 5
-  status: PLANNED
+  status: VALIDATED
   priority: critical
   depends_on: [HCW-05-006]
   requirements: [FR-015, NFR-007, OPS-007]
@@ -1630,9 +1630,9 @@ tasks:
   - "Snapshot, alteração e rollback devolvem hashes SHA-256 idênticos aos originais"
   - "Undo desfaz o rollback e repõe o estado pós-alteração"
   - "Uma interrupção antes do commit não deixa ficheiros parciais nem perde o snapshot"
-  evidence: []
-  validated_on: null
-  notes: Toca em recuperação; executar hcw-security-review e teste de interrupção.
+  evidence: [reports/tasks/HCW-05-007.md]
+  validated_on: 2026-11-27
+  notes: "Toca em recuperação; hcw-security-review executado com sete testes de ataque, rollback, undo, interrupção antes do commit, manifesto forjado e ligação externa. Limitação documentada: interrupção no meio das substituições não é atómica ao nível do sistema de ficheiros. Commit e push autorizados nesta sessão; sem tag da Fase 5."
 - id: HCW-05-008
   title: Registar auditoria e operações atómicas de ficheiro
   phase: 5

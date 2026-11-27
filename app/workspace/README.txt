@@ -1,5 +1,5 @@
 MÓDULO: workspace
-FINALIDADE: Manter caminhos confinados à raiz resolvida, relatar cobertura sem ler conteúdos no scan, classificar e isolar anexos sem expor conteúdo e ingerir ZIPs com validação completa antes de gravar.
+FINALIDADE: Manter caminhos confinados à raiz resolvida, relatar cobertura sem ler conteúdos no scan, classificar e isolar anexos sem expor conteúdo, ingerir ZIPs com validação completa antes de gravar e criar snapshots com rollback e undo verificáveis.
 FUNCIONALIDADES:
 - validação de caminhos relativos com separadores '/' ou '\';
 - rejeição de caminhos absolutos, UNC, travessia '..' e componente '.';
@@ -18,14 +18,21 @@ FUNCIONALIDADES:
 - ingestão de ZIP com validação de todas as entradas em memória antes de gravar;
 - rejeição de Zip Slip, caminhos absolutos, entradas especiais e ligações declaradas;
 - limites de ficheiro, total, tamanho do ZIP, entradas, rácio e aninhamento;
-- extração atómica em staging dentro do workspace, sem expor conteúdo no relatório.
+- extração atómica em staging dentro do workspace, sem expor conteúdo no relatório;
+- inventário de ficheiros com SHA-256 e limites de caminho, ficheiro, total e quantidade;
+- snapshots gravados em staging e confirmados por manifesto com digest canónico;
+- verificação de cada ficheiro do snapshot antes de qualquer rollback;
+- rollback com undo automático do estado pós-alteração;
+- limpeza do staging quando a gravação ou a aplicação falha antes do commit.
 ESTRUTURA:
 - __init__.py: API pública do módulo;
 - paths.py: regras de validação e excepção tipada;
 - scanner.py: percurso confinado e relatório de cobertura;
 - sensitive.py: classificação sem exposição de conteúdo;
 - quarantine.py: retenção e libertação de anexos com aprovação;
-- archive.py: validação e extração segura de ZIP.
+- archive.py: validação e extração segura de ZIP;
+- snapshot.py: inventário, digest e criação de snapshots;
+- rollback.py: leitura verificada, restauro e undo.
 INTERFACE PÚBLICA:
 - WorkspacePathError: erro de validação de caminho;
 - validate_workspace_path(root, candidate, *, max_chars): devolve o caminho absoluto validado;
@@ -45,15 +52,28 @@ INTERFACE PÚBLICA:
 - ArchiveLimits: limites de caminho, bytes e entradas do ZIP;
 - ArchiveEntry: metadados da entrada extraída, sem conteúdo;
 - ArchiveReport: destino, entradas, total descomprimido e total comprimido;
-- ingest_zip(root, source, *, destination, limits): valida e extrai um ZIP no workspace.
-DEPENDÊNCIAS: biblioteca padrão (dataclasses, enum, hashlib, hmac, io, json, ntpath, os, pathlib, re, shutil, stat, uuid, zipfile) e llm-egress para detecção de segredos.
+- ingest_zip(root, source, *, destination, limits): valida e extrai um ZIP no workspace;
+- SnapshotError: erro de snapshot inválido ou não verificado;
+- SnapshotLimits: limites de caminho, ficheiro, total e quantidade do snapshot;
+- SnapshotEntry: caminho, tamanho e SHA-256 de um ficheiro inventariado;
+- Snapshot: snapshot confirmado com identificador, digest e entradas;
+- create_snapshot(root, *, limits): cria um snapshot atómico do workspace;
+- inventory_workspace(root, *, limits): devolve o inventário verificado do workspace;
+- snapshot_digest(entries): calcula o digest canónico de um inventário;
+- load_snapshot(root, snapshot_id, *, limits): lê e verifica um snapshot guardado;
+- RollbackError: erro de rollback ou undo recusado, interrompido ou não verificado;
+- RollbackReport: identificadores, digest e entradas do estado restaurado;
+- UndoReport: identificador, digest e entradas do estado reposto pelo undo;
+- rollback(root, snapshot_id, *, limits): restaura um snapshot e guarda o estado actual como undo;
+- undo_rollback(root, undo_id, *, limits): desfaz um rollback.
+DEPENDÊNCIAS: biblioteca padrão (collections.abc, dataclasses, enum, hashlib, hmac, io, json, ntpath, os, pathlib, re, shutil, stat, uuid, zipfile) e llm-egress para detecção de segredos.
 CONFIGURAÇÃO: os limites são passados pelo chamador; os valores previstos vêm de HCW_MAX_WORKSPACE_PATH_CHARS, HCW_MAX_WORKSPACE_FILE_BYTES, HCW_MAX_ZIP_BYTES, HCW_MAX_ZIP_ENTRIES e HCW_MAX_ZIP_NESTING em app.core.config.
 UTILIZAÇÃO: validate_workspace_path(settings.workspace_dir, "src/main.py", max_chars=settings.max_workspace_path_chars)
 UTILIZAÇÃO: scan_workspace(settings.workspace_dir, max_chars=settings.max_workspace_path_chars, max_file_bytes=settings.max_workspace_file_bytes)
 UTILIZAÇÃO: classify_sensitive(settings.workspace_dir, "anexo.txt", max_chars=settings.max_workspace_path_chars, max_file_bytes=settings.max_workspace_file_bytes)
 UTILIZAÇÃO: quarantine_attachment(settings.workspace_dir, origem, relative_name="docs/anexo.txt", approval_token=token_da_ui, limits=QuarantineLimits(max_chars=settings.max_workspace_path_chars, max_file_bytes=settings.max_workspace_file_bytes))
 UTILIZAÇÃO: ingest_zip(settings.workspace_dir, origem, destination="inbox", limits=ArchiveLimits(max_chars=settings.max_workspace_path_chars, max_file_bytes=settings.max_workspace_file_bytes, max_total_bytes=20_000_000, max_zip_bytes=settings.max_zip_bytes, max_entries=settings.max_zip_entries, max_ratio=100, max_nesting=settings.max_zip_nesting))
-TESTES: python -m pytest -q tests/unit/test_workspace_paths.py tests/security/test_phase05_paths.py tests/unit/test_workspace_scanner.py tests/security/test_phase05_quarantine.py tests/security/test_phase05_zip.py
-LIMITAÇÕES: o scanner não lê conteúdo; a classificação e a ingestão de ZIP leem cópias limitadas em memória e não devolvem texto. Nenhum módulo protege contra substituição do ficheiro depois da validação; o chamador deve abrir com opções que não sigam ligações quando o sistema operativo as oferecer. A quarentena e a ingestão de ZIP ainda não estão ligadas ao chat; essa integração pertence a tarefas posteriores. O token de aprovação é fornecido pelo chamador e só o seu digest é guardado; a UI deve gerar o token opaco. O limite de aninhamento usa o nome da entrada e a assinatura dos bytes, não uma descompressão recursiva.
-SEGURANÇA: conteúdo de caminhos, anexos e ZIPs é tratado como dado não confiável; nenhum erro, registo, metadado ou relatório inclui conteúdo de ficheiros nem token em claro. Nenhum ficheiro dentro de um ZIP é escrito ou executado antes da validação completa de todas as entradas.
-RELAÇÕES: prepara o terreno para snapshots, diff, aprovação de alterações e ecrãs locais das tarefas seguintes da Fase 5.
+TESTES: python -m pytest -q tests/unit/test_workspace_paths.py tests/security/test_phase05_paths.py tests/unit/test_workspace_scanner.py tests/security/test_phase05_quarantine.py tests/security/test_phase05_zip.py tests/integration/test_workspace_snapshot.py
+LIMITAÇÕES: o scanner não lê conteúdo; a classificação e a ingestão de ZIP leem cópias limitadas em memória e não devolvem texto. Nenhum módulo protege contra substituição do ficheiro depois da validação; o chamador deve abrir com opções que não sigam ligações quando o sistema operativo as oferecer. A quarentena e a ingestão de ZIP ainda não estão ligadas ao chat; essa integração pertence a tarefas posteriores. O token de aprovação é fornecido pelo chamador e só o seu digest é guardado; a UI deve gerar o token opaco. O limite de aninhamento usa o nome da entrada e a assinatura dos bytes, não uma descompressão recursiva. O rollback é consistente quando falha antes do commit; uma interrupção no meio das substituições de ficheiros não é atómica ao nível do sistema de ficheiros. Snapshots e undo ainda não estão ligados à UI nem ao fluxo de aprovação.
+SEGURANÇA: conteúdo de caminhos, anexos, ZIPs e snapshots é tratado como dado não confiável; nenhum erro, registo, metadado ou relatório inclui conteúdo de ficheiros nem token em claro. Nenhum ficheiro dentro de um ZIP é escrito ou executado antes da validação completa de todas as entradas. Nenhum snapshot é aplicado sem verificação de manifesto, de caminhos e de SHA-256 de todos os ficheiros.
+RELAÇÕES: prepara o terreno para diff, aprovação de alterações e ecrãs locais das tarefas seguintes da Fase 5.
