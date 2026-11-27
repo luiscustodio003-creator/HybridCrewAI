@@ -96,7 +96,7 @@ A árvore abaixo é a meta do plano; as pastas só devem ser criadas quando a fa
 | Fornecedores LLM, encaminhamento, egress e orçamento | `app/llm/` | 2 (gateway com adaptadores e demonstração na CLI) |
 | Servidor e interface web | `app/ui/`, `app/ui/web/` | 3 (servidor e cliente local validados; evidência real em `HCW-03-010`) |
 | Fluxo CREATE ponta a ponta | `workflows/create/` | 4 (núcleo validado em HCW-04-006; caso dourado validado em HCW-04-008; cancelamento e retoma validados em HCW-04-009) |
-| Workspace, ZIP, snapshots e auditoria | `app/workspace/` | 5 (caminhos, scan, anexos, ZIP e snapshots/rollback validados) |
+| Workspace, ZIP, snapshots e auditoria | `app/workspace/` | 5 (caminhos, scan, anexos, ZIP, snapshots/rollback e auditoria com escritas atómicas validados) |
 | Execução isolada | `app/execution/` | 6 |
 | Análise de código e grafo | `app/analysis/` | 7 |
 | Conhecimento | `app/knowledge/` | 10 |

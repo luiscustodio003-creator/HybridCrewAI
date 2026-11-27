@@ -78,10 +78,14 @@ def test_logs_follow_mostra_evento_em_tempo_real(tmp_path: Path) -> None:
         encoding="utf-8",
         errors="replace",
     )
-    time.sleep(1.0)
-    JsonlSink(caminho).write(
-        new_event(contexto, kind="cli.integration", message="evento em tempo real")
-    )
+    sumidor = JsonlSink(caminho)
+    for _ in range(40):
+        time.sleep(0.25)
+        sumidor.write(
+            new_event(contexto, kind="cli.integration", message="evento em tempo real")
+        )
+        if processo.poll() is not None:
+            break
     saida, erros = processo.communicate(timeout=LIMITE + 5)
 
     assert processo.returncode == 0, erros

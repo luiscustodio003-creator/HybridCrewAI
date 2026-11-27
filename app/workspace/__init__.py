@@ -7,6 +7,15 @@ from app.workspace.archive import (
     ArchiveReport,
     ingest_zip,
 )
+from app.workspace.audit import AuditError, AuditLimits, AuditTrail
+from app.workspace.file_ops import apply_atomic, recover_workspace
+from app.workspace.journal import (
+    FileChange,
+    FileOpLimits,
+    FileOpReport,
+    FileOpsError,
+    RecoveryReport,
+)
 from app.workspace.paths import WorkspacePathError, validate_workspace_path
 from app.workspace.quarantine import (
     QuarantinedAttachment,
@@ -49,11 +58,19 @@ __all__ = [
     "ArchiveError",
     "ArchiveLimits",
     "ArchiveReport",
+    "AuditError",
+    "AuditLimits",
+    "AuditTrail",
+    "FileChange",
+    "FileOpLimits",
+    "FileOpReport",
+    "FileOpsError",
     "IgnoreReason",
     "IgnoredFile",
     "QuarantinedAttachment",
     "QuarantineError",
     "QuarantineLimits",
+    "RecoveryReport",
     "RollbackError",
     "RollbackReport",
     "SensitiveFile",
@@ -65,12 +82,14 @@ __all__ = [
     "UndoReport",
     "WorkspacePathError",
     "WorkspaceScan",
+    "apply_atomic",
     "classify_sensitive",
     "create_snapshot",
     "ingest_zip",
     "inventory_workspace",
     "load_snapshot",
     "quarantine_attachment",
+    "recover_workspace",
     "release_quarantine",
     "rollback",
     "scan_workspace",

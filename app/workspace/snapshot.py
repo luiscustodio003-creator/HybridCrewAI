@@ -20,6 +20,7 @@ _MANIFEST = "manifest.json"
 _INTERNOS = frozenset(
     {
         ".archive-staging",
+        ".file-ops",
         ".quarantine",
         ".rollback-staging",
         ".snapshot-staging",

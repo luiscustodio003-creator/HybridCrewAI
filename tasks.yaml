@@ -1636,21 +1636,21 @@ tasks:
 - id: HCW-05-008
   title: Registar auditoria e operações atómicas de ficheiro
   phase: 5
-  status: PLANNED
+  status: VALIDATED
   priority: high
   depends_on: [HCW-05-007]
   requirements: [OPS-007, NFR-007, SEC-005, DOC-003]
   modules: [app/workspace]
-  files_new: [app/workspace/file_ops.py, app/workspace/audit.py, tests/recovery/test_workspace_interrupt.py]
+  files_new: [app/workspace/file_ops.py, app/workspace/audit.py, app/workspace/journal.py, tests/recovery/test_workspace_interrupt.py, tests/recovery/test_workspace_audit_attack.py]
   files_change: []
-  tests: [tests/recovery/test_workspace_interrupt.py]
+  tests: [tests/recovery/test_workspace_interrupt.py, tests/recovery/test_workspace_audit_attack.py]
   acceptance:
   - "Uma operação interrompida a meio deixa a pasta consistente com o último commit válido"
   - "Cada escrita gera evento de auditoria com task_id e correlation_id, sem conteúdo sensível"
   - "Nenhuma operação escreve fora da raiz do workspace"
-  evidence: []
-  validated_on: null
-  notes: Toca em auditoria e recuperação; executar hcw-security-review.
+  evidence: [reports/tasks/HCW-05-008.md]
+  validated_on: 2026-11-27
+  notes: "Toca em auditoria e recuperação; hcw-security-review executado com journal adulterado, manifesto sem conteúdo sensível, escrita em pasta interna, interrupção antes do commit, morte após o commit e caminho fora da raiz. Corrigida a corrida no teste de follow da CLI. Limitações documentadas: symlink externo ignorado no Windows por WinError 1314 e atomicidade multi-ficheiro dependente de recover_workspace. Commit e push não autorizados nesta sessão; sem tag da Fase 5."
 - id: HCW-05-009
   title: Ligar diff e aprovação do workspace ao token local
   phase: 5
