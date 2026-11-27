@@ -11,6 +11,7 @@ Uma saída de modelo com `approved=true` não emite token: o runner apenas regis
 - `SolicitacaoAprovacao`: pedido com `task_id`, `correlation_id`, `diff_hash`, cabeçalhos e porta local.
 - `TokenStore.emitir`: emite `ApprovalToken` após validar Bearer e `Origin` da interface.
 - `TokenStore.validar`: valida token, tarefa, hash do diff e expiração.
+- `calcular_hash_diff`: digest canónico dos hashes reais do snapshot e da alteração do workspace.
 - `ApprovalToken`: valor opaco e metadados; o valor do token está oculto em `repr`.
 - Excepções tipadas: `ApprovalDenied`, `DadosInvalidos`, `TokenInvalido`, `TokenExpirado`, `TarefaInvalida`, `DiffAlterado`.
 

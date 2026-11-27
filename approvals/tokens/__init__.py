@@ -13,6 +13,7 @@ from approvals.tokens.models import (
     TokenExpirado,
     TokenInvalido,
     agora_utc,
+    calcular_hash_diff,
     hash_diff_obrigatorio,
     texto_obrigatorio,
 )
@@ -32,6 +33,7 @@ __all__ = [
     "TokenInvalido",
     "TokenStore",
     "agora_utc",
+    "calcular_hash_diff",
     "hash_diff_obrigatorio",
     "texto_obrigatorio",
 ]

@@ -1654,21 +1654,21 @@ tasks:
 - id: HCW-05-009
   title: Ligar diff e aprovação do workspace ao token local
   phase: 5
-  status: PLANNED
+  status: VALIDATED
   priority: critical
   depends_on: [HCW-05-008]
   requirements: [FR-016, FR-010, SEC-003, SEC-005]
   modules: [app/ui/server, approvals]
   files_new: [app/ui/server/routes_diff.py, tests/integration/test_workspace_approval.py]
-  files_change: [app/ui/server/app.py, app/ui/server/routes_approvals.py, app/ui/server/README.txt]
+  files_change: [app/ui/server/app.py, app/ui/server/routes_approvals.py, app/ui/server/__init__.py, app/ui/server/README.txt, app/ui/server/module.yaml, approvals/tokens/models.py, approvals/tokens/__init__.py, approvals/tokens/README.txt, approvals/tokens/module.yaml, THREAT_MODEL.md, docs/MAP.md, STATE.md, DEVLOG.md]
   tests: [tests/integration/test_workspace_approval.py, tests/security/test_ui_approvals.py]
   acceptance:
   - "O diff_hash é calculado a partir dos hashes reais do snapshot e da alteração"
   - "A aprovação só é aceite com token opaco emitido pela UI e ligado à tarefa"
   - "approved=true vindo do modelo não tem efeito e nenhum token aparece no DOM, URL ou storage"
-  evidence: []
-  validated_on: null
-  notes: Toca em aprovação; executar hcw-security-review.
+  evidence: [reports/tasks/HCW-05-009.md]
+  validated_on: 2026-11-27
+  notes: "Toca em aprovação; hcw-security-review executado com ameaça/contramedida/teste/resultado. Oito testes de integração, 359 de regressão e browser real passaram; ruff/mypy/validadores limpos. Comitada neste conjunto; push pendente; sem tag da Fase 5."
 - id: HCW-05-010
   title: Adicionar anexos ao chat com relatório de cobertura
   phase: 5

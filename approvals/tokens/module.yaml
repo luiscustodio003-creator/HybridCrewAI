@@ -1,6 +1,6 @@
 name: approvals-tokens
 purpose: Emissão e validação de tokens de aprovação apenas pelo servidor local autenticado da interface web
-public_api: [ApprovalDenied, ApprovalError, ApprovalToken, DadosInvalidos, DiffAlterado, SolicitacaoAprovacao, TarefaInvalida, TokenExpirado, TokenInvalido, TokenStore, VALIDADE_MINUTOS]
+public_api: [ApprovalDenied, ApprovalError, ApprovalToken, DadosInvalidos, DiffAlterado, SolicitacaoAprovacao, TarefaInvalida, TokenExpirado, TokenInvalido, TokenStore, VALIDADE_MINUTOS, calcular_hash_diff]
 depends_on: [core-local-auth]
 events_emitted: []
 events_consumed: []

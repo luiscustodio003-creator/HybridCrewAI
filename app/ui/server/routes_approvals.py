@@ -1,4 +1,4 @@
-"""Rotas de equipa e aprovação da interface local."""
+"""Rotas de equipa e aprovação ligadas ao diff verificado do workspace."""
 
 from __future__ import annotations
 

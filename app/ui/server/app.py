@@ -29,6 +29,7 @@ from app.ui.server.routes_chat import (
     analisar_corpo,
     analisar_filtro_tarefa,
 )
+from app.ui.server.routes_diff import DIFF_PATH, processar_diff
 from app.ui.server.routes_events import EVENTS_PATH, transmitir_eventos
 from app.ui.server.routes_llm_calls import (
     LLM_CALLS_PATH,
@@ -43,7 +44,10 @@ HEALTH_PATH: Final = "/health"
 MAX_PORT: Final = 65535
 PHASE: Final = 3
 GET_ROTAS: Final = frozenset(
-    {HEALTH_PATH, TAREFAS_PATH, EVENTS_PATH, LLM_CALLS_PATH, CHAT_PATH, AGENTS_PATH}
+    {
+        HEALTH_PATH, TAREFAS_PATH, EVENTS_PATH, LLM_CALLS_PATH,
+        CHAT_PATH, AGENTS_PATH, DIFF_PATH,
+    }
 )
 
 
@@ -124,6 +128,8 @@ class _Handler(BaseHTTPRequestHandler):
             self._tasks()
         elif caminho == AGENTS_PATH:
             self._agents()
+        elif caminho == DIFF_PATH:
+            self._diff()
         elif caminho == LLM_CALLS_PATH:
             self._llm_calls()
         elif caminho == CHAT_PATH:
@@ -174,6 +180,13 @@ class _Handler(BaseHTTPRequestHandler):
     def _agents(self) -> None:
         """Devolve a equipa sem expor prompts nem instruções internas."""
         enviar_json(self, *resposta_agentes())
+
+    def _diff(self) -> None:
+        """Devolve o hash verificado entre o snapshot e o estado actual."""
+        estado, resposta = processar_diff(
+            self.server.settings, urlsplit(self.path).query
+        )
+        enviar_json(self, estado, resposta)
 
     def _approvals_post(self) -> None:
         """Emite um token de aprovação para um diff e uma tarefa válidos."""

@@ -16,6 +16,12 @@ from app.ui.server.routes_approvals import (
     listar_agentes,
 )
 from app.ui.server.routes_chat import CHAT_PATH, analisar_corpo, analisar_filtro_tarefa
+from app.ui.server.routes_diff import (
+    DIFF_PATH,
+    analisar_consulta_diff,
+    calcular_diff,
+    calcular_diff_hash,
+)
 from app.ui.server.routes_events import EVENTS_PATH, gerar_eventos_sse
 from app.ui.server.routes_llm_calls import (
     LLM_CALLS_PATH,
@@ -33,6 +39,7 @@ __all__ = [
     "AGENTS_PATH",
     "APPROVALS_PATH",
     "CHAT_PATH",
+    "DIFF_PATH",
     "EVENTS_PATH",
     "LLM_CALLS_PATH",
     "TAREFAS_PATH",
@@ -42,10 +49,13 @@ __all__ = [
     "ChatStore",
     "EventFilter",
     "UiServer",
+    "analisar_consulta_diff",
     "analisar_corpo",
     "analisar_filtro_correlacao",
     "analisar_filtro_tarefa",
     "analisar_filtros",
+    "calcular_diff",
+    "calcular_diff_hash",
     "create_server",
     "emitir_aprovacao",
     "filtrar_evento",

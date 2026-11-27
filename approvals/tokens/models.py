@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
@@ -66,6 +68,19 @@ def hash_diff_obrigatorio(valor: object) -> str:
             "O campo diff_hash tem de ser SHA-256 hexadecimal com 64 caracteres."
         )
     return valor
+
+
+def calcular_hash_diff(snapshot_hash: object, alteracao_hash: object) -> str:
+    """Calcula o hash canónico que liga o snapshot verificado à alteração."""
+    origem = hash_diff_obrigatorio(snapshot_hash)
+    destino = hash_diff_obrigatorio(alteracao_hash)
+    serializado = json.dumps(
+        {"snapshot_hash": origem, "alteracao_hash": destino},
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(serializado.encode("utf-8")).hexdigest()
 
 
 @dataclass(frozen=True, slots=True)
