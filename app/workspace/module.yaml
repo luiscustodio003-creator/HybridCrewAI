@@ -3,13 +3,21 @@ purpose: Manter todos os caminhos de ficheiro confinados à raiz resolvida do wo
 public_api:
   - WorkspacePathError
   - validate_workspace_path
+  - IgnoreReason
+  - IgnoredFile
+  - WorkspaceScan
+  - scan_workspace
 depends_on: []
 events_emitted: []
 events_consumed: []
 tests:
   - tests/unit/test_workspace_paths.py
   - tests/security/test_phase05_paths.py
+  - tests/unit/test_workspace_scanner.py
 limits:
   - caminhos relativos, absolutos rejeitados
   - travessia, nomes reservados e caminhos longos rejeitados
   - symlinks e junctions rejeitados antes de abertura
+  - lidos e ignorados somam o total de ficheiros listados
+  - motivos de ignorado estáveis: link, invalid-path, too-large, not-regular, unreadable
+  - nenhum conteúdo de ficheiro é lido nem nenhuma ligação é seguida

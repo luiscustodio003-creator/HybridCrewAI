@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-27 — HCW-05-004 validada
+Feito: Utilizador aprovou a execução; `HCW-05-004` passou a APPROVED/IN_PROGRESS/IMPLEMENTED/VALIDATED. Criado `app/workspace/scanner.py` com `IgnoreReason(StrEnum)`, `IgnoredFile`, `WorkspaceScan` e `scan_workspace(root, max_chars, max_file_bytes)`. O scanner ordena o percurso, conta todos os ficheiros listados em `total_on_disk`, classifica ligações, paths inválidos, ficheiros grandes, entradas não regulares e ficheiros ilegíveis com motivos estáveis, e nunca abre conteúdo. A API pública de `app/workspace` exporta também o scanner; documentação e modelo de ameaças actualizados com os testes reais.
+Falhou / por resolver: o primeiro teste falhou por `ImportError` do scanner; corrigido. `ruff` assinalou ordem de imports, `UP042` em `IgnoreReason` e números literais nos testes; corrigido com imports no topo, `StrEnum` e constante `TOTAL_FICHEIROS`. Não houve commit, push nem tag da Fase 5: ainda sem autorização. Commit/push de `HCW-05-003` já enviados em `d374335`.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `app/workspace/__init__.py`, `app/workspace/scanner.py`, `app/workspace/README.txt`, `app/workspace/module.yaml`, `tests/unit/test_workspace_scanner.py`, `THREAT_MODEL.md`, `reports/tasks/HCW-05-004.md`.
+Testes executados: `pytest -o addopts="" --tb=short -q` em `test_workspace_scanner.py` → 6 passed; com paths e segurança da Fase 5 → 31 passed; com regressão de configuração/segredos → 94 passed; `ruff check` scoped → OK; `mypy` scoped → OK; `validate_plan`, `check_traceability`, `check_modules` → 0 erros/0 avisos; `check_file_size` → 0 erros/23 avisos.
+Próxima acção: pedir autorização para commit/push de `HCW-05-004`, sem incluir screenshots, `docs/reports/audit.md` nem `.jarvis_backup/`; depois passar `HCW-05-005` a APPROVED e implementar classificação de ficheiros sensíveis com quarentena de anexos.
+
 ## 2026-11-27 — HCW-05-003 validada
 Feito: Utilizador aprovou a execução; `HCW-05-003` passou a APPROVED/IN_PROGRESS/IMPLEMENTED/VALIDATED. Criado `app/workspace` com validação de caminhos relativos, rejeição de absolutos/UNC/travessia/nomes reservados/caracteres de controlo/caminhos longos e bloqueio de symlinks/junctions por `lstat` antes de qualquer abertura. O caminho final é sempre verificado como pertencente à raiz resolvida do workspace.
 Falhou / por resolver: a criação de symlinks reais falha neste ambiente com `WinError 1314`; os testes de ligação usam junctions do Windows como alternativa equivalente. TOCTOU entre validação e abertura continua como limitação documentada. Commit e push autorizados em 2026-11-27; sem tag da Fase 5.

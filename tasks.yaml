@@ -1564,7 +1564,7 @@ tasks:
 - id: HCW-05-004
   title: Escanear workspace com cobertura e motivos de ignorado
   phase: 5
-  status: IN_PROGRESS
+  status: VALIDATED
   priority: high
   depends_on: [HCW-05-003]
   requirements: [FR-014, UI-010, SEC-005]
@@ -1576,9 +1576,9 @@ tasks:
   - "A soma de ficheiros lidos e ignorados é igual ao número de ficheiros no disco"
   - "Cada ficheiro ignorado tem um motivo explícito e estável"
   - "O scanner não lê nem lista conteúdo fora do workspace"
-  evidence: []
-  validated_on: null
-  notes: A cobertura alimenta o relatório do chat; sem leitura fora da raiz.
+  evidence: [reports/tasks/HCW-05-004.md]
+  validated_on: 2026-11-27
+  notes: "Toca em sistema de ficheiros; hcw-security-review executado com ligação externa, não abertura de conteúdo e limites inválidos. Sem commit, push ou tag da Fase 5 autorizados."
 - id: HCW-05-005
   title: Classificar ficheiros sensíveis e colocar anexos em quarentena
   phase: 5
