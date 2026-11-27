@@ -1,0 +1,15 @@
+name: workspace
+purpose: Manter todos os caminhos de ficheiro confinados à raiz resolvida do workspace.
+public_api:
+  - WorkspacePathError
+  - validate_workspace_path
+depends_on: []
+events_emitted: []
+events_consumed: []
+tests:
+  - tests/unit/test_workspace_paths.py
+  - tests/security/test_phase05_paths.py
+limits:
+  - caminhos relativos, absolutos rejeitados
+  - travessia, nomes reservados e caminhos longos rejeitados
+  - symlinks e junctions rejeitados antes de abertura

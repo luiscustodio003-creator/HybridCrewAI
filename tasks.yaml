@@ -1546,7 +1546,7 @@ tasks:
 - id: HCW-05-003
   title: Confinar caminhos do workspace e bloquear symlinks
   phase: 5
-  status: PLANNED
+  status: VALIDATED
   priority: critical
   depends_on: [HCW-05-002]
   requirements: [SEC-005, FR-013, NFR-002]
@@ -1558,13 +1558,13 @@ tasks:
   - "Caminhos absolutos, '..', nomes reservados do Windows e caminhos longos são rejeitados"
   - "Um symlink que resolve fora da raiz é rejeitado antes de qualquer abertura"
   - "O caminho final pertence sempre à raiz resolvida do workspace"
-  evidence: []
-  validated_on: null
-  notes: Toca em sistema de ficheiros; executar hcw-security-review com teste de ataque de travessia.
+  evidence: [reports/tasks/HCW-05-003.md]
+  validated_on: 2026-11-27
+  notes: "Toca em sistema de ficheiros; hcw-security-review executado com teste de ataque de travessia. Commit e push autorizados em 2026-11-27; sem tag da Fase 5."
 - id: HCW-05-004
   title: Escanear workspace com cobertura e motivos de ignorado
   phase: 5
-  status: PLANNED
+  status: IN_PROGRESS
   priority: high
   depends_on: [HCW-05-003]
   requirements: [FR-014, UI-010, SEC-005]

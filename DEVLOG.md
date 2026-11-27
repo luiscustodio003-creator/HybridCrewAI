@@ -1,6 +1,13 @@
 # Diário de desenvolvimento
 Uma entrada por sessão (formato na Skill `hcw-handoff`). Mais recente em cima.
 
+## 2026-11-27 — HCW-05-003 validada
+Feito: Utilizador aprovou a execução; `HCW-05-003` passou a APPROVED/IN_PROGRESS/IMPLEMENTED/VALIDATED. Criado `app/workspace` com validação de caminhos relativos, rejeição de absolutos/UNC/travessia/nomes reservados/caracteres de controlo/caminhos longos e bloqueio de symlinks/junctions por `lstat` antes de qualquer abertura. O caminho final é sempre verificado como pertencente à raiz resolvida do workspace.
+Falhou / por resolver: a criação de symlinks reais falha neste ambiente com `WinError 1314`; os testes de ligação usam junctions do Windows como alternativa equivalente. TOCTOU entre validação e abertura continua como limitação documentada. Commit e push autorizados em 2026-11-27; sem tag da Fase 5.
+Ficheiros tocados: `tasks.yaml`, `STATE.md`, `DEVLOG.md`, `app/workspace/__init__.py`, `app/workspace/paths.py`, `app/workspace/README.txt`, `app/workspace/module.yaml`, `tests/unit/test_workspace_paths.py`, `tests/security/test_phase05_paths.py`, `reports/tasks/HCW-05-003.md`.
+Testes executados: `pytest -o addopts="" --tb=short -q` nos dois ficheiros novos → 25 passed; com regressão de configuração/segredos → 88 passed; `ruff check` → OK; `mypy` → OK; `check_modules` → 0 erros; `check_file_size` → 0 erros/23 avisos; `validate_plan` e `check_traceability` → 0 erros/0 avisos.
+Próxima acção: executar `HCW-05-004` com scanner de cobertura e motivos de ignorado, sem incluir screenshots, `docs/reports/audit.md` nem `.jarvis_backup/` no commit.
+
 ## 2026-11-26 — HCW-05-002 validada
 Feito: Utilizador aprovou o plano da Fase 5; `HCW-05-001` passou a VALIDATED e `HCW-05-002` a APPROVED/IN_PROGRESS/IMPLEMENTED/VALIDATED. `Settings` expõe agora as flags `workspace_write`, `snapshots`, `diff`, `zip_enabled`, `attachments` e `permissions`, todas desligadas por omissão, cinco limites positivos e `workspace_dir` derivado de `data_dir`. `tasks.yaml` e `docs/requirements.yaml` ficaram com o plano aprovado.
 Falhou / por resolver: `ruff format --check` assinala linhas pré-existentes em `loader.py`, `schema.py`, `secrets.py` e `test_config.py`; não houve reformatação fora do necessário. Commit e push autorizados pelo Utilizador; sem tag da Fase 5.
