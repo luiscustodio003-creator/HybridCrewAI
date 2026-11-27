@@ -1582,7 +1582,7 @@ tasks:
 - id: HCW-05-005
   title: Classificar ficheiros sensíveis e colocar anexos em quarentena
   phase: 5
-  status: PLANNED
+  status: VALIDATED
   priority: critical
   depends_on: [HCW-05-004]
   requirements: [SEC-007, FR-014, DOC-003]
@@ -1594,9 +1594,9 @@ tasks:
   - "Ficheiros sensíveis são detectados sem escrever o conteúdo em logs ou relatórios"
   - "Um anexo fica em quarentena e não entra no chat antes de aprovação explícita"
   - "O hash SHA-256 do anexo em quarentena é igual ao do ficheiro original"
-  evidence: []
-  validated_on: null
-  notes: Toca em conteúdo não confiável; executar hcw-security-review e teste de fuga de conteúdo.
+  evidence: [reports/tasks/HCW-05-005.md]
+  validated_on: 2026-11-27
+  notes: "Toca em conteúdo não confiável; hcw-security-review executado com fuga de conteúdo, aprovação forjada, travessia, ligação externa e verificação de hash. Commit e push autorizados nesta sessão; sem tag da Fase 5."
 - id: HCW-05-006
   title: Ingerir ZIP com limites e defesa contra Zip Slip
   phase: 5

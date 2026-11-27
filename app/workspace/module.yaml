@@ -1,5 +1,5 @@
 name: workspace
-purpose: Manter todos os caminhos de ficheiro confinados à raiz resolvida do workspace.
+purpose: Manter caminhos confinados à raiz resolvida, classificar anexos sensíveis e retê-los até aprovação explícita.
 public_api:
   - WorkspacePathError
   - validate_workspace_path
@@ -7,17 +7,28 @@ public_api:
   - IgnoredFile
   - WorkspaceScan
   - scan_workspace
-depends_on: []
+  - SensitiveReason
+  - SensitiveFile
+  - classify_sensitive
+  - QuarantineError
+  - QuarantineLimits
+  - QuarantinedAttachment
+  - quarantine_attachment
+  - release_quarantine
+depends_on: [llm-egress]
 events_emitted: []
 events_consumed: []
 tests:
   - tests/unit/test_workspace_paths.py
   - tests/security/test_phase05_paths.py
   - tests/unit/test_workspace_scanner.py
+  - tests/security/test_phase05_quarantine.py
 limits:
   - caminhos relativos, absolutos rejeitados
   - travessia, nomes reservados e caminhos longos rejeitados
   - symlinks e junctions rejeitados antes de abertura
   - lidos e ignorados somam o total de ficheiros listados
   - motivos de ignorado estáveis: link, invalid-path, too-large, not-regular, unreadable
-  - nenhum conteúdo de ficheiro é lido nem nenhuma ligação é seguida
+  - nenhum conteúdo de ficheiro é lido pelo scanner nem nenhuma ligação é seguida
+  - ficheiros sensíveis classificados por nome e conteúdo sem expor texto
+  - anexos copiados para quarentena com SHA-256 e libertados só com token opaco
