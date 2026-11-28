@@ -72,6 +72,10 @@
     }
   }
 
+  window.hcwAprovacaoToken = function () {
+    return ultimoToken;
+  };
+
   api.registar(function () {
     observarPlanos().catch(function () {});
   });

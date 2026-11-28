@@ -18,6 +18,7 @@ RECURSOS = (
     "chat.js",
     "agents.js",
     "approvals.js",
+    "attachments.js",
 )
 
 

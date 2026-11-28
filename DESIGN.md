@@ -6,7 +6,7 @@ Este documento descreve o cliente web servido pelo próprio servidor local. Não
 
 ### Painel único
 
-O painel é uma única página com seis secções: equipa de agentes, aprovação de plano, tarefas, eventos, chamadas LLM e chat. O cabeçalho contém o campo de token, o botão «Ligar» e uma linha de estado. O token não é gravado em ficheiros nem no armazenamento do browser; permanece apenas em memória enquanto a página está aberta.
+O painel é uma única página com sete secções: equipa de agentes, aprovação de plano, anexos, tarefas, eventos, chamadas LLM e chat. O cabeçalho contém o campo de token, o botão «Ligar» e uma linha de estado. O token não é gravado em ficheiros nem no armazenamento do browser; permanece apenas em memória enquanto a página está aberta.
 
 ### Equipa de agentes
 
@@ -14,7 +14,11 @@ A secção de equipa apresenta a lista devolvida por `GET /api/agents`. Cada lin
 
 ### Aprovação de plano
 
-A secção de aprovação tem os campos `task_id`, `correlation_id` e `diff_hash`, além do botão «Aprovar plano». O botão começa oculto e desactivado e só fica disponível quando o fluxo de eventos recebe `create.plano`. A submissão usa `POST /api/approvals`; o token devolvido fica apenas na variável `ultimoToken` e nunca entra no DOM.
+A secção de aprovação tem os campos `task_id`, `correlation_id` e `diff_hash`, além do botão «Aprovar plano». O botão começa oculto e desactivado e só fica disponível quando o fluxo de eventos recebe `create.plano`. A submissão usa `POST /api/approvals`; o token devolvido fica apenas na variável `ultimoToken` e nunca entra no DOM. A aprovação expõe esse valor apenas à secção de anexos através de `window.hcwAprovacaoToken()`.
+
+### Anexos
+
+A secção de anexos tem um campo de ficheiro aceitando apenas `.zip`, os botões «Enviar para quarentena» e «Liberar anexo» e uma linha de estado. Os botões só ficam activos quando existe ficheiro e os campos de aprovação e o token estão preenchidos. O envio codifica o ZIP em base64 e usa `POST /api/attachments`; a liberação usa `POST /api/attachments/release` com o identificador devolvido. O histórico do chat é recarregado depois de cada operação e mostra a mensagem de quarentena ou o relatório de cobertura com lidos, ignorados e motivos. O conteúdo do ZIP não é apresentado na página.
 
 ### Tarefas
 
@@ -50,6 +54,10 @@ Ao ligar, o botão «Aprovar plano» fica oculto e desactivado e a linha da apro
 
 A receção de `create.plano` torna o botão visível e activo e actualiza o estado para «Plano pronto para aprovação.». Depois de uma emissão válida, o estado passa a «Aprovação emitida.» sem apresentar o token.
 
+### Anexo em quarentena
+
+Sem ficheiro ou sem contexto de aprovação, os botões de anexos permanecem desactivados e o estado indica «Sem anexo». Depois de um envio válido, o estado identifica o anexo em quarentena e o chat apresenta o nome ficheiro, o digest e os identificadores da tarefa e da correlação. O anexo só é libertado depois de «Liberar anexo» com o mesmo token da aprovação; nesse momento o chat apresenta a cobertura real e o relatório passa a indicar lidos, ignorados e motivos.
+
 ### Fluxo de eventos activo
 
 Enquanto o fluxo está activo, o botão «Iniciar fluxo» fica desactivado e o botão «Parar fluxo» fica disponível. Alterar um filtro reinicia o fluxo com o novo critério. A lista é limitada às 200 entradas mais recentes.
@@ -83,6 +91,10 @@ Depois de «Ligar», a equipa é carregada automaticamente. O botão «Atualizar
 ### Aprovar plano
 
 O utilizador preenche `task_id`, `correlation_id` e `diff_hash`, confirma que o botão ficou visível após `create.plano` e prime «Aprovar plano». O cliente envia apenas esses três campos e guarda o token devolvido em `ultimoToken`, sem o copiar para a página nem para o armazenamento local.
+
+### Enviar e libertar anexo
+
+O utilizador escolhe um ZIP e prime «Enviar para quarentena». O cliente lê o ficheiro com `FileReader`, envia os dados em base64 e guarda apenas o identificador devolvido. Depois de confirmar o relatório de quarentena no chat, prime «Liberar anexo». O cliente envia o identificador, os identificadores de aprovação e o token em memória, e recarrega o chat; a linha de estado passa a apresentar a cobertura devolvida. Nenhum destino aceita ficheiros por arrastar e nenhum pedido sai da origem local.
 
 ### Segurança da apresentação
 

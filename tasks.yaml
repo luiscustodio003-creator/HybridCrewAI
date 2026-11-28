@@ -1668,25 +1668,27 @@ tasks:
   - "approved=true vindo do modelo não tem efeito e nenhum token aparece no DOM, URL ou storage"
   evidence: [reports/tasks/HCW-05-009.md]
   validated_on: 2026-11-27
-  notes: "Toca em aprovação; hcw-security-review executado com ameaça/contramedida/teste/resultado. Oito testes de integração, 359 de regressão e browser real passaram; ruff/mypy/validadores limpos. Comitada neste conjunto; push pendente; sem tag da Fase 5."
+  notes: "Toca em aprovação; hcw-security-review executado com ameaça/contramedida/teste/resultado. Oito testes de integração, 359 de regressão e browser real passaram; ruff/mypy/validadores limpos. Comitada em `3911ea1` e enviada para `origin/master`; sem tag da Fase 5."
 - id: HCW-05-010
   title: Adicionar anexos ao chat com relatório de cobertura
   phase: 5
-  status: PLANNED
+  status: VALIDATED
   priority: high
   depends_on: [HCW-05-009]
   requirements: [UI-010, FR-014, SEC-007, UI-007]
   modules: [app/ui/server, app/ui/web]
-  files_new: [app/ui/server/routes_attachments.py, app/ui/web/attachments.js, tests/integration/test_ui_attachments.py, tests/ui/test_browser_phase05.py]
-  files_change: [app/ui/server/app.py, app/ui/server/routes_chat.py, app/ui/web/index.html, app/ui/web/chat.js, app/ui/web/README.txt]
-  tests: [tests/integration/test_ui_attachments.py, tests/ui/test_browser_phase05.py]
+  files_new: [app/ui/server/attachments_contract.py, app/ui/server/attachments_paths.py, app/ui/server/routes_attachments.py, app/ui/web/attachments.js, tests/integration/test_ui_attachments.py, tests/ui/test_browser_phase05.py, reports/tasks/HCW-05-010.md, screenshots/phase-05/01-anexos.png]
+  files_change: [DESIGN.md, THREAT_MODEL.md, app/ui/server/README.txt, app/ui/server/__init__.py, app/ui/server/app.py, app/ui/server/module.yaml, app/ui/server/web_assets.py, app/ui/web/README.txt, app/ui/web/approvals.js, app/ui/web/chat.js, app/ui/web/index.html, docs/MAP.md, tests/integration/test_ui_server.py, tests/unit/test_ui_web_assets.py]
+  tests: [tests/integration/test_ui_attachments.py, tests/integration/test_ui_server.py, tests/unit/test_ui_web_assets.py, tests/ui/test_browser_phase05.py, tests/security/test_phase05_zip.py]
   acceptance:
   - "Um ZIP com subpastas é mostrado no chat com o relatório de cobertura real"
   - "Lidos e ignorados batem com o disco e cada ignorado mostra o motivo"
   - "O anexo continua em quarentena até aprovação e não carrega recursos externos"
-  evidence: []
-  validated_on: null
-  notes: Toca em upload local; executar hcw-security-review e evidência de browser real.
+  evidence:
+  - reports/tasks/HCW-05-010.md
+  - screenshots/phase-05/01-anexos.png
+  validated_on: 2026-11-28
+  notes: "Toca em upload local; hcw-security-review executado com ameaça/contramedida/teste/resultado. 39 testes focados, 10 de browser real e 423 de regressão passaram; ruff, mypy e validadores limpos; quatro ignorados são os testes opcionais de fornecedor. Commit e push autorizados nesta sessão; registo final da hash após publicação; sem gate da Fase 5 ou tag."
 - id: HCW-05-011
   title: Criar ecrãs locais de aprovações e diff, snapshots e permissões
   phase: 5

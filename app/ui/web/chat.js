@@ -72,6 +72,8 @@
     }
   }
 
+  window.hcwChatRecarregar = carregar;
+
   api.registar(carregar);
   document.getElementById("formulario-chat").addEventListener("submit", enviar);
 })();

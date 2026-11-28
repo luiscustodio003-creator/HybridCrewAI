@@ -41,6 +41,15 @@
       <span id="estado-aprovacao" role="status">Sem plano pronto</span>
     </section>
 
+    <section aria-labelledby="titulo-anexos">
+      <h2 id="titulo-anexos">Anexos</h2>
+      <label for="anexo-ficheiro">ZIP a anexar</label>
+      <input id="anexo-ficheiro" type="file" accept=".zip">
+      <button id="anexo-enviar" type="button" disabled>Enviar para quarentena</button>
+      <button id="anexo-aprovar" type="button" disabled>Liberar anexo</button>
+      <span id="estado-anexo" role="status">Sem anexo</span>
+    </section>
+
     <section aria-labelledby="titulo-eventos">
       <h2 id="titulo-eventos">Eventos</h2>
       <div class="filtros">
@@ -93,5 +102,6 @@
   <script src="chat.js"></script>
   <script src="agents.js"></script>
   <script src="approvals.js"></script>
+  <script src="attachments.js"></script>
 </body>
 </html>

@@ -15,6 +15,12 @@ from app.ui.server.routes_approvals import (
     emitir_aprovacao,
     listar_agentes,
 )
+from app.ui.server.routes_attachments import (
+    ATTACHMENTS_PATH,
+    RELEASE_PATH,
+    caminhos_post,
+    resposta_anexo,
+)
 from app.ui.server.routes_chat import CHAT_PATH, analisar_corpo, analisar_filtro_tarefa
 from app.ui.server.routes_diff import (
     DIFF_PATH,
@@ -38,7 +44,9 @@ from app.ui.server.web_assets import WEB_FILES, ler_asset
 __all__ = [
     "AGENTS_PATH",
     "APPROVALS_PATH",
+    "ATTACHMENTS_PATH",
     "CHAT_PATH",
+    "RELEASE_PATH",
     "DIFF_PATH",
     "EVENTS_PATH",
     "LLM_CALLS_PATH",
@@ -56,6 +64,7 @@ __all__ = [
     "analisar_filtros",
     "calcular_diff",
     "calcular_diff_hash",
+    "caminhos_post",
     "create_server",
     "emitir_aprovacao",
     "filtrar_evento",
@@ -68,6 +77,7 @@ __all__ = [
     "origin_local",
     "origem_valida",
     "pedido_autorizado",
+    "resposta_anexo",
     "serializar_mensagem",
     "serializar_tarefa",
 ]

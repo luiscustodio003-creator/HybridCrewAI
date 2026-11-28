@@ -23,6 +23,7 @@ from app.ui.server.routes_approvals import (
     resposta_agentes,
     resposta_aprovacao,
 )
+from app.ui.server.routes_attachments import caminhos_post, resposta_anexo
 from app.ui.server.routes_chat import (
     CHAT_PATH,
     MAX_CORPO_BYTES,
@@ -44,10 +45,7 @@ HEALTH_PATH: Final = "/health"
 MAX_PORT: Final = 65535
 PHASE: Final = 3
 GET_ROTAS: Final = frozenset(
-    {
-        HEALTH_PATH, TAREFAS_PATH, EVENTS_PATH, LLM_CALLS_PATH,
-        CHAT_PATH, AGENTS_PATH, DIFF_PATH,
-    }
+    {HEALTH_PATH, TAREFAS_PATH, EVENTS_PATH, LLM_CALLS_PATH, CHAT_PATH, AGENTS_PATH, DIFF_PATH}
 )
 
 
@@ -148,12 +146,10 @@ class _Handler(BaseHTTPRequestHandler):
         self.send_error(status, mensagem)
 
     def do_POST(self) -> None:
-        """Recebe mensagens e aprovações após aplicar as barreiras locais."""
+        """Recebe mensagens, aprovações e anexos após as barreiras locais."""
         caminho = urlsplit(self.path).path
-        if (
-            caminho not in {CHAT_PATH, APPROVALS_PATH}
-            or not self.server.settings.ui_enabled
-        ):
+        rotas = {CHAT_PATH, APPROVALS_PATH} | caminhos_post(self.server.settings)
+        if caminho not in rotas or not self.server.settings.ui_enabled:
             self._recusar_post(HTTPStatus.NOT_FOUND, "Recurso não encontrado")
             return
         origem = self.headers.get("Origin")
@@ -166,19 +162,18 @@ class _Handler(BaseHTTPRequestHandler):
             return
         if caminho == CHAT_PATH:
             self._chat_post()
-        else:
+        elif caminho == APPROVALS_PATH:
             self._approvals_post()
+        else:
+            self._anexos_post(caminho)
 
     def _health(self) -> None:
-        """Devolve o estado mínimo do servidor sem dados sensíveis."""
         enviar_json(self, HTTPStatus.OK, {"status": "ok", "phase": PHASE})
 
     def _tasks(self) -> None:
-        """Devolve o histórico persistido sem aceitar escrita por consulta."""
         enviar_json(self, HTTPStatus.OK, listar_tarefas(self.server.store))
 
     def _agents(self) -> None:
-        """Devolve a equipa sem expor prompts nem instruções internas."""
         enviar_json(self, *resposta_agentes())
 
     def _diff(self) -> None:
@@ -206,6 +201,14 @@ class _Handler(BaseHTTPRequestHandler):
             MAX_CORPO_BYTES,
         )
         enviar_json(self, *resposta)
+
+    def _anexos_post(self, caminho: str) -> None:
+        """Processa uploads e libertações com limites próprios."""
+        estado, resposta = resposta_anexo(
+            self, self.server.settings, self.server.tokens,
+            self.server.chat_service, caminho,
+        )
+        enviar_json(self, estado, resposta)
 
     def _llm_calls(self) -> None:
         """Devolve chamadas LLM registadas, sem prompt completo nem segredos."""
@@ -259,7 +262,6 @@ class _Handler(BaseHTTPRequestHandler):
         enviar_json(self, HTTPStatus.OK, serializar_mensagem(resposta))
 
     def _events(self) -> None:
-        """Transmite eventos filtrados em formato Server-Sent Events."""
         transmitir_eventos(self)
 
     def log_message(self, formato: str, *argumentos: object) -> None:
