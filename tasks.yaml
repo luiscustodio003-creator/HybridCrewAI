@@ -1688,7 +1688,7 @@ tasks:
   - reports/tasks/HCW-05-010.md
   - screenshots/phase-05/01-anexos.png
   validated_on: 2026-11-28
-  notes: "Toca em upload local; hcw-security-review executado com ameaça/contramedida/teste/resultado. 39 testes focados, 10 de browser real e 423 de regressão passaram; ruff, mypy e validadores limpos; quatro ignorados são os testes opcionais de fornecedor. Commit e push autorizados nesta sessão; registo final da hash após publicação; sem gate da Fase 5 ou tag."
+  notes: "Toca em upload local; hcw-security-review executado com ameaça/contramedida/teste/resultado. 39 testes focados, 10 de browser real e 423 de regressão passaram; ruff, mypy e validadores limpos; quatro ignorados são os testes opcionais de fornecedor. Commit e push executados em `efd458f`; sem gate da Fase 5 ou tag."
 - id: HCW-05-011
   title: Criar ecrãs locais de aprovações e diff, snapshots e permissões
   phase: 5
